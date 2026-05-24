@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZHIXING RUBBER TECH | Global Industrial Rubber Engineering Brand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--primary:#0f172a;
+--secondary:#1e293b;
+--accent:#2563eb;
+--light:#f8fbff;
+--gray:#64748b;
+--white:#ffffff;
+--border:rgba(255,255,255,0.08);
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:#f6fbff;
+color:#334155;
+overflow-x:hidden;
+}
+
+h1,h2,h3,h4,h5{
+font-family:'Montserrat',sans-serif;
+letter-spacing:-0.03em;
+}
+
+.container{
+width:92%;
+max-width:1400px;
+margin:auto;
+}
+
+section{
+padding:80px 0;
+position:relative;
+}
+
+.section-tag{
+display:inline-flex;
+align-items:center;
+gap:10px;
+padding:12px 22px;
+border-radius:999px;
+background:rgba(37,99,235,.1);
+color:var(--accent);
+font-size:13px;
+font-weight:700;
+letter-spacing:.08em;
+text-transform:uppercase;
+margin-bottom:28px;
+}
+
+.section-title{
+font-size:46px;
+line-height:1.12;
+margin-bottom:20px;
+font-weight:800;
+color:var(--primary);
+}
+
+.section-subtitle{
+max-width:800px;
+font-size:17px;
+line-height:1.8;
+color:var(--gray);
+margin-bottom:44px;
+}
+
+/* NAVIGATION */
+
+nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:90px;
+backdrop-filter:blur(18px);
+background:rgba(255,255,255,.86);
+border-bottom:1px solid rgba(15,23,42,.05);
+z-index:9999;
+}
+
+.nav-inner{
+height:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.logo-area{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.logo-area img{
+width:56px;
+height:56px;
+object-fit:contain;
+border-radius:50%;
+background:white;
+padding:4px;
+box-shadow:0 10px 30px rgba(37,99,235,.1);
+}
+
+.logo-text h3{
+font-size:17px;
+font-weight:800;
+color:var(--primary);
+margin-bottom:4px;
+}
+
+.logo-text p{
+font-size:11px;
+letter-spacing:.12em;
+color:var(--gray);
+font-weight:700;
+}
+
+.nav-links{
+display:flex;
+gap:36px;
+align-items:center;
+}
+
+.nav-links a{
+text-decoration:none;
+font-weight:600;
+font-size:14px;
+color:var(--primary);
+transition:.3s;
+}
+
+.nav-links a:hover{
+color:var(--accent);
+}
+
+.nav-btn{
+padding:16px 28px;
+border-radius:14px;
+background:var(--accent);
+color:white;
+text-decoration:none;
+font-weight:700;
+margin-left:48px;
+box-shadow:0 16px 40px rgba(37,99,235,.24);
+transition:.35s;
+}
+
+.nav-btn:hover{
+transform:translateY(-3px);
+}
+
+/* HERO */
+
+.hero{
+min-height:100vh;
+overflow:hidden;
+background:
+linear-gradient(rgba(8,15,30,.65),rgba(8,15,30,.7)),
+url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1800&auto=format&fit=crop') center/cover;
+position:relative;
+display:flex;
+align-items:center;
+}
+
+.hero::before{
+content:'';
+position:absolute;
+inset:0;
+background:
+radial-gradient(circle at top right, rgba(37,99,235,.32), transparent 25%),
+linear-gradient(transparent, rgba(37,99,235,.08));
+}
+
+.grid-overlay{
+position:absolute;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+background-size:60px 60px;
+opacity:.45;
+}
+
+.hero-grid{
+position:relative;
+z-index:3;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:60px;
+align-items:center;
+margin-top:40px;
+}
+
+.hero-content .section-tag{
+background:rgba(255,255,255,.12);
+color:#93c5fd;
+backdrop-filter:blur(10px);
+}
+
+.hero-title{
+font-size:64px;
+line-height:1.06;
+font-weight:800;
+color:white;
+margin-bottom:26px;
+}
+
+.hero-description{
+font-size:18px;
+line-height:1.8;
+color:rgba(255,255,255,.78);
+max-width:720px;
+}
+
+.hero-buttons{
+display:flex;
+gap:20px;
+margin-top:32px;
+}
+
+.btn-primary,
+.btn-secondary{
+padding:18px 34px;
+border-radius:16px;
+font-weight:700;
+text-decoration:none;
+transition:.35s;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+}
+
+.btn-primary{
+background:var(--accent);
+color:white;
+box-shadow:0 18px 50px rgba(37,99,235,.32);
+}
+
+.btn-secondary{
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.12);
+backdrop-filter:blur(10px);
+color:white;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover{
+transform:translateY(-4px);
+}
+
+.hero-stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:16px;
+margin-top:36px;
+}
+
+.stat-card{
+padding:22px 26px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(16px);
+border-radius:22px;
+}
+
+.stat-card h3{
+font-size:32px;
+color:#60a5fa;
+margin-bottom:8px;
+}
+
+.stat-card p{
+color:rgba(255,255,255,.72);
+line-height:1.7;
+}
+
+.hero-visual{
+position:relative;
+height:560px;
+}
+
+.tech-circle{
+position:absolute;
+border-radius:50%;
+border:1px solid rgba(96,165,250,.25);
+animation:spin 20s linear infinite;
+}
+
+.circle-1{
+width:400px;
+height:400px;
+top:40px;
+left:60px;
+}
+
+.circle-2{
+width:300px;
+height:300px;
+top:100px;
+left:110px;
+animation-direction:reverse;
+}
+
+.floating-panel{
+position:absolute;
+padding:22px 24px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(18px);
+border-radius:22px;
+border:1px solid rgba(255,255,255,.08);
+box-shadow:0 30px 60px rgba(0,0,0,.16);
+color:white;
+}
+
+.floating-panel h4{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.floating-panel ul{
+list-style:none;
+line-height:1.9;
+font-size:14px;
+color:rgba(255,255,255,.78);
+}
+
+.panel-1{
+width:270px;
+top:30px;
+right:10px;
+}
+
+.panel-2{
+width:250px;
+bottom:50px;
+left:10px;
+}
+
+.panel-3{
+width:240px;
+bottom:130px;
+right:0;
+}
+
+/* TRUST */
+
+.trust{
+background:white;
+}
+
+.trust-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:28px;
+}
+
+.trust-card{
+padding:42px;
+border-radius:28px;
+background:#f8fbff;
+transition:.35s;
+box-shadow:0 10px 30px rgba(15,23,42,.03);
+}
+
+.trust-card:hover{
+transform:translateY(-10px);
+box-shadow:0 25px 60px rgba(15,23,42,.08);
+}
+
+.icon-box{
+width:72px;
+height:72px;
+border-radius:22px;
+background:linear-gradient(to bottom right,#2563eb,#60a5fa);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+color:white;
+margin-bottom:24px;
+}
+
+.trust-card h3{
+font-size:24px;
+margin-bottom:16px;
+color:var(--primary);
+}
+
+.trust-card p{
+line-height:1.9;
+color:var(--gray);
+}
+
+/* PRODUCT SYSTEM */
+
+.products{
+background:linear-gradient(to bottom,#f7fbff,#ffffff);
+}
+
+.product-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:36px;
+}
+
+.product-card{
+background:white;
+border-radius:34px;
+overflow:hidden;
+box-shadow:0 25px 70px rgba(15,23,42,.06);
+transition:.4s;
+}
+
+.product-card:hover{
+transform:translateY(-12px);
+}
+
+.product-image{
+aspect-ratio:4/3;
+position:relative;
+overflow:hidden;
+background:#e8ecf1;
+}
+
+.product-image img{
+width:100%;
+height:100%;
+object-fit:contain;
+transition:1s;
+}
+
+.product-card:hover .product-image img{
+transform:scale(1.05);
+}
+
+.product-overlay{
+position:absolute;
+inset:0;
+background:linear-gradient(to top,rgba(15,23,42,.08),transparent);
+pointer-events:none;
+}
+
+.product-content{
+padding:44px;
+}
+
+.product-content h3{
+font-size:36px;
+margin-bottom:26px;
+color:var(--primary);
+}
+
+.product-content ul{
+list-style:none;
+line-height:2.3;
+margin-bottom:34px;
+color:#475569;
+}
+
+/* ABOUT */
+
+.about-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:70px;
+align-items:center;
+}
+
+.about-visual{
+height:560px;
+background:
+linear-gradient(rgba(15,23,42,.58),rgba(15,23,42,.58)),
+url('设备照片/自动炼胶线3.png') center/cover;
+border-radius:38px;
+box-shadow:0 30px 70px rgba(15,23,42,.1);
+position:relative;
+overflow:hidden;
+}
+
+.about-content-box{
+padding:34px;
+border-radius:24px;
+background:white;
+margin-bottom:22px;
+box-shadow:0 14px 40px rgba(15,23,42,.05);
+}
+
+.about-content-box h4{
+margin-bottom:14px;
+font-size:24px;
+}
+
+.about-content-box p{
+line-height:1.9;
+color:var(--gray);
+}
+
+/* MANUFACTURING */
+
+.manufacturing{
+background:#0f172a;
+}
+
+.manufacturing .section-title,
+.manufacturing .section-subtitle{
+color:white;
+}
+
+.process-line{
+display:flex;
+justify-content:space-between;
+gap:18px;
+flex-wrap:wrap;
+margin-top:60px;
+}
+
+.process-step{
+flex:1;
+min-width:160px;
+padding:34px 20px;
+border-radius:24px;
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(10px);
+text-align:center;
+position:relative;
+}
+
+.process-step h3{
+font-size:18px;
+color:white;
+margin-top:18px;
+}
+
+.step-number{
+width:64px;
+height:64px;
+border-radius:50%;
+background:linear-gradient(to bottom right,#2563eb,#60a5fa);
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+font-weight:800;
+color:white;
+font-size:22px;
+}
+
+/* ENGINEERING */
+
+.engineering-grid{
+display:grid;
+grid-template-columns:1.1fr 1fr;
+gap:70px;
+align-items:center;
+}
+
+.engineering-visual{
+height:560px;
+border-radius:40px;
+background:
+linear-gradient(rgba(15,23,42,.72),rgba(15,23,42,.72)),
+url('设备照片/硫化1.jpg') center/cover;
+position:relative;
+overflow:hidden;
+box-shadow:0 30px 70px rgba(15,23,42,.1);
+}
+
+.rd-card{
+padding:34px;
+border-radius:26px;
+background:white;
+box-shadow:0 16px 40px rgba(15,23,42,.05);
+margin-bottom:22px;
+}
+
+.rd-card h3{
+font-size:24px;
+margin-bottom:14px;
+}
+
+.rd-card p{
+line-height:1.9;
+color:var(--gray);
+}
+
+.tech-tags{
+display:flex;
+flex-wrap:wrap;
+gap:16px;
+margin-top:40px;
+}
+
+.tech-tags span{
+padding:14px 20px;
+border-radius:999px;
+background:#eff6ff;
+color:var(--accent);
+font-weight:700;
+border:1px solid rgba(37,99,235,.1);
+}
+
+/* GLOBAL */
+
+.global{
+background:
+linear-gradient(rgba(15,23,42,.82),rgba(15,23,42,.82)),
+url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1800&auto=format&fit=crop') center/cover fixed;
+}
+
+.global .section-title,
+.global .section-subtitle{
+color:white;
+}
+
+.global-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:28px;
+margin-top:50px;
+}
+
+.global-card{
+padding:36px;
+background:rgba(255,255,255,.08);
+border-radius:26px;
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+}
+
+.global-card h3{
+font-size:24px;
+margin-bottom:16px;
+color:white;
+}
+
+.global-card p{
+line-height:1.9;
+color:rgba(255,255,255,.74);
+}
+
+/* CONTACT */
+
+.contact-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+}
+
+.contact-info{
+background:#0f172a;
+padding:44px;
+border-radius:30px;
+color:white;
+}
+
+.contact-info h2{
+font-size:38px;
+margin-bottom:20px;
+}
+
+.contact-info p{
+line-height:2;
+color:rgba(255,255,255,.74);
+margin-bottom:40px;
+}
+
+.contact-list{
+list-style:none;
+line-height:2.5;
+}
+
+[data-fs-success]:empty,
+[data-fs-error]:empty{
+display:none;
+}
+
+[data-fs-success]:not(:empty){
+padding:24px;
+background:#ecfdf5;
+border-radius:16px;
+margin-bottom:20px;
+color:#065f46;
+font-weight:600;
+text-align:center;
+}
+
+[data-fs-error]:not(:empty){
+padding:24px;
+background:#fef2f2;
+border-radius:16px;
+margin-bottom:20px;
+color:#991b1b;
+font-weight:600;
+text-align:center;
+}
+
+[data-fs-error="name"]:not(:empty),
+[data-fs-error="email"]:not(:empty),
+[data-fs-error="message"]:not(:empty){
+display:block;
+color:#dc2626;
+font-size:13px;
+margin-top:4px;
+padding:0;
+background:none;
+}
+
+.contact-form{
+background:white;
+padding:44px;
+border-radius:30px;
+box-shadow:0 30px 70px rgba(15,23,42,.08);
+}
+
+.form-group{
+margin-bottom:22px;
+}
+
+input,
+textarea{
+width:100%;
+padding:18px 22px;
+border-radius:16px;
+border:1px solid #dbeafe;
+background:#f8fbff;
+font-size:15px;
+font-family:'Inter',sans-serif;
+}
+
+textarea{
+height:150px;
+resize:none;
+}
+
+/* FOOTER */
+
+footer{
+background:#020617;
+padding:70px 0 40px;
+color:white;
+}
+
+.footer-grid{
+display:grid;
+grid-template-columns:1.5fr 1fr 1fr;
+gap:60px;
+}
+
+.footer-brand p{
+line-height:2;
+color:rgba(255,255,255,.68);
+margin-top:26px;
+max-width:560px;
+}
+
+.footer-title{
+font-size:22px;
+margin-bottom:24px;
+}
+
+.footer-links ul,
+.footer-contact ul{
+list-style:none;
+line-height:2.4;
+color:rgba(255,255,255,.68);
+}
+
+.copyright{
+margin-top:50px;
+padding-top:24px;
+border-top:1px solid rgba(255,255,255,.08);
+color:rgba(255,255,255,.5);
+font-size:14px;
+}
+
+/* FLOATING BUTTON */
+
+.whatsapp-btn{
+position:fixed;
+right:30px;
+bottom:30px;
+width:70px;
+height:70px;
+border-radius:50%;
+background:linear-gradient(to bottom right,#2563eb,#60a5fa);
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:28px;
+text-decoration:none;
+box-shadow:0 20px 50px rgba(37,99,235,.3);
+z-index:999;
+}
+
+/* PRODUCT GALLERY */
+
+.gallery{
+background:white;
+}
+
+.gallery-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:22px;
+}
+
+.gallery-item{
+border-radius:22px;
+overflow:hidden;
+background:white;
+box-shadow:0 12px 40px rgba(15,23,42,.06);
+transition:.35s;
+}
+
+.gallery-item:hover{
+transform:translateY(-8px);
+box-shadow:0 24px 60px rgba(15,23,42,.1);
+}
+
+.gallery-item img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:contain;
+display:block;
+background:#f4f6f9;
+}
+
+.gallery-label{
+padding:18px 22px;
+font-weight:600;
+font-size:15px;
+color:var(--primary);
+text-align:center;
+}
+
+/* EQUIPMENT */
+
+.equipment{
+background:#f7fbff;
+}
+
+.equipment-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:22px;
+}
+
+.equipment-card{
+border-radius:22px;
+overflow:hidden;
+background:white;
+box-shadow:0 12px 40px rgba(15,23,42,.06);
+transition:.35s;
+}
+
+.equipment-card:hover{
+transform:translateY(-8px);
+box-shadow:0 24px 60px rgba(15,23,42,.1);
+}
+
+.equipment-card img{
+width:100%;
+height:300px;
+object-fit:cover;
+display:block;
+}
+
+.equipment-label{
+padding:22px 24px;
+}
+
+.equipment-label h4{
+font-size:18px;
+color:var(--primary);
+margin-bottom:6px;
+}
+
+.equipment-label p{
+color:var(--gray);
+font-size:14px;
+}
+
+/* LANGUAGE SWITCHER */
+
+.lang-switch{
+position:relative;
+margin-left:14px;
+}
+
+.lang-btn{
+padding:10px 14px;
+border-radius:10px;
+border:1px solid rgba(15,23,42,.12);
+background:white;
+color:var(--primary);
+font-weight:600;
+font-size:13px;
+cursor:pointer;
+font-family:'Inter',sans-serif;
+display:flex;
+align-items:center;
+gap:6px;
+transition:.3s;
+}
+
+.lang-btn:hover{
+border-color:var(--accent);
+color:var(--accent);
+}
+
+.lang-dropdown{
+position:absolute;
+top:110%;
+right:0;
+background:white;
+border-radius:12px;
+box-shadow:0 20px 50px rgba(15,23,42,.12);
+overflow:hidden;
+display:none;
+min-width:130px;
+z-index:10000;
+}
+
+.lang-dropdown.show{
+display:block;
+}
+
+.lang-dropdown button{
+display:block;
+width:100%;
+padding:12px 20px;
+border:none;
+background:white;
+color:var(--primary);
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+text-align:left;
+font-family:'Inter',sans-serif;
+transition:.2s;
+}
+
+.lang-dropdown button:hover{
+background:#f1f5f9;
+color:var(--accent);
+}
+
+.lang-dropdown button.active{
+color:var(--accent);
+background:#eff6ff;
+}
+
+/* ADMIN */
+
+.admin-link{
+position:fixed;
+bottom:30px;
+left:30px;
+font-size:12px;
+color:#94a3b8;
+text-decoration:none;
+font-family:'Inter',sans-serif;
+z-index:998;
+transition:.3s;
+cursor:pointer;
+}
+
+.admin-link:hover{
+color:var(--accent);
+}
+
+.admin-overlay{
+position:fixed;
+inset:0;
+background:rgba(15,23,42,.6);
+backdrop-filter:blur(4px);
+z-index:99999;
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.admin-overlay.show{
+display:flex;
+}
+
+.admin-modal{
+background:white;
+padding:48px;
+border-radius:24px;
+width:90%;
+max-width:460px;
+box-shadow:0 30px 70px rgba(15,23,42,.2);
+}
+
+.admin-modal h2{
+font-size:26px;
+margin-bottom:8px;
+color:var(--primary);
+}
+
+.admin-modal .hint{
+color:var(--gray);
+margin-bottom:28px;
+font-size:14px;
+line-height:1.6;
+}
+
+.admin-modal .form-group{
+margin-bottom:18px;
+}
+
+.admin-modal label{
+display:block;
+font-weight:700;
+font-size:13px;
+margin-bottom:6px;
+color:var(--primary);
+}
+
+.admin-modal input{
+width:100%;
+padding:14px 18px;
+border-radius:12px;
+border:1px solid #dbeafe;
+background:#f8fbff;
+font-size:15px;
+font-family:'Inter',sans-serif;
+}
+
+.admin-modal .btn-row{
+display:flex;
+gap:12px;
+margin-top:28px;
+}
+
+.btn-save{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+background:var(--accent);
+color:white;
+font-weight:700;
+cursor:pointer;
+font-size:15px;
+font-family:'Inter',sans-serif;
+}
+
+.btn-cancel{
+flex:1;
+padding:14px;
+border:1px solid #e2e8f0;
+border-radius:12px;
+background:white;
+color:var(--gray);
+font-weight:700;
+cursor:pointer;
+font-size:15px;
+font-family:'Inter',sans-serif;
+}
+
+/* ANIMATION */
+
+@keyframes spin{
+from{
+transform:rotate(0deg);
+}
+
+to{
+transform:rotate(360deg);
+}
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+.hero-grid,
+.about-grid,
+.engineering-grid,
+.contact-grid,
+.footer-grid,
+.product-grid,
+.trust-grid,
+.global-grid,
+.gallery-grid,
+.equipment-grid{
+grid-template-columns:1fr;
+}
+
+.hero-title{
+font-size:48px;
+}
+
+.nav-links{
+display:none;
+}
+}
+
+@media(max-width:768px){
+section{
+padding:90px 0;
+}
+
+.hero-title{
+font-size:36px;
+}
+
+.section-title{
+font-size:32px;
+}
+
+.hero-stats{
+grid-template-columns:1fr;
+}
+
+.hero-buttons{
+flex-direction:column;
+}
+
+.floating-panel{
+display:none;
+}
+
+.contact-info,
+.contact-form{
+padding:36px;
+}
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+<div class="container nav-inner">
+
+<div class="logo-area">
+<img src="LOGO/ZXLOGO.png" alt="Zhixing Logo">
+<img src="LOGO/LileiLOGO.png" alt="Lilei Logo">
+
+<div class="logo-text">
+<h3>ZHIXING RUBBER TECH</h3>
+<p data-i18n="footer.tagline">ENGINEERING • MANUFACTURING • GLOBAL EXPORT</p>
+</div>
+</div>
+
+<div class="nav-links">
+<a href="#home" data-i18n="nav.home">HOME</a>
+<a href="#products" data-i18n="nav.products">PRODUCTS</a>
+<a href="#about" data-i18n="nav.about">ABOUT</a>
+<a href="#manufacturing" data-i18n="nav.manufacturing">MANUFACTURING</a>
+<a href="#engineering" data-i18n="nav.engineering">ENGINEERING</a>
+<a href="#contact" data-i18n="nav.contact">CONTACT</a>
+</div>
+
+<div class="lang-switch">
+<button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 EN ▾</button>
+<div class="lang-dropdown" id="langDropdown">
+<button onclick="setLang('en')" class="active">English</button>
+<button onclick="setLang('de')">Deutsch</button>
+<button onclick="setLang('zh')">中文</button>
+</div>
+</div>
+
+<a href="#contact" class="nav-btn" data-i18n="nav.cta">GET A QUOTE</a>
+
+</div>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+<div class="grid-overlay"></div>
+
+<div class="container hero-grid">
+
+<div class="hero-content">
+
+<div class="section-tag" data-i18n="hero.tag">
+Integrated Manufacturing & Global Export Service
+</div>
+
+<h1 class="hero-title" data-i18n="hero.title">
+Advanced Rubber Compound & Molded Rubber Products Manufacturer
+</h1>
+
+<p class="hero-description" data-i18n="hero.desc">
+ANHUI ZHIXING RUBBER TECH CO., LTD & NINGBO LILEI IMPORT AND EXPORT CO., LTD provide integrated rubber engineering, compound manufacturing and OEM global export solutions for automotive, industrial and appliance applications.
+</p>
+
+<div class="hero-buttons">
+<a href="#contact" class="btn-primary" data-i18n="hero.btn1">GET A QUOTE</a>
+<a href="#products" class="btn-secondary" data-i18n="hero.btn2">EXPLORE PRODUCTS</a>
+</div>
+
+<div class="hero-stats">
+
+<div class="stat-card">
+<h3 data-i18n="hero.stat1.val">3000 Tons</h3>
+<p data-i18n="hero.stat1.txt">Annual Rubber Compound Production Capacity</p>
+</div>
+
+<div class="stat-card">
+<h3 data-i18n="hero.stat2.val">15 Million+</h3>
+<p data-i18n="hero.stat2.txt">Molded Rubber Components Manufactured Per Year</p>
+</div>
+
+<div class="stat-card">
+<h3 data-i18n="hero.stat3.val">CAE</h3>
+<p data-i18n="hero.stat3.txt">Engineering Simulation & Product Development Support</p>
+</div>
+
+<div class="stat-card">
+<h3 data-i18n="hero.stat4.val">OEM / ODM</h3>
+<p data-i18n="hero.stat4.txt">Global Export Service & Custom Manufacturing</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="hero-visual">
+
+<div class="tech-circle circle-1"></div>
+<div class="tech-circle circle-2"></div>
+
+<div class="floating-panel panel-1">
+<h4 data-i18n="hero.panel1.title">Rubber Compounds</h4>
+<ul>
+<li data-i18n="hero.panel1.l1">NR / EPDM / NBR</li>
+<li data-i18n="hero.panel1.l2">HNBR / CR / SBR</li>
+<li data-i18n="hero.panel1.l3">MQ / FKM / AEM / ACM</li>
+<li data-i18n="hero.panel1.l4">NV (Rubber-Plastic Alloy)</li>
+</ul>
+</div>
+
+<div class="floating-panel panel-2">
+<h4 data-i18n="hero.panel2.title">Engineering Capability</h4>
+<ul>
+<li data-i18n="hero.panel2.l1">CAE Simulation</li>
+<li data-i18n="hero.panel2.l2">Formula Development</li>
+<li data-i18n="hero.panel2.l3">Mold Design</li>
+<li data-i18n="hero.panel2.l4">Validation Testing</li>
+</ul>
+</div>
+
+<div class="floating-panel panel-3">
+<h4 data-i18n="hero.panel3.title">Molded Products</h4>
+<ul>
+<li data-i18n="hero.panel3.l1">Dust Covers & Boots</li>
+<li data-i18n="hero.panel3.l2">Bushings & Bellows</li>
+<li data-i18n="hero.panel3.l3">Seals & Grommets</li>
+<li data-i18n="hero.panel3.l4">Rubber-Metal Bonded Parts</li>
+</ul>
+</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- TRUST -->
+
+<section class="trust">
+<div class="container">
+
+<div class="section-tag" data-i18n="trust.tag">Industrial Technology Capability</div>
+
+<h2 class="section-title" data-i18n="trust.title">
+Engineering Driven Manufacturing System
+</h2>
+
+<p class="section-subtitle" data-i18n="trust.subtitle">
+Combining rubber material science, precision manufacturing and global export support to build a long-term industrial rubber engineering brand.
+</p>
+
+<div class="trust-grid">
+
+<div class="trust-card">
+<div class="icon-box">⚙</div>
+<h3 data-i18n="trust.c1.title">Engineering Capability</h3>
+<p data-i18n="trust.c1.text">
+Advanced rubber material development and CAE simulation support for high-performance applications.
+</p>
+</div>
+
+<div class="trust-card">
+<div class="icon-box">🏭</div>
+<h3 data-i18n="trust.c2.title">Integrated Manufacturing</h3>
+<p data-i18n="trust.c2.text">
+Rubber mixing, vulcanization and molded rubber production completed in-house.
+</p>
+</div>
+
+<div class="trust-card">
+<div class="icon-box">🧪</div>
+<h3 data-i18n="trust.c3.title">Strict Quality Control</h3>
+<p data-i18n="trust.c3.text">
+Comprehensive laboratory validation including ozone resistance and aging testing.
+</p>
+</div>
+
+<div class="trust-card">
+<div class="icon-box">🌍</div>
+<h3 data-i18n="trust.c4.title">Global Export Service</h3>
+<p data-i18n="trust.c4.text">
+Professional communication and stable international supply support for OEM customers.
+</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- PRODUCTS -->
+
+<section class="products" id="products">
+<div class="container">
+
+<div class="section-tag" data-i18n="products.tag">Product System</div>
+
+<h2 class="section-title" data-i18n="products.title">
+Rubber Compounds & Molded Rubber Products
+</h2>
+
+<p class="section-subtitle" data-i18n="products.subtitle">
+Comprehensive industrial rubber solutions for automotive, machinery, industrial equipment and appliance applications.
+</p>
+
+<div class="product-grid">
+
+<div class="product-card">
+<div class="product-image">
+<img src="设备照片/自动炼胶线.png" alt="Rubber Compound Mixing Line">
+<div class="product-overlay"></div>
+</div>
+
+<div class="product-content">
+<h3 data-i18n="products.card1.title">Rubber Compounds</h3>
+
+<ul>
+<li data-i18n="products.card1.l1">NR — Natural Rubber</li>
+<li data-i18n="products.card1.l2">EPDM — Ethylene Propylene Diene Monomer</li>
+<li data-i18n="products.card1.l3">NBR — Nitrile Butadiene Rubber</li>
+<li data-i18n="products.card1.l4">HNBR — Hydrogenated Nitrile Rubber</li>
+<li data-i18n="products.card1.l5">CR — Chloroprene Rubber (Neoprene)</li>
+<li data-i18n="products.card1.l6">SBR — Styrene Butadiene Rubber</li>
+<li data-i18n="products.card1.l7">MQ — Silicone Rubber</li>
+<li data-i18n="products.card1.l8">FKM — Fluoroelastomer</li>
+<li data-i18n="products.card1.l9">AEM / ACM — Acrylate Elastomer</li>
+<li data-i18n="products.card1.l10">NV — Rubber-Plastic Alloy</li>
+<li data-i18n="products.card1.l11">Custom Formula Development</li>
+</ul>
+
+<a href="#contact" class="btn-primary" data-i18n="products.card1.btn">VIEW DETAILS</a>
+</div>
+</div>
+
+<div class="product-card">
+<div class="product-image">
+<img src="OptimizedPicture/减震防尘罩.jpg" alt="Automotive Rubber Components">
+<div class="product-overlay"></div>
+</div>
+
+<div class="product-content">
+<h3 data-i18n="products.card2.title">Automotive Rubber Components</h3>
+
+<ul>
+<li data-i18n="products.card2.l1">Transmission System — Dust Covers, Seals</li>
+<li data-i18n="products.card2.l2">Suspension System — Bushings, Bellows</li>
+<li data-i18n="products.card2.l3">Steering System — Dust Boots, Grommets</li>
+<li data-i18n="products.card2.l4">Body System — Gaskets, Wire Harness Sheaths</li>
+<li data-i18n="products.card2.l5">Rubber-Metal Bonded Assemblies</li>
+<li data-i18n="products.card2.l6">Custom OEM / ODM Rubber Parts</li>
+</ul>
+
+<a href="#contact" class="btn-primary" data-i18n="products.card2.btn">VIEW DETAILS</a>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- PRODUCT GALLERY -->
+
+<section class="gallery">
+<div class="container">
+
+<div class="section-tag" data-i18n="gallery.tag">Product Gallery</div>
+
+<h2 class="section-title" data-i18n="gallery.title">
+Automotive & Industrial Rubber Components
+</h2>
+
+<p class="section-subtitle" data-i18n="gallery.subtitle">
+Typical rubber parts for transmission, suspension, steering and body systems — developed and manufactured in-house.
+</p>
+
+<div class="gallery-grid">
+
+<div class="gallery-item">
+<img src="OptimizedPicture/减震衬套.jpeg" alt="Suspension Bushing">
+<div class="gallery-label" data-i18n="gallery.l1">Suspension Bushing</div>
+</div>
+
+<div class="gallery-item">
+<img src="OptimizedPicture/减震防尘罩.jpg" alt="Shock Absorber Dust Cover">
+<div class="gallery-label" data-i18n="gallery.l2">Shock Absorber Dust Cover</div>
+</div>
+
+<div class="gallery-item">
+<img src="产品照片/球形防尘罩.png" alt="Ball Joint Dust Cover">
+<div class="gallery-label" data-i18n="gallery.l3">Ball Joint Dust Cover</div>
+</div>
+
+<div class="gallery-item">
+<img src="产品照片/线束护套.png" alt="Wire Harness Sheath">
+<div class="gallery-label" data-i18n="gallery.l4">Wire Harness Sheath</div>
+</div>
+
+<div class="gallery-item">
+<img src="产品照片/橡胶轮.png" alt="Rubber Wheel">
+<div class="gallery-label" data-i18n="gallery.l5">Rubber Wheel</div>
+</div>
+
+<div class="gallery-item" style="display:flex;align-items:center;justify-content:center;background:#f4f6f9;aspect-ratio:1/1;border-radius:22px;">
+<div style="text-align:center;color:#94a3b8;">
+<div style="font-size:40px;margin-bottom:12px;">+</div>
+<div style="font-size:17px;font-weight:600;" data-i18n="gallery.more">More to Come</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ABOUT -->
+
+<section id="about">
+<div class="container about-grid">
+
+<div class="about-visual"></div>
+
+<div>
+<div class="section-tag" data-i18n="about.tag">About Us</div>
+
+<h2 class="section-title" data-i18n="about.title">
+Integrated Manufacturing & Global Export
+</h2>
+
+<p class="section-subtitle" data-i18n="about.subtitle">
+Two specialized companies working together to deliver rubber compounds and molded products from our China manufacturing base to global customers.
+</p>
+
+<div class="about-content-box">
+<h4 data-i18n="about.box1.title">ANHUI ZHIXING RUBBER TECH CO., LTD</h4>
+<p data-i18n="about.box1.text">
+Our manufacturing center in Anhui — specializing in rubber compound formula development, mixing production, and molded rubber component manufacturing. In-house lab, mixing line, and vulcanization workshop.
+</p>
+</div>
+
+<div class="about-content-box">
+<h4 data-i18n="about.box2.title">NINGBO LILEI IMPORT AND EXPORT CO., LTD</h4>
+<p data-i18n="about.box2.text">
+Our international trade arm in Ningbo — handling global export of rubber compounds, automotive rubber components, and OEM/ODM supply. Professional English communication and logistics coordination.
+</p>
+</div>
+
+<div class="about-content-box">
+<h4 data-i18n="about.box3.title">Engineering-Driven Partnership</h4>
+<p data-i18n="about.box3.text">
+Together, we offer a seamless chain from material R&D and manufacturing to international delivery — a true engineering partner, not just a trading supplier.
+</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- MANUFACTURING -->
+
+<section class="manufacturing" id="manufacturing">
+<div class="container">
+
+<div class="section-tag" data-i18n="mfg.tag">Manufacturing Capability</div>
+
+<h2 class="section-title" data-i18n="mfg.title">
+Integrated Industrial Production System
+</h2>
+
+<p class="section-subtitle" data-i18n="mfg.subtitle">
+From raw material mixing to precision vulcanization and final inspection, our manufacturing process is designed for stable global industrial supply.
+</p>
+
+<div class="process-line">
+
+<div class="process-step">
+<div class="step-number">01</div>
+<h3 data-i18n="mfg.s1">Raw Material</h3>
+</div>
+
+<div class="process-step">
+<div class="step-number">02</div>
+<h3 data-i18n="mfg.s2">Rubber Mixing</h3>
+</div>
+
+<div class="process-step">
+<div class="step-number">03</div>
+<h3 data-i18n="mfg.s3">Mold Development</h3>
+</div>
+
+<div class="process-step">
+<div class="step-number">04</div>
+<h3 data-i18n="mfg.s4">Vulcanization</h3>
+</div>
+
+<div class="process-step">
+<div class="step-number">05</div>
+<h3 data-i18n="mfg.s5">Inspection</h3>
+</div>
+
+<div class="process-step">
+<div class="step-number">06</div>
+<h3 data-i18n="mfg.s6">Global Export</h3>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- EQUIPMENT -->
+
+<section class="equipment">
+<div class="container">
+
+<div class="section-tag" data-i18n="equip.tag">Manufacturing Equipment</div>
+
+<h2 class="section-title" data-i18n="equip.title">
+Advanced Rubber Processing Equipment
+</h2>
+
+<p class="section-subtitle" data-i18n="equip.subtitle">
+Key production machinery at our Anhui manufacturing facility, enabling precise rubber mixing and vulcanization.
+</p>
+
+<div class="equipment-grid">
+
+<div class="equipment-card">
+<img src="设备照片/自动炼胶线.png" alt="Internal Mixer">
+<div class="equipment-label">
+<h4 data-i18n="equip.e1.title">Internal Mixer (密炼机)</h4>
+<p data-i18n="equip.e1.text">High-precision rubber compounding and mixing for consistent material quality.</p>
+</div>
+</div>
+
+<div class="equipment-card">
+<img src="设备照片/自动炼胶线2.png" alt="Open Mill">
+<div class="equipment-label">
+<h4 data-i18n="equip.e2.title">Open Mill (开炼机)</h4>
+<p data-i18n="equip.e2.text">Secondary mixing and sheeting for uniform rubber compound preparation.</p>
+</div>
+</div>
+
+<div class="equipment-card">
+<img src="设备照片/硫化.png" alt="Vulcanizing Press">
+<div class="equipment-label">
+<h4 data-i18n="equip.e3.title">Vulcanizing Press (硫化机)</h4>
+<p data-i18n="equip.e3.text">Precision molding and vulcanization for finished rubber components.</p>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ENGINEERING -->
+
+<section id="engineering">
+<div class="container engineering-grid">
+
+<div class="engineering-visual"></div>
+
+<div>
+<div class="section-tag" data-i18n="eng.tag">Engineering & R&D</div>
+
+<h2 class="section-title" data-i18n="eng.title">
+Advanced Rubber Engineering Capability
+</h2>
+
+<p class="section-subtitle" data-i18n="eng.subtitle">
+From material development to simulation and validation, our engineering team supports full-cycle industrial product development.
+</p>
+
+<div class="rd-card">
+<h3 data-i18n="eng.r1.title">Material Formula Development</h3>
+<p data-i18n="eng.r1.text">
+Customized rubber formulations designed according to temperature, hardness and environmental requirements.
+</p>
+</div>
+
+<div class="rd-card">
+<h3 data-i18n="eng.r2.title">CAE Simulation & Mold Design</h3>
+<p data-i18n="eng.r2.text">
+Engineering analysis and mold precision optimization for stable large-scale production.
+</p>
+</div>
+
+<div class="rd-card">
+<h3 data-i18n="eng.r3.title">Reliability Validation</h3>
+<p data-i18n="eng.r3.text">
+Environmental and mechanical performance testing for long-term industrial applications.
+</p>
+</div>
+
+<div class="tech-tags">
+<span>UG NX</span>
+<span>CATIA</span>
+<span>ABAQUS</span>
+<span>MOLDEX3D</span>
+<span>HyperMesh</span>
+<span>ADAMS</span>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- GLOBAL -->
+
+<section class="global">
+<div class="container">
+
+<div class="section-tag" data-i18n="global.tag">Global Export</div>
+
+<h2 class="section-title" data-i18n="global.title">
+Reliable Global Industrial Supply Support
+</h2>
+
+<p class="section-subtitle" data-i18n="global.subtitle">
+Through NINGBO LILEI IMPORT AND EXPORT CO., LTD, we provide professional international trade service — backed by ANHUI ZHIXING's manufacturing capability, engineering communication and OEM development support.
+</p>
+
+<div class="global-grid">
+
+<div class="global-card">
+<h3 data-i18n="global.c1.title">Automotive</h3>
+<p data-i18n="global.c1.text">Powertrain, sealing and vibration control applications.</p>
+</div>
+
+<div class="global-card">
+<h3 data-i18n="global.c2.title">Industrial</h3>
+<p data-i18n="global.c2.text">Heavy equipment and industrial sealing systems.</p>
+</div>
+
+<div class="global-card">
+<h3 data-i18n="global.c3.title">Appliance</h3>
+<p data-i18n="global.c3.text">Washing machine, HVAC and appliance rubber components.</p>
+</div>
+
+<div class="global-card">
+<h3 data-i18n="global.c4.title">OEM / ODM</h3>
+<p data-i18n="global.c4.text">Custom engineering and manufacturing support for global customers.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+
+<section id="contact">
+<div class="container contact-grid">
+
+<div class="contact-info">
+<h2 data-i18n="contact.title">
+Start Your Rubber Solution Project
+</h2>
+
+<p data-i18n="contact.text">
+Contact our engineering and sales team for material selection, product development and quotation support.
+</p>
+
+<ul class="contact-list">
+<li><strong data-i18n="contact.manufacturing">Manufacturing:</strong> ANHUI ZHIXING RUBBER TECH CO., LTD</li>
+<li><strong data-i18n="contact.export">Export:</strong> NINGBO LILEI IMPORT AND EXPORT CO., LTD</li>
+<li><span data-i18n="contact.email">Email:</span> <span class="contact-email-dyn">sales@zhixing-rubber.com</span></li>
+<li><span data-i18n="contact.whatsapp">WhatsApp:</span> <span class="contact-whatsapp-dyn">+86-000000000</span></li>
+<li data-i18n="contact.oem">OEM / ODM Development Support</li>
+</ul>
+</div>
+
+<div class="contact-form">
+<form id="contact-form">
+
+<div data-fs-success></div>
+<div data-fs-error></div>
+
+<div class="form-group">
+<input type="text" name="name" data-i18n="form.name" data-fs-field required>
+<span data-fs-error="name" style="color:#dc2626;font-size:13px;margin-top:4px;display:block;"></span>
+</div>
+
+<div class="form-group">
+<input type="text" name="company" data-i18n="form.company" data-fs-field>
+</div>
+
+<div class="form-group">
+<input type="email" name="email" data-i18n="form.email" data-fs-field required>
+<span data-fs-error="email" style="color:#dc2626;font-size:13px;margin-top:4px;display:block;"></span>
+</div>
+
+<div class="form-group">
+<input type="text" name="phone" data-i18n="form.phone" data-fs-field>
+</div>
+
+<div class="form-group">
+<textarea name="message" data-i18n="form.message" data-fs-field required></textarea>
+<span data-fs-error="message" style="color:#dc2626;font-size:13px;margin-top:4px;display:block;"></span>
+</div>
+
+<button type="submit" class="btn-primary" data-fs-submit-btn data-i18n="form.submit" style="border:none;cursor:pointer;font-family:'Inter',sans-serif;">REQUEST A QUOTE</button>
+
+</form>
+</div>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+<div class="container">
+
+<div class="footer-grid">
+
+<div class="footer-brand">
+<div class="logo-area">
+<img src="LOGO/ZXLOGO.png" alt="Zhixing Logo">
+<img src="LOGO/LileiLOGO.png" alt="Lilei Logo">
+
+<div class="logo-text">
+<h3 style="color:white;">ZHIXING RUBBER TECH</h3>
+<p data-i18n="footer.tagline">ENGINEERING • MANUFACTURING • GLOBAL EXPORT</p>
+</div>
+</div>
+
+<p data-i18n="footer.about">
+A partnership of ANHUI ZHIXING RUBBER TECH CO., LTD (manufacturing) and NINGBO LILEI IMPORT AND EXPORT CO., LTD (global export), integrating rubber engineering, compound mixing, molded component production and international supply.
+</p>
+</div>
+
+<div class="footer-links">
+<h3 class="footer-title" data-i18n="footer.quick">Quick Links</h3>
+<ul>
+<li data-i18n="footer.ql1">About Us</li>
+<li data-i18n="footer.ql2">Products</li>
+<li data-i18n="footer.ql3">Engineering</li>
+<li data-i18n="footer.ql4">Manufacturing</li>
+<li data-i18n="footer.ql5">Quality Control</li>
+</ul>
+</div>
+
+<div class="footer-contact">
+<h3 class="footer-title" data-i18n="footer.contact">Contact</h3>
+<ul>
+<li class="footer-email-dyn">sales@zhixing-rubber.com</li>
+<li data-i18n="footer.fc2">Global OEM / ODM Support</li>
+<li data-i18n="footer.fc3">China Manufacturing Base</li>
+<li data-i18n="footer.fc4">24-Hour Engineering Response</li>
+</ul>
+</div>
+
+</div>
+
+<div class="copyright" data-i18n="footer.copy">
+© 2026 ZHIXING RUBBER TECH. All Rights Reserved.
+</div>
+
+</div>
+</footer>
+
+<a href="#contact" class="whatsapp-btn">✉</a>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="adminOverlay">
+<div class="admin-modal">
+<h2 data-i18n="admin.title">Update Contact Info</h2>
+<p class="hint" data-i18n="admin.hint">Changes are saved to your browser and will be reflected on the website immediately.</p>
+<div class="form-group">
+<label data-i18n="admin.email">Email Address</label>
+<input type="email" id="adminEmail" placeholder="sales@zhixing-rubber.com">
+</div>
+<div class="form-group">
+<label data-i18n="admin.whatsapp">WhatsApp Number</label>
+<input type="text" id="adminWhatsapp" placeholder="+86-000000000">
+</div>
+<div class="form-group">
+<label data-i18n="admin.password">Admin Password</label>
+<input type="password" id="adminPassword" placeholder="Enter password to save">
+</div>
+<div class="btn-row">
+<button class="btn-cancel" onclick="closeAdmin()" data-i18n="admin.cancel">Cancel</button>
+<button class="btn-save" onclick="saveContactInfo()" data-i18n="admin.save">Save Changes</button>
+</div>
+</div>
+</div>
+
+<span class="admin-link" onclick="openAdmin()" data-i18n="admin.link">⚙ Contact Settings</span>
+
+<script>
+// ============ I18N TRANSLATIONS ============
+const i18n = {
+en: {
+  'nav.home':'HOME','nav.products':'PRODUCTS','nav.about':'ABOUT',
+  'nav.manufacturing':'MANUFACTURING','nav.engineering':'ENGINEERING',
+  'nav.contact':'CONTACT','nav.cta':'GET A QUOTE',
+  'hero.tag':'Integrated Manufacturing & Global Export Service',
+  'hero.title':'Advanced Rubber Compound & Molded Rubber Products Manufacturer',
+  'hero.desc':'ANHUI ZHIXING RUBBER TECH CO., LTD & NINGBO LILEI IMPORT AND EXPORT CO., LTD provide integrated rubber engineering, compound manufacturing and OEM global export solutions for automotive, industrial and appliance applications.',
+  'hero.btn1':'GET A QUOTE','hero.btn2':'EXPLORE PRODUCTS',
+  'hero.stat1.val':'3000 Tons','hero.stat1.txt':'Annual Rubber Compound Production Capacity',
+  'hero.stat2.val':'15 Million+','hero.stat2.txt':'Molded Rubber Components Manufactured Per Year',
+  'hero.stat3.val':'CAE','hero.stat3.txt':'Engineering Simulation & Product Development Support',
+  'hero.stat4.val':'OEM / ODM','hero.stat4.txt':'Global Export Service & Custom Manufacturing',
+  'hero.panel1.title':'Rubber Compounds',
+  'hero.panel1.l1':'NR / EPDM / NBR','hero.panel1.l2':'HNBR / CR / SBR',
+  'hero.panel1.l3':'MQ / FKM / AEM / ACM','hero.panel1.l4':'NV (Rubber-Plastic Alloy)',
+  'hero.panel2.title':'Engineering Capability',
+  'hero.panel2.l1':'CAE Simulation','hero.panel2.l2':'Formula Development',
+  'hero.panel2.l3':'Mold Design','hero.panel2.l4':'Validation Testing',
+  'hero.panel3.title':'Automotive Parts',
+  'hero.panel3.l1':'Dust Covers & Boots','hero.panel3.l2':'Bushings & Bellows',
+  'hero.panel3.l3':'Seals & Grommets','hero.panel3.l4':'Rubber-Metal Bonded Parts',
+  'trust.tag':'Industrial Technology Capability',
+  'trust.title':'Engineering Driven Manufacturing System',
+  'trust.subtitle':'Combining rubber material science, precision manufacturing and global export support to build a long-term industrial rubber engineering brand.',
+  'trust.c1.title':'Engineering Capability',
+  'trust.c1.text':'Advanced rubber material development and CAE simulation support for high-performance applications.',
+  'trust.c2.title':'Integrated Manufacturing',
+  'trust.c2.text':'Rubber mixing, vulcanization and molded rubber production completed in-house.',
+  'trust.c3.title':'Strict Quality Control',
+  'trust.c3.text':'Comprehensive laboratory validation including ozone resistance and aging testing.',
+  'trust.c4.title':'Global Export Service',
+  'trust.c4.text':'Professional communication and stable international supply support for OEM customers.',
+  'products.tag':'Product System',
+  'products.title':'Rubber Compounds & Molded Rubber Products',
+  'products.subtitle':'Comprehensive industrial rubber solutions for automotive, machinery, industrial equipment and appliance applications.',
+  'products.card1.title':'Rubber Compounds',
+  'products.card1.l1':'NR — Natural Rubber','products.card1.l2':'EPDM — Ethylene Propylene Diene Monomer',
+  'products.card1.l3':'NBR — Nitrile Butadiene Rubber','products.card1.l4':'HNBR — Hydrogenated Nitrile Rubber',
+  'products.card1.l5':'CR — Chloroprene Rubber (Neoprene)','products.card1.l6':'SBR — Styrene Butadiene Rubber',
+  'products.card1.l7':'MQ — Silicone Rubber','products.card1.l8':'FKM — Fluoroelastomer',
+  'products.card1.l9':'AEM / ACM — Acrylate Elastomer','products.card1.l10':'NV — Rubber-Plastic Alloy',
+  'products.card1.l11':'Custom Formula Development',
+  'products.card1.btn':'VIEW DETAILS',
+  'products.card2.title':'Automotive Rubber Components',
+  'products.card2.l1':'Transmission System — Dust Covers, Seals',
+  'products.card2.l2':'Suspension System — Bushings, Bellows',
+  'products.card2.l3':'Steering System — Dust Boots, Grommets',
+  'products.card2.l4':'Body System — Gaskets, Wire Harness Sheaths',
+  'products.card2.l5':'Rubber-Metal Bonded Assemblies',
+  'products.card2.l6':'Custom OEM / ODM Rubber Parts',
+  'products.card2.btn':'VIEW DETAILS',
+  'gallery.tag':'Product Gallery',
+  'gallery.title':'Automotive & Industrial Rubber Components',
+  'gallery.subtitle':'Typical rubber parts for transmission, suspension, steering and body systems — developed and manufactured in-house.',
+  'gallery.l1':'Suspension Bushing','gallery.l2':'Shock Absorber Dust Cover',
+  'gallery.l3':'Ball Joint Dust Cover','gallery.l4':'Wire Harness Sheath',
+  'gallery.l5':'Rubber Wheel','gallery.more':'More to Come',
+  'about.tag':'About Us',
+  'about.title':'Integrated Manufacturing & Global Export',
+  'about.subtitle':'Two specialized companies working together to deliver rubber compounds and molded products from our China manufacturing base to global customers.',
+  'about.box1.title':'ANHUI ZHIXING RUBBER TECH CO., LTD',
+  'about.box1.text':'Our manufacturing center in Anhui — specializing in rubber compound formula development, mixing production, and molded rubber component manufacturing. In-house lab, mixing line, and vulcanization workshop.',
+  'about.box2.title':'NINGBO LILEI IMPORT AND EXPORT CO., LTD',
+  'about.box2.text':'Our international trade arm in Ningbo — handling global export of rubber compounds, automotive rubber components, and OEM/ODM supply. Professional English communication and logistics coordination.',
+  'about.box3.title':'Engineering-Driven Partnership',
+  'about.box3.text':'Together, we offer a seamless chain from material R&D and manufacturing to international delivery — a true engineering partner, not just a trading supplier.',
+  'mfg.tag':'Manufacturing Capability',
+  'mfg.title':'Integrated Industrial Production System',
+  'mfg.subtitle':'From raw material mixing to precision vulcanization and final inspection, our manufacturing process is designed for stable global industrial supply.',
+  'mfg.s1':'Raw Material','mfg.s2':'Rubber Mixing','mfg.s3':'Mold Development',
+  'mfg.s4':'Vulcanization','mfg.s5':'Inspection','mfg.s6':'Global Export',
+  'equip.tag':'Manufacturing Equipment',
+  'equip.title':'Advanced Rubber Processing Equipment',
+  'equip.subtitle':'Key production machinery at our Anhui manufacturing facility, enabling precise rubber mixing and vulcanization.',
+  'equip.e1.title':'Internal Mixer (密炼机)',
+  'equip.e1.text':'High-precision rubber compounding and mixing for consistent material quality.',
+  'equip.e2.title':'Open Mill (开炼机)',
+  'equip.e2.text':'Secondary mixing and sheeting for uniform rubber compound preparation.',
+  'equip.e3.title':'Vulcanizing Press (硫化机)',
+  'equip.e3.text':'Precision molding and vulcanization for finished rubber components.',
+  'eng.tag':'Engineering & R&D',
+  'eng.title':'Advanced Rubber Engineering Capability',
+  'eng.subtitle':'From material development to simulation and validation, our engineering team supports full-cycle industrial product development.',
+  'eng.r1.title':'Material Formula Development',
+  'eng.r1.text':'Customized rubber formulations designed according to temperature, hardness and environmental requirements.',
+  'eng.r2.title':'CAE Simulation & Mold Design',
+  'eng.r2.text':'Engineering analysis and mold precision optimization for stable large-scale production.',
+  'eng.r3.title':'Reliability Validation',
+  'eng.r3.text':'Environmental and mechanical performance testing for long-term industrial applications.',
+  'global.tag':'Global Export',
+  'global.title':'Reliable Global Industrial Supply Support',
+  'global.subtitle':'Through NINGBO LILEI IMPORT AND EXPORT CO., LTD, we provide professional international trade service — backed by ANHUI ZHIXING\'s manufacturing capability, engineering communication and OEM development support.',
+  'global.c1.title':'Automotive','global.c1.text':'Powertrain, sealing and vibration control applications.',
+  'global.c2.title':'Industrial','global.c2.text':'Heavy equipment and industrial sealing systems.',
+  'global.c3.title':'Appliance','global.c3.text':'Washing machine, HVAC and appliance rubber components.',
+  'global.c4.title':'OEM / ODM','global.c4.text':'Custom engineering and manufacturing support for global customers.',
+  'contact.title':'Start Your Rubber Solution Project',
+  'contact.text':'Contact our engineering and sales team for material selection, product development and quotation support.',
+  'contact.manufacturing':'Manufacturing:','contact.export':'Export:',
+  'contact.email':'Email:','contact.whatsapp':'WhatsApp:','contact.oem':'OEM / ODM Development Support',
+  'form.name':'Your Name','form.company':'Company Name','form.email':'Email Address',
+  'form.phone':'WhatsApp / Phone','form.message':'Project Requirement','form.submit':'REQUEST A QUOTE',
+  'form.success':'Thank you! Your inquiry has been sent. We will reply within 24 hours.',
+  'form.error':'Something went wrong. Please try again or email us directly.',
+  'footer.about':'A partnership of ANHUI ZHIXING RUBBER TECH CO., LTD (manufacturing) and NINGBO LILEI IMPORT AND EXPORT CO., LTD (global export), integrating rubber engineering, compound mixing, molded component production and international supply.',
+  'footer.quick':'Quick Links',
+  'footer.ql1':'About Us','footer.ql2':'Products','footer.ql3':'Engineering',
+  'footer.ql4':'Manufacturing','footer.ql5':'Quality Control',
+  'footer.contact':'Contact','footer.fc2':'Global OEM / ODM Support',
+  'footer.fc3':'China Manufacturing Base','footer.fc4':'24-Hour Engineering Response',
+  'footer.copy':'© 2026 ZHIXING RUBBER TECH. All Rights Reserved.',
+  'footer.tagline':'ENGINEERING • MANUFACTURING • GLOBAL EXPORT',
+  'admin.title':'Update Contact Info',
+  'admin.hint':'Changes are saved to your browser and will be reflected on the website immediately.',
+  'admin.email':'Email Address','admin.whatsapp':'WhatsApp Number',
+  'admin.password':'Admin Password','admin.cancel':'Cancel','admin.save':'Save Changes',
+  'admin.link':'⚙ Contact Settings'
+},
+de: {
+  'nav.home':'STARTSEITE','nav.products':'PRODUKTE','nav.about':'ÜBER UNS',
+  'nav.manufacturing':'PRODUKTION','nav.engineering':'ENTWICKLUNG',
+  'nav.contact':'KONTAKT','nav.cta':'ANGEBOT ANFORDERN',
+  'hero.tag':'Integrierte Fertigung & Globaler Export',
+  'hero.title':'Fortschrittlicher Hersteller von Kautschukmischungen & Gummiformteilen',
+  'hero.desc':'ANHUI ZHIXING RUBBER TECH CO., LTD & NINGBO LILEI IMPORT AND EXPORT CO., LTD bieten integrierte Kautschuktechnik, Mischungsproduktion und globale OEM-Exportlösungen für Automobil-, Industrie- und Geräteanwendungen.',
+  'hero.btn1':'ANGEBOT ANFORDERN','hero.btn2':'PRODUKTE ENTDECKEN',
+  'hero.stat1.val':'3.000 Tonnen','hero.stat1.txt':'Jährliche Produktionskapazität für Kautschukmischungen',
+  'hero.stat2.val':'15 Mio.+','hero.stat2.txt':'Gummiformteile pro Jahr',
+  'hero.stat3.val':'CAE','hero.stat3.txt':'Simulations- und Produktentwicklungsunterstützung',
+  'hero.stat4.val':'OEM / ODM','hero.stat4.txt':'Globaler Export & kundenspezifische Fertigung',
+  'hero.panel1.title':'Kautschukmischungen',
+  'hero.panel1.l1':'NR / EPDM / NBR','hero.panel1.l2':'HNBR / CR / SBR',
+  'hero.panel1.l3':'MQ / FKM / AEM / ACM','hero.panel1.l4':'NV (Kunststoff-Kautschuk-Legierung)',
+  'hero.panel2.title':'Entwicklungskompetenz',
+  'hero.panel2.l1':'CAE-Simulation','hero.panel2.l2':'Formelentwicklung',
+  'hero.panel2.l3':'Werkzeugbau','hero.panel2.l4':'Validierungstests',
+  'hero.panel3.title':'Automobilteile',
+  'hero.panel3.l1':'Staubschutzmanschetten','hero.panel3.l2':'Buchsen & Bälge',
+  'hero.panel3.l3':'Dichtungen & Tüllen','hero.panel3.l4':'Gummi-Metall-Verbundteile',
+  'trust.tag':'Industrielle Technologie',
+  'trust.title':'Technisch führendes Fertigungssystem',
+  'trust.subtitle':'Kombination von Kautschuk-Materialwissenschaft, Präzisionsfertigung und globalem Export für eine langfristige Industriemarke.',
+  'trust.c1.title':'Entwicklungskompetenz',
+  'trust.c1.text':'Fortschrittliche Kautschuk-Materialentwicklung und CAE-Simulation für Hochleistungsanwendungen.',
+  'trust.c2.title':'Integrierte Fertigung',
+  'trust.c2.text':'Kautschukmischung, Vulkanisation und Gummiformteilproduktion komplett im Haus.',
+  'trust.c3.title':'Strenge Qualitätskontrolle',
+  'trust.c3.text':'Umfassende Laborvalidierung einschließlich Ozonbeständigkeits- und Alterungstests.',
+  'trust.c4.title':'Globaler Export',
+  'trust.c4.text':'Professionelle Kommunikation und stabile internationale Lieferunterstützung für OEM-Kunden.',
+  'products.tag':'Produktsystem',
+  'products.title':'Kautschukmischungen & Gummiformteile',
+  'products.subtitle':'Umfassende industrielle Kautschuklösungen für Automobil-, Maschinen-, Industrie- und Geräteanwendungen.',
+  'products.card1.title':'Kautschukmischungen',
+  'products.card1.l1':'NR — Naturkautschuk','products.card1.l2':'EPDM — Ethylen-Propylen-Dien-Kautschuk',
+  'products.card1.l3':'NBR — Nitrilkautschuk','products.card1.l4':'HNBR — Hydrierter Nitrilkautschuk',
+  'products.card1.l5':'CR — Chloroprenkautschuk (Neopren)','products.card1.l6':'SBR — Styrol-Butadien-Kautschuk',
+  'products.card1.l7':'MQ — Silikonkautschuk','products.card1.l8':'FKM — Fluorelastomer',
+  'products.card1.l9':'AEM / ACM — Acrylat-Elastomer','products.card1.l10':'NV — Kunststoff-Kautschuk-Legierung',
+  'products.card1.l11':'Kundenspezifische Formelentwicklung',
+  'products.card1.btn':'DETAILS','products.card2.title':'Automobil-Gummikomponenten',
+  'products.card2.l1':'Antriebssystem — Staubschutz, Dichtungen',
+  'products.card2.l2':'Fahrwerksystem — Buchsen, Bälge',
+  'products.card2.l3':'Lenksystem — Faltenbälge, Tüllen',
+  'products.card2.l4':'Karosseriesystem — Dichtungen, Kabeldurchführungen',
+  'products.card2.l5':'Gummi-Metall-Verbundbaugruppen',
+  'products.card2.l6':'Kundenspezifische OEM / ODM Teile',
+  'products.card2.btn':'DETAILS',
+  'gallery.tag':'Produktgalerie',
+  'gallery.title':'Automobil- & Industrie-Gummikomponenten',
+  'gallery.subtitle':'Typische Gummiteile für Antriebs-, Fahrwerks-, Lenk- und Karosseriesysteme — entwickelt und gefertigt im eigenen Haus.',
+  'gallery.l1':'Fahrwerksbuchse','gallery.l2':'Stoßdämpfer-Staubschutz',
+  'gallery.l3':'Kugelgelenk-Staubschutz','gallery.l4':'Kabeldurchführung',
+  'gallery.l5':'Gummirad','gallery.more':'Weitere folgen',
+  'about.tag':'Über uns',
+  'about.title':'Integrierte Fertigung & Globaler Export',
+  'about.subtitle':'Zwei spezialisierte Unternehmen arbeiten zusammen, um Kautschukmischungen und Formteile von unserer chinesischen Produktionsbasis zu globalen Kunden zu liefern.',
+  'about.box1.title':'ANHUI ZHIXING RUBBER TECH CO., LTD',
+  'about.box1.text':'Unser Produktionszentrum in Anhui — spezialisiert auf Kautschuk-Formelentwicklung, Mischungsproduktion und Gummiformteilfertigung. Eigenes Labor, Mischstraße und Vulkanisationswerkstatt.',
+  'about.box2.title':'NINGBO LILEI IMPORT AND EXPORT CO., LTD',
+  'about.box2.text':'Unser internationaler Handelsarm in Ningbo — verantwortlich für den globalen Export von Kautschukmischungen, Automobil-Gummikomponenten und OEM/ODM-Versorgung. Professionelle englische Kommunikation und Logistikkoordination.',
+  'about.box3.title':'Entwicklungsorientierte Partnerschaft',
+  'about.box3.text':'Gemeinsam bieten wir eine nahtlose Kette von Material-F&E und Fertigung bis zur internationalen Lieferung — ein echter Entwicklungspartner, nicht nur ein Handelslieferant.',
+  'mfg.tag':'Fertigungskompetenz',
+  'mfg.title':'Integriertes industrielles Produktionssystem',
+  'mfg.subtitle':'Von der Rohmaterialmischung bis zur Präzisionsvulkanisation und Endprüfung — unser Prozess ist auf stabile globale Industrieversorgung ausgelegt.',
+  'mfg.s1':'Rohmaterial','mfg.s2':'Kautschukmischung','mfg.s3':'Werkzeugbau',
+  'mfg.s4':'Vulkanisation','mfg.s5':'Prüfung','mfg.s6':'Globaler Export',
+  'equip.tag':'Fertigungsausrüstung',
+  'equip.title':'Moderne Kautschuk-Verarbeitungsanlagen',
+  'equip.subtitle':'Wichtige Produktionsmaschinen in unserem Werk in Anhui für präzise Kautschukmischung und Vulkanisation.',
+  'equip.e1.title':'Innenmischer (密炼机)',
+  'equip.e1.text':'Hochpräzise Kautschukmischung für gleichbleibende Materialqualität.',
+  'equip.e2.title':'Walzwerk (开炼机)',
+  'equip.e2.text':'Sekundärmischung und Walzen für gleichmäßige Mischungsvorbereitung.',
+  'equip.e3.title':'Vulkanisationspresse (硫化机)',
+  'equip.e3.text':'Präzisionsformen und Vulkanisation für fertige Gummikomponenten.',
+  'eng.tag':'Entwicklung & F&E',
+  'eng.title':'Fortschrittliche Kautschuk-Entwicklungskompetenz',
+  'eng.subtitle':'Von der Materialentwicklung bis zur Simulation und Validierung unterstützt unser Entwicklungsteam die industrielle Produktentwicklung über den gesamten Zyklus.',
+  'eng.r1.title':'Material-Formelentwicklung',
+  'eng.r1.text':'Kundenspezifische Kautschukformulierungen, ausgelegt auf Temperatur-, Härte- und Umgebungsanforderungen.',
+  'eng.r2.title':'CAE-Simulation & Werkzeugbau',
+  'eng.r2.text':'Entwicklungsanalyse und Werkzeugoptimierung für stabile Großserienproduktion.',
+  'eng.r3.title':'Zuverlässigkeitsvalidierung',
+  'eng.r3.text':'Umwelt- und mechanische Leistungstests für langfristige Industrieanwendungen.',
+  'global.tag':'Globaler Export',
+  'global.title':'Zuverlässige globale Industrieversorgung',
+  'global.subtitle':'Durch NINGBO LILEI IMPORT AND EXPORT CO., LTD bieten wir professionellen internationalen Handel — gestützt durch die Fertigungskompetenz, Entwicklungskommunikation und OEM-Unterstützung von ANHUI ZHIXING.',
+  'global.c1.title':'Automobil','global.c1.text':'Antriebs-, Dichtungs- und Schwingungskontrollanwendungen.',
+  'global.c2.title':'Industrie','global.c2.text':'Schwermaschinen und industrielle Dichtungssysteme.',
+  'global.c3.title':'Haushaltsgeräte','global.c3.text':'Waschmaschinen-, HLK- und Gerätegummikomponenten.',
+  'global.c4.title':'OEM / ODM','global.c4.text':'Kundenspezifische Entwicklung und Fertigungsunterstützung für globale Kunden.',
+  'contact.title':'Starten Sie Ihr Kautschuk-Lösungsprojekt',
+  'contact.text':'Kontaktieren Sie unser Entwicklungs- und Vertriebsteam für Materialauswahl, Produktentwicklung und Angebotsunterstützung.',
+  'contact.manufacturing':'Fertigung:','contact.export':'Export:',
+  'contact.email':'E-Mail:','contact.whatsapp':'WhatsApp:','contact.oem':'OEM / ODM Entwicklungsunterstützung',
+  'form.name':'Ihr Name','form.company':'Firmenname','form.email':'E-Mail-Adresse',
+  'form.phone':'WhatsApp / Telefon','form.message':'Projektanforderung','form.submit':'ANGEBOT ANFORDERN',
+  'form.success':'Vielen Dank! Ihre Anfrage wurde gesendet. Wir antworten innerhalb von 24 Stunden.',
+  'form.error':'Etwas ist schief gelaufen. Bitte versuchen Sie es erneut oder senden Sie uns eine E-Mail.',
+  'footer.about':'Eine Partnerschaft von ANHUI ZHIXING RUBBER TECH CO., LTD (Fertigung) und NINGBO LILEI IMPORT AND EXPORT CO., LTD (globaler Export) — Integration von Kautschuktechnik, Mischungsproduktion, Formteilfertigung und internationaler Lieferung.',
+  'footer.quick':'Schnelllinks','footer.ql1':'Über uns','footer.ql2':'Produkte',
+  'footer.ql3':'Entwicklung','footer.ql4':'Fertigung','footer.ql5':'Qualitätskontrolle',
+  'footer.contact':'Kontakt','footer.fc2':'Globale OEM / ODM Unterstützung',
+  'footer.fc3':'Produktionsstandort China','footer.fc4':'24-Stunden Entwicklungsantwort',
+  'footer.copy':'© 2026 ZHIXING RUBBER TECH. Alle Rechte vorbehalten.',
+  'footer.tagline':'ENTWICKLUNG • FERTIGUNG • GLOBALER EXPORT',
+  'admin.title':'Kontaktinfo aktualisieren',
+  'admin.hint':'Änderungen werden im Browser gespeichert und sofort auf der Website angezeigt.',
+  'admin.email':'E-Mail-Adresse','admin.whatsapp':'WhatsApp-Nummer',
+  'admin.password':'Admin-Passwort','admin.cancel':'Abbrechen','admin.save':'Speichern',
+  'admin.link':'⚙ Kontakteinstellungen'
+},
+zh: {
+  'nav.home':'首页','nav.products':'产品','nav.about':'关于我们',
+  'nav.manufacturing':'制造能力','nav.engineering':'研发工程',
+  'nav.contact':'联系我们','nav.cta':'获取报价',
+  'hero.tag':'一体化制造与全球出口服务',
+  'hero.title':'先进混炼胶及橡胶模压制品制造商',
+  'hero.desc':'安徽致信橡胶科技有限公司与宁波立磊进出口有限公司，为汽车、工业和家电领域提供一体化橡胶工程、混炼胶生产及OEM全球出口解决方案。',
+  'hero.btn1':'获取报价','hero.btn2':'浏览产品',
+  'hero.stat1.val':'年产能3000吨','hero.stat1.txt':'混炼胶年生产能力',
+  'hero.stat2.val':'1500万+','hero.stat2.txt':'橡胶模压件年产量',
+  'hero.stat3.val':'CAE仿真','hero.stat3.txt':'工程仿真与产品开发支持',
+  'hero.stat4.val':'OEM / ODM','hero.stat4.txt':'全球出口与定制制造服务',
+  'hero.panel1.title':'混炼胶品种',
+  'hero.panel1.l1':'天然胶 / 乙丙胶 / 丁腈胶','hero.panel1.l2':'氢化丁腈 / 氯丁胶 / 丁苯胶',
+  'hero.panel1.l3':'硅胶 / 氟胶 / 丙烯酸酯','hero.panel1.l4':'橡塑合金',
+  'hero.panel2.title':'工程能力',
+  'hero.panel2.l1':'CAE仿真分析','hero.panel2.l2':'配方开发',
+  'hero.panel2.l3':'模具设计','hero.panel2.l4':'试验验证',
+  'hero.panel3.title':'汽车零部件',
+  'hero.panel3.l1':'防尘罩与护套','hero.panel3.l2':'衬套与波纹管',
+  'hero.panel3.l3':'密封件与线束护套','hero.panel3.l4':'橡胶金属粘结件',
+  'trust.tag':'工业技术能力',
+  'trust.title':'工程驱动制造体系',
+  'trust.subtitle':'融合橡胶材料科学、精密制造和全球出口支持，打造长周期工业橡胶工程品牌。',
+  'trust.c1.title':'工程能力',
+  'trust.c1.text':'先进的橡胶材料开发和CAE仿真支持，服务高性能应用需求。',
+  'trust.c2.title':'一体化制造',
+  'trust.c2.text':'橡胶混炼、硫化及模压制品生产全部在工厂内部完成。',
+  'trust.c3.title':'严格质量控制',
+  'trust.c3.text':'全面的实验室验证，包括耐臭氧和老化测试。',
+  'trust.c4.title':'全球出口服务',
+  'trust.c4.text':'专业的沟通和稳定的国际供应支持，服务OEM客户。',
+  'products.tag':'产品体系',
+  'products.title':'混炼胶与橡胶模压制品',
+  'products.subtitle':'为汽车、机械、工业设备和家电应用提供全面的工业橡胶解决方案。',
+  'products.card1.title':'混炼胶',
+  'products.card1.l1':'天然胶/NR','products.card1.l2':'乙丙胶/EPDM',
+  'products.card1.l3':'丁腈胶/NBR','products.card1.l4':'氢化丁腈/HNBR',
+  'products.card1.l5':'氯丁胶/CR','products.card1.l6':'丁苯胶/SBR',
+  'products.card1.l7':'硅橡胶/MQ','products.card1.l8':'氟橡胶/FKM',
+  'products.card1.l9':'丙烯酸酯/AEM·ACM','products.card1.l10':'橡塑合金/NV',
+  'products.card1.l11':'定制配方开发',
+  'products.card1.btn':'查看详情','products.card2.title':'汽车橡胶零部件',
+  'products.card2.l1':'传动系统 — 防尘罩、密封件',
+  'products.card2.l2':'悬挂系统 — 衬套、波纹管',
+  'products.card2.l3':'转向系统 — 防尘套、护线套',
+  'products.card2.l4':'车身系统 — 密封垫、线束护套',
+  'products.card2.l5':'橡胶金属粘结总成',
+  'products.card2.l6':'定制OEM/ODM橡胶件',
+  'products.card2.btn':'查看详情',
+  'gallery.tag':'产品展示',
+  'gallery.title':'汽车与工业橡胶零部件',
+  'gallery.subtitle':'传动、悬挂、转向和车身系统的典型橡胶件 — 自主开发与制造。',
+  'gallery.l1':'悬挂衬套','gallery.l2':'减震器防尘罩',
+  'gallery.l3':'球头防尘罩','gallery.l4':'线束护套',
+  'gallery.l5':'橡胶轮','gallery.more':'更多产品即将上线',
+  'about.tag':'关于我们',
+  'about.title':'一体化制造与全球出口',
+  'about.subtitle':'两家专业公司协同合作，从中国制造基地向全球客户提供混炼胶和模压制品。',
+  'about.box1.title':'安徽致信橡胶科技有限公司',
+  'about.box1.text':'我们的安徽制造中心 — 专注橡胶配方开发、混炼胶生产及橡胶模压件制造。拥有内部实验室、混炼生产线和硫化车间。',
+  'about.box2.title':'宁波立磊进出口有限公司',
+  'about.box2.text':'我们的宁波国际贸易公司 — 负责混炼胶、汽车橡胶零部件及OEM/ODM的全球出口。专业的英文沟通和物流协调。',
+  'about.box3.title':'工程驱动型合作伙伴',
+  'about.box3.text':'共同提供从材料研发、制造到国际交付的无缝链条 — 是真正的工程合作伙伴，而不仅仅是贸易供应商。',
+  'mfg.tag':'制造能力',
+  'mfg.title':'一体化工业生产体系',
+  'mfg.subtitle':'从原材料混炼到精密硫化和最终检验，我们的制造流程专为稳定的全球工业供应而设计。',
+  'mfg.s1':'原材料','mfg.s2':'橡胶混炼','mfg.s3':'模具开发',
+  'mfg.s4':'硫化成型','mfg.s5':'质量检验','mfg.s6':'全球出口',
+  'equip.tag':'制造设备',
+  'equip.title':'先进橡胶加工设备',
+  'equip.subtitle':'安徽工厂的关键生产设备，实现精密橡胶混炼和硫化。',
+  'equip.e1.title':'密炼机',
+  'equip.e1.text':'高精度橡胶混炼，确保材料质量稳定一致。',
+  'equip.e2.title':'开炼机',
+  'equip.e2.text':'二次混炼和压片，制备均匀的混炼胶。',
+  'equip.e3.title':'硫化机',
+  'equip.e3.text':'精密模压和硫化成型，完成橡胶制品生产。',
+  'eng.tag':'工程与研发',
+  'eng.title':'先进橡胶工程能力',
+  'eng.subtitle':'从材料开发到仿真验证，我们的工程团队支持全周期工业产品开发。',
+  'eng.r1.title':'材料配方开发',
+  'eng.r1.text':'根据温度、硬度和环境要求设计定制橡胶配方。',
+  'eng.r2.title':'CAE仿真与模具设计',
+  'eng.r2.text':'工程分析和模具精度优化，确保稳定的大规模生产。',
+  'eng.r3.title':'可靠性验证',
+  'eng.r3.text':'环境和机械性能测试，满足长期工业应用需求。',
+  'global.tag':'全球出口',
+  'global.title':'可靠的全球工业供应支持',
+  'global.subtitle':'通过宁波立磊进出口有限公司，我们提供专业的国际贸易服务 — 依托安徽致信的制造能力、工程沟通和OEM开发支持。',
+  'global.c1.title':'汽车领域','global.c1.text':'动力总成、密封和振动控制应用。',
+  'global.c2.title':'工业领域','global.c2.text':'重型设备和工业密封系统。',
+  'global.c3.title':'家电领域','global.c3.text':'洗衣机、暖通空调和家电橡胶部件。',
+  'global.c4.title':'OEM / ODM','global.c4.text':'为全球客户提供定制工程和制造支持。',
+  'contact.title':'开启您的橡胶解决方案项目',
+  'contact.text':'联系我们的工程和销售团队，获取材料选择、产品开发和报价支持。',
+  'contact.manufacturing':'制造工厂：','contact.export':'外贸出口：',
+  'contact.email':'邮箱：','contact.whatsapp':'WhatsApp：','contact.oem':'OEM / ODM 开发支持',
+  'form.name':'您的姓名','form.company':'公司名称','form.email':'电子邮箱',
+  'form.phone':'WhatsApp / 电话','form.message':'项目需求','form.submit':'提交询价',
+  'form.success':'感谢！您的询价已发送，我们将在24小时内回复。',
+  'form.error':'提交失败，请重试或直接发送邮件给我们。',
+  'footer.about':'由安徽致信橡胶科技有限公司（制造）和宁波立磊进出口有限公司（全球出口）组成，整合橡胶工程、混炼生产、模压件制造和国际供应。',
+  'footer.quick':'快速链接','footer.ql1':'关于我们','footer.ql2':'产品',
+  'footer.ql3':'工程研发','footer.ql4':'制造能力','footer.ql5':'质量控制',
+  'footer.contact':'联系方式','footer.fc2':'全球OEM/ODM支持',
+  'footer.fc3':'中国制造基地','footer.fc4':'24小时工程响应',
+  'footer.copy':'© 2026 致信橡胶科技 版权所有。',
+  'footer.tagline':'工程 • 制造 • 全球出口',
+  'admin.title':'更新联系信息',
+  'admin.hint':'修改将保存在浏览器中，并立即在网站上生效。',
+  'admin.email':'电子邮箱','admin.whatsapp':'WhatsApp号码',
+  'admin.password':'管理员密码','admin.cancel':'取消','admin.save':'保存更改',
+  'admin.link':'⚙ 联系信息设置'
+}};
+
+const contactDefaults = {
+  email: 'sales@zhixing-rubber.com',
+  whatsapp: '+86-000000000'
+};
+
+// ============ CONTACT INFO LOADER ============
+function getContact(key) {
+  const saved = localStorage.getItem('contact_'+key);
+  return saved || contactDefaults[key];
+}
+
+function loadContactInfo() {
+  const email = getContact('email');
+  const whatsapp = getContact('whatsapp');
+  // Update all instances of email
+  document.querySelectorAll('.contact-email-dyn').forEach(el => el.textContent = email);
+  document.querySelectorAll('.contact-whatsapp-dyn').forEach(el => el.textContent = whatsapp);
+  // Update footer email
+  const fcEmail = document.querySelector('.footer-email-dyn');
+  if(fcEmail) fcEmail.textContent = email;
+}
+
+// ============ LANGUAGE SWITCHING ============
+function setLang(lang) {
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang] && i18n[lang][key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = i18n[lang][key];
+      } else {
+        el.textContent = i18n[lang][key];
+      }
+    }
+  });
+  // Update active state in dropdown
+  document.querySelectorAll('.lang-dropdown button').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim().toLowerCase().startsWith(lang === 'en' ? 'english' : lang === 'de' ? 'deutsch' : '中'));
+  });
+  // Update lang button label
+  const lb = document.getElementById('langBtn');
+  if (lb) {
+    const labels = { en: 'EN', de: 'DE', zh: '中文' };
+    lb.innerHTML = '🌐 ' + labels[lang] + ' ▾';
+  }
+  // Update formspree messages
+  updateFormspreeMessages();
+  // Reload contact info
+  loadContactInfo();
+}
+
+function toggleLang() {
+  document.getElementById('langDropdown').classList.toggle('show');
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+  const sw = document.querySelector('.lang-switch');
+  if (sw && !sw.contains(e.target)) {
+    document.getElementById('langDropdown').classList.remove('show');
+  }
+});
+
+// ============ ADMIN PANEL ============
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('show');
+  document.getElementById('adminEmail').value = getContact('email');
+  document.getElementById('adminWhatsapp').value = getContact('whatsapp');
+  document.getElementById('adminPassword').value = '';
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('show');
+}
+
+function saveContactInfo() {
+  const pw = document.getElementById('adminPassword').value;
+  if (pw !== 'zxadmin2026') {
+    alert('Incorrect password. Please try again.');
+    return;
+  }
+  const email = document.getElementById('adminEmail').value.trim();
+  const whatsapp = document.getElementById('adminWhatsapp').value.trim();
+  if (!email) { alert('Email is required.'); return; }
+  localStorage.setItem('contact_email', email);
+  localStorage.setItem('contact_whatsapp', whatsapp);
+  loadContactInfo();
+  closeAdmin();
+  alert('Contact info updated successfully!');
+}
+
+// ============ FORMSPREE INTEGRATION ============
+function updateFormspreeMessages() {
+  const lang = localStorage.getItem('lang') || 'en';
+  const elS = document.querySelector('[data-fs-success]');
+  const elE = document.querySelector('[data-fs-error]');
+  if (elS && !elS.textContent.trim()) elS.textContent = '';
+  if (elE && !elE.textContent.trim()) elE.textContent = '';
+}
+
+window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+formspree('initForm', { formElement: '#contact-form', formId: 'xkoevwql',
+  onSuccess: function() {
+    const lang = localStorage.getItem('lang') || 'en';
+    document.querySelector('[data-fs-success]').textContent = i18n[lang]['form.success'];
+  },
+  onError: function() {
+    const lang = localStorage.getItem('lang') || 'en';
+    document.querySelector('[data-fs-error]').textContent = i18n[lang]['form.error'];
+  }
+});
+
+// ============ INIT ============
+(function() {
+  const savedLang = localStorage.getItem('lang') || 'en';
+  setLang(savedLang);
+  loadContactInfo();
+})();
+</script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+
+</body>
+</html>
