@@ -10,3 +10,6 @@ Thumbs.db
 
 # Node
 node_modules/
+
+# Internal ops docs (kept local, not published)
+GSC-收录操作清单.md

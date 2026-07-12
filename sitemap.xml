@@ -8,7 +8,7 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/"/>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -19,7 +19,7 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/"/>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -30,7 +30,7 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/"/>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -41,8 +41,272 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/"/>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/suspension-bushing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/suspension-bushing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/suspension-bushing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/suspension-bushing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/suspension-bushing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/suspension-bushing/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/shock-absorber-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/shock-absorber-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/shock-absorber-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/shock-absorber-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/shock-absorber-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/shock-absorber-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/ball-joint-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/ball-joint-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/ball-joint-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/ball-joint-dust-cover/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/ball-joint-dust-cover/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/ball-joint-dust-cover/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/wire-harness-sheath/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/wire-harness-sheath/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/wire-harness-sheath/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/wire-harness-sheath/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/wire-harness-sheath/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/wire-harness-sheath/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/products/rubber-wheel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/de/products/rubber-wheel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/zh/products/rubber-wheel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.zxrubbertech.com/ru/products/rubber-wheel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.zxrubbertech.com/de/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://www.zxrubbertech.com/zh/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.zxrubbertech.com/ru/products/rubber-wheel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/products/rubber-wheel/"/>
+    <lastmod>2026-07-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

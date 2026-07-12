@@ -68,6 +68,12 @@ def build(lang, cfg, src_html, i18n):
         if v and not v.startswith(SKIP_PREFIX):
             el["href"] = "/" + v
 
+    # Keep visitors in their language: rewrite internal product links
+    # /products/... -> /<lang>/products/... on the localized pages.
+    for a in soup.find_all("a", href=True):
+        if a["href"].startswith("/products/"):
+            a["href"] = f"/{lang}{a['href']}"
+
     page_url = f"{SITE}/{lang}/"
     title = f"ZHIXIN RUBBER TECH | {tr.get('hero.title', '')}".strip(" |")
     desc = clip(tr.get("hero.desc", ""))
