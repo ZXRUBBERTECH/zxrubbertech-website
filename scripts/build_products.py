@@ -535,6 +535,9 @@ def build_product(p, lang):
 
 def product_jsonld(p, lang, canonical, name, d, ogimg):
     import json
+    # Only BreadcrumbList: a bare Product without offers/review/aggregateRating
+    # triggers a Google "critical" error, and we have no honest price or reviews
+    # to add. Breadcrumbs are valid, useful (breadcrumb rich result) and clean.
     breadcrumb = {
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         "itemListElement": [
@@ -543,15 +546,7 @@ def product_jsonld(p, lang, canonical, name, d, ogimg):
             {"@type": "ListItem", "position": 3, "name": name, "item": canonical},
         ],
     }
-    product = {
-        "@context": "https://schema.org", "@type": "Product",
-        "name": name, "category": d["cat"], "description": d["meta"],
-        "image": ogimg,
-        "brand": {"@type": "Brand", "name": "ZHIXIN RUBBER TECH"},
-        "manufacturer": {"@type": "Organization", "name": "ANHUI ZHIXIN RUBBER TECH CO., LTD"},
-        "url": canonical,
-    }
-    return json.dumps([product, breadcrumb], ensure_ascii=False, indent=2)
+    return json.dumps(breadcrumb, ensure_ascii=False, indent=2)
 
 
 def build_hub(lang):
