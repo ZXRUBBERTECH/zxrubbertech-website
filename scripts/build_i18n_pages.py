@@ -25,6 +25,7 @@ LANGS = {
     "de": {"html_lang": "de",    "locale": "de_DE"},
     "zh": {"html_lang": "zh-CN", "locale": "zh_CN"},
     "ru": {"html_lang": "ru",    "locale": "ru_RU"},
+    "tr": {"html_lang": "tr",    "locale": "tr_TR"},
 }
 
 SKIP_PREFIX = ("http://", "https://", "//", "/", "#", "mailto:", "tel:", "data:", "javascript:")

@@ -12,9 +12,9 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://www.zxrubbertech.com"
-LASTMOD = "2026-07-12"
-PREFIXES = ["", "de/", "zh/", "ru/"]  # en is ""
-HREFLANGS = [("en", ""), ("de", "de/"), ("zh", "zh/"), ("ru", "ru/")]
+LASTMOD = "2026-07-21"
+PREFIXES = ["", "de/", "zh/", "ru/", "tr/"]  # en is ""
+HREFLANGS = [("en", ""), ("de", "de/"), ("zh", "zh/"), ("ru", "ru/"), ("tr", "tr/")]
 
 SLUGS = [
     "suspension-bushing", "shock-absorber-dust-cover", "ball-joint-dust-cover",

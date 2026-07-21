@@ -28,8 +28,9 @@ LANGS = {
     "de": ("de",    "de_DE", "de/"),
     "zh": ("zh-CN", "zh_CN", "zh/"),
     "ru": ("ru",    "ru_RU", "ru/"),
+    "tr": ("tr",    "tr_TR", "tr/"),
 }
-LANG_CODE = {"en": "EN", "de": "DE", "zh": "中", "ru": "RU"}
+LANG_CODE = {"en": "EN", "de": "DE", "zh": "中", "ru": "RU", "tr": "TR"}
 
 # ---- Shared UI strings per language ----
 UI = {
@@ -121,6 +122,28 @@ UI = {
         ],
         "copy": "© 2026 ZHIXIN RUBBER TECH. Все права защищены.",
     },
+    "tr": {
+        "home": "Ana Sayfa", "products": "Ürünler", "manufacturer": "Üreticisi",
+        "applications": "Uygulamalar", "materials": "Mevcut Karışımlar",
+        "capabilities": "Üretim Yetkinlikleri", "specs": "Teknik Özellikler",
+        "related": "İlgili Ürünler", "onrequest": "Talep üzerine sunulur",
+        "quote": "Teklif Alın", "backhome": "Ana Sayfaya Dön",
+        "spec_rows": ["Malzeme", "Sertlik (Shore A)", "Çalışma Sıcaklığı",
+                      "Boyutlar ve Tolerans", "Renk", "Minimum Sipariş Miktarı", "Sertifikasyon"],
+        "cta_head": "Fiyat teklifi veya teknik veri sayfası isteyin",
+        "cta_text": "Bize malzemenizi, sertliği, boyutları ve yıllık adedi iletin — mühendislik ekibimiz 24 saat içinde yanıt verir.",
+        "hub_title": "Kauçuk Ürünler", "hub_h1": "Otomotiv ve Endüstriyel Kauçuk Ürünler",
+        "hub_sub": "Otomotiv, endüstriyel ve beyaz eşya uygulamaları için kendi tesisimizde tasarlanan ve üretilen kalıplanmış kauçuk parçalar. Çizimlerinize göre OEM / ODM.",
+        "view": "Detayları görün",
+        "capabilities_list": [
+            "Çizimlerinize göre OEM / ODM özel üretim",
+            "Kauçuk-metal bağlı parçalar",
+            "Kendi tesisimizde karışım: NR, EPDM, NBR, HNBR, CR, SBR, MQ, FKM, AEM / ACM",
+            "CAE simülasyonu, reçete ve kalıp geliştirme",
+            "Ozon ve yaşlanma direnci dahil laboratuvar doğrulaması",
+        ],
+        "copy": "© 2026 ZHIXIN RUBBER TECH. Tüm Hakları Saklıdır.",
+    },
 }
 
 # ---- Product data. `apps` and text fields per language; materials are universal codes. ----
@@ -150,6 +173,11 @@ PRODUCTS = [
                "lead": "Резино-металлическая втулка подвески соединяет шасси и элементы подвески, изолируя дорожные вибрации и шум и обеспечивая контролируемое, долговечное перемещение между деталями. Изготавливается по чертежам OEM с резино-металлическим соединением для долгого срока службы.",
                "apps": ["Рычаги и подрамники", "Опоры стабилизатора и амортизатора", "Легковые и коммерческие автомобили", "Виброизоляция NVH"],
                "meta": "Производитель резино-металлических втулок подвески. Виброизолирующие втулки рычагов и подрамников из NR, EPDM и NBR, по чертежу."},
+        "tr": {"name": "Süspansiyon Burcu",
+               "cat": "Otomotiv Kauçuk Parçaları",
+               "lead": "Kauçuk-metal süspansiyon burcu, şasi ile süspansiyon elemanlarını birbirine bağlar; yoldan gelen titreşim ve gürültüyü izole ederken hareketli parçalar arasında kontrollü ve dayanıklı bir hareket sağlar. Uzun servis ömrü için kauçuk-metal bağlama teknolojisiyle OEM çizimlerine göre üretilir.",
+               "apps": ["Salıncak kolları ve alt şasiler", "Viraj demiri ve amortisör bağlantıları", "Binek ve ticari araçlar", "NVH titreşim izolasyonu"],
+               "meta": "OEM kauçuk-metal süspansiyon burcu üreticisi. NR, EPDM ve NBR karışımlarından, çizime göre üretilen titreşim izolasyonlu salıncak ve alt şasi burçları."},
     },
     {
         "slug": "shock-absorber-dust-cover",
@@ -176,6 +204,11 @@ PRODUCTS = [
                "lead": "Формованный резиновый пыльник (чехол) защищает шток амортизатора или стойки от пыли, грязи и воды, оберегает сальник и продлевает срок службы амортизатора. Изготавливается из атмосферо- и озоностойких смесей для тяжёлых дорожных условий.",
                "apps": ["Стойки и амортизаторы", "Демпферы и узлы подвески", "Легковые и коммерческие автомобили", "Защита штока и сальника"],
                "meta": "Производитель пыльников амортизаторов / чехлов стоек. Атмосферо- и озоностойкие резиновые чехлы из EPDM и CR для защиты сальника, по чертежу."},
+        "tr": {"name": "Amortisör Toz Körüğü",
+               "cat": "Otomotiv Kauçuk Parçaları",
+               "lead": "Kalıplanmış kauçuk toz körüğü, amortisör veya süspansiyon kolonu piston milini toz, çamur ve suya karşı korur; yağ keçesini koruyarak amortisörün servis ömrünü uzatır. Zorlu yol koşulları için hava ve ozon dirençli karışımlardan üretilir.",
+               "apps": ["Süspansiyon kolonları ve amortisörler", "Damperler ve süspansiyon üniteleri", "Binek ve ticari araçlar", "Piston mili ve keçe koruması"],
+               "meta": "Amortisör toz körüğü üreticisi. Amortisör keçesini koruyan, EPDM ve CR malzemeden hava ve ozon dirençli kalıplanmış kauçuk körükler, çizime göre."},
     },
     {
         "slug": "ball-joint-dust-cover",
@@ -202,6 +235,11 @@ PRODUCTS = [
                "lead": "Резиновый пыльник шарового шарнира защищает шарнир от пыли, воды и дорожных загрязнений и удерживает смазку, обеспечивая плавную работу рулевых и подвесочных шарниров. Формуется из гибких, износо- и озоностойких смесей.",
                "apps": ["Шаровые опоры рулевого управления и подвески", "Наконечники рулевых тяг", "Шарниры рычагов", "Удержание смазки и уплотнение"],
                "meta": "Производитель пыльников шаровых шарниров. Гибкие озоностойкие резиновые пыльники из CR, NBR и EPDM для рулевых и подвесочных шарниров, по чертежу."},
+        "tr": {"name": "Rotil Toz Körüğü",
+               "cat": "Otomotiv Kauçuk Parçaları",
+               "lead": "Kauçuk rotil körüğü, mafsalı toz, su ve yol kirlerine karşı sızdırmaz hale getirir ve gres yağını içeride tutarak direksiyon ve süspansiyon mafsallarının sorunsuz çalışmasını sağlar. Esnek, aşınmaya ve ozona dayanıklı karışımlardan kalıplanır.",
+               "apps": ["Direksiyon ve süspansiyon rotilleri", "Rot başları", "Salıncak mafsalları", "Gres tutma ve sızdırmazlık"],
+               "meta": "Rotil toz körüğü üreticisi. Direksiyon ve süspansiyon mafsallarını sızdırmaz hale getiren CR, NBR ve EPDM esnek, ozon dirençli körükler, çizime göre."},
     },
     {
         "slug": "wire-harness-sheath",
@@ -228,6 +266,11 @@ PRODUCTS = [
                "lead": "Формованная резиновая оболочка жгута проводов (втулка) защищает автомобильную проводку в местах прохода через панели кузова, уплотняет от пыли и воды и предотвращает истирание об острые кромки. Индивидуальные профили под ваш жгут и геометрию панели.",
                "apps": ["Проходы через кузов и моторный щит", "Жгуты дверей и багажника", "Защита проводки моторного отсека", "Уплотнение от пыли и воды"],
                "meta": "Производитель оболочек и втулок жгутов проводов. Формованные проходные оболочки из EPDM/NBR, уплотняющие и защищающие автопроводку, по чертежу."},
+        "tr": {"name": "Kablo Tesisatı Kılıfı",
+               "cat": "Otomotiv Kauçuk Parçaları",
+               "lead": "Kalıplanmış kauçuk kablo kılıfı (geçiş lastiği), araç kablo tesisatını gövde saclarından geçtiği noktalarda korur; toza ve suya karşı sızdırmazlık sağlar ve keskin kenarlara sürtünmeyi önler. Kablo demetinize ve sac geometrinize uygun özel profiller kalıplanır.",
+               "apps": ["Gövde ve motor bölmesi geçişleri", "Kapı ve bagaj kablo demetleri", "Motor bölmesi kablo koruması", "Toz ve su sızdırmazlığı"],
+               "meta": "Kauçuk kablo tesisatı kılıfı ve geçiş lastiği üreticisi. Araç kablolarını sızdırmaz hale getirip koruyan kalıplanmış EPDM / NBR kılıflar, çizime göre."},
     },
     {
         "slug": "rubber-wheel",
@@ -254,6 +297,11 @@ PRODUCTS = [
                "lead": "Формованное резиновое колесо обеспечивает тихое качение, хорошее сцепление и амортизацию для промышленного оборудования, тележек и бытовой техники. Доступно с привулканизацией к металлической или пластиковой ступице, в градациях твёрдости под нагрузку и тип пола.",
                "apps": ["Ролики, тележки и каталки", "Промышленное и подъёмно-транспортное оборудование", "Ролики бытовой техники", "Колёса с металлической или пластиковой ступицей"],
                "meta": "Производитель формованных резиновых колёс. Тихие амортизирующие колёса из NR/SBR для роликов, тележек и оборудования, с металлической или пластиковой ступицей, по чертежу."},
+        "tr": {"name": "Kauçuk Tekerlek",
+               "cat": "Endüstriyel Kauçuk Parçalar",
+               "lead": "Kalıplanmış kauçuk tekerlek; endüstriyel ekipmanlar, taşıma arabaları ve beyaz eşyalar için sessiz yuvarlanma, iyi tutuş ve darbe emilimi sağlar. Metal veya plastik göbeğe bağlı olarak üretilebilir ve yüke ile zemin tipine uygun sertlik derecelerinde sunulur.",
+               "apps": ["Tekerlekli ayaklar, arabalar ve el arabaları", "Endüstriyel ve taşıma ekipmanları", "Beyaz eşya makaraları", "Metal veya plastik göbekli tekerlekler"],
+               "meta": "Kalıplanmış kauçuk tekerlek üreticisi. Tekerlekli ayaklar, arabalar ve ekipmanlar için sessiz, darbe emici NR / SBR tekerlekler; metal veya plastik göbekli, çizime göre."},
     },
 ]
 
