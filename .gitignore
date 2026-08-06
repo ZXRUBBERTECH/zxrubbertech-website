@@ -16,3 +16,15 @@ GSC-收录操作清单.md
 
 # AI tool working dirs
 .superpowers/
+
+# Local design mockups (not deployed)
+design-demos/
+
+# AI review exchange (internal, not published)
+docs/codex-exchange/
+
+# Raw media intake (never deploy)
+素材库/
+
+# Site snapshots (local archive)
+存档/
