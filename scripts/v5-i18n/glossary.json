@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "sourceLocale": "en",
+  "preservedLiterals": [
+    "ZHIXIN RUBBER MATERIAL",
+    "ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD",
+    "martin@zxrubbertech.com",
+    "+86 152 5622 5135",
+    "https://wa.me/8615256225135",
+    "mrpzqado",
+    "0x4AAAAAAENHOMMn_zK0WuNN",
+    "NR",
+    "SBR",
+    "CR",
+    "NBR",
+    "HNBR",
+    "EPDM",
+    "FKM",
+    "ACM",
+    "AEM",
+    "OEM",
+    "ODM",
+    "MOQ"
+  ],
+  "verifiedFacts": {
+    "annualCompoundCapacity": "approximately 3,000 metric tons",
+    "annualMoldedComponents": "more than 15 million molded rubber components per year",
+    "inquiryAcknowledgement": "within 24 hours",
+    "regularCompoundMoq": "2 metric tons",
+    "quotationWindow": "2–7 business days"
+  },
+  "verifiedFactRenderings": {
+    "zh-CN": {
+      "annualCompoundCapacity": "约 3,000 公吨",
+      "annualMoldedComponents": "每年超过 1,500 万件模压橡胶部件",
+      "inquiryAcknowledgement": "24 小时内",
+      "regularCompoundMoq": "2 公吨",
+      "quotationWindow": "2–7 个工作日"
+    },
+    "ru": {
+      "annualCompoundCapacity": "около 3 000 метрических тонн",
+      "annualMoldedComponents": "более 15 миллионов формованных резиновых компонентов в год",
+      "inquiryAcknowledgement": "в течение 24 часов",
+      "regularCompoundMoq": "2 метрические тонны",
+      "quotationWindow": "2–7 рабочих дней"
+    },
+    "tr": {
+      "annualCompoundCapacity": "yaklaşık 3.000 metrik ton",
+      "annualMoldedComponents": "yılda 15 milyondan fazla kalıplanmış kauçuk bileşen",
+      "inquiryAcknowledgement": "24 saat içinde",
+      "regularCompoundMoq": "2 metrik ton",
+      "quotationWindow": "2–7 iş günü"
+    }
+  },
+  "terms": {
+    "rubber compound": {
+      "en": "rubber compound",
+      "de": "Gummimischung",
+      "zh-CN": "橡胶胶料",
+      "ru": "резиновая смесь",
+      "tr": "kauçuk karışımı"
+    },
+    "molded rubber parts": {
+      "en": "molded rubber parts",
+      "de": "Gummiformteile",
+      "zh-CN": "模压橡胶件",
+      "ru": "формованные резиновые детали",
+      "tr": "kalıplanmış kauçuk parçalar"
+    },
+    "rubber-to-metal bonding": {
+      "en": "rubber-to-metal bonding",
+      "de": "Gummi-Metall-Verbindung",
+      "zh-CN": "橡胶-金属粘接",
+      "ru": "соединение резины с металлом",
+      "tr": "kauçuk-metal yapıştırma"
+    },
+    "compression molding": {
+      "en": "compression molding",
+      "de": "Formpressen",
+      "zh-CN": "压缩模压",
+      "ru": "компрессионное формование",
+      "tr": "sıkıştırma kalıplama"
+    },
+    "injection molding": {
+      "en": "injection molding",
+      "de": "Spritzgießen",
+      "zh-CN": "注射成型",
+      "ru": "литьё под давлением",
+      "tr": "enjeksiyon kalıplama"
+    },
+    "extrusion": {
+      "en": "extrusion",
+      "de": "Extrusion",
+      "zh-CN": "挤出成型",
+      "ru": "экструзия",
+      "tr": "ekstrüzyon"
+    },
+    "tooling": {
+      "en": "tooling",
+      "de": "Werkzeug",
+      "zh-CN": "模具",
+      "ru": "оснастка",
+      "tr": "kalıp"
+    },
+    "traceability": {
+      "en": "traceability",
+      "de": "Rückverfolgbarkeit",
+      "zh-CN": "可追溯性",
+      "ru": "прослеживаемость",
+      "tr": "izlenebilirlik"
+    },
+    "batch release": {
+      "en": "batch release",
+      "de": "Chargenfreigabe",
+      "zh-CN": "批次放行",
+      "ru": "приёмка партии",
+      "tr": "parti serbest bırakma"
+    },
+    "drawing": {
+      "en": "drawing",
+      "de": "Zeichnung",
+      "zh-CN": "图纸",
+      "ru": "чертёж",
+      "tr": "teknik resim"
+    },
+    "sample": {
+      "en": "sample",
+      "de": "Muster",
+      "zh-CN": "样品",
+      "ru": "образец",
+      "tr": "numune"
+    },
+    "project requirements": {
+      "en": "project requirements",
+      "de": "Projektanforderungen",
+      "zh-CN": "项目要求",
+      "ru": "требования проекта",
+      "tr": "proje gereksinimleri"
+    }
+  }
+}

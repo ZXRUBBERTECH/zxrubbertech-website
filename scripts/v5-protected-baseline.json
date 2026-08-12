@@ -1,0 +1,3533 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "design-demos/_qa/home-products-before-full.png",
+      "sha256": "5996d5bf72735bc99a758feb5a454dec318c7af84a2730fcd4f8f7cb5ad7ee6d"
+    },
+    {
+      "path": "design-demos/about-a-share.html",
+      "sha256": "84d8f7e7052223033afab4da904214383c26c459bdcbb2708c285ba7c122dc21"
+    },
+    {
+      "path": "design-demos/about-a.html",
+      "sha256": "4cd7fe186ad61e212526e12a32f8113eb2a7263521005df68b20f685a8fec214"
+    },
+    {
+      "path": "design-demos/about-v4-share.html",
+      "sha256": "5290c02288e01219961c4360b56cc8de3bc4f147cfb5e466ea88e1f40126c788"
+    },
+    {
+      "path": "design-demos/about-v4.html",
+      "sha256": "51fc230007c9b2c79c107ab5a9960e8a532f1812ebda82ecf635ea03eabaf960"
+    },
+    {
+      "path": "design-demos/assets-v4-share.html",
+      "sha256": "92fcf238a4304e5a8b813bf380efb1f21d8d94bb645cd42b6c8a8d74c92d42f4"
+    },
+    {
+      "path": "design-demos/assets-v4.html",
+      "sha256": "96b503940e906f5183fe350ddda36220a121836f7dd7804a29ad8b79079fd720"
+    },
+    {
+      "path": "design-demos/build_assets.py",
+      "sha256": "368683d8eee61588551a8118dec344d6da3a4c61db4d2c8f3a9a73b0b10424ee"
+    },
+    {
+      "path": "design-demos/build_catalog.py",
+      "sha256": "35292aeae5e4402bb0ef6a3509c874b8bb957704589d44518cd92933f0d2f630"
+    },
+    {
+      "path": "design-demos/build_gallery.py",
+      "sha256": "5eb962d9c76f9d1fbf8cec073a40243a55b07cec7967a5bd178fc517f731fd83"
+    },
+    {
+      "path": "design-demos/build_registry.py",
+      "sha256": "bc917a035af3b146fc5da4e794c7057eabbad00c8db6421663dd662c5fa6f3f5"
+    },
+    {
+      "path": "design-demos/build_share.py",
+      "sha256": "cc93a1507e3ebf1717d3708ee9c40f6086ac2f085b7ef58703e7c62a770a1fe6"
+    },
+    {
+      "path": "design-demos/build_shell.py",
+      "sha256": "feb13c4f838e4dbe6cc8f21e45c4bd8f796fcf80350b225dd4fbe0d7c05b3705"
+    },
+    {
+      "path": "design-demos/CHANGELOG.md",
+      "sha256": "bdd21faf111fd431f059a117e22c9d82e2a0a405b9000aa9c80ebb6f212884b6"
+    },
+    {
+      "path": "design-demos/check-v4.py",
+      "sha256": "27a65b00598b41cc4b13374fd8fa1a2a94bd74ada8743f40d2320ea59c6aabd4"
+    },
+    {
+      "path": "design-demos/demo-a-cinematic-dark.html",
+      "sha256": "52ce4ac816fca591d0d7dff81d21b9dd6be8c2b8cf31a703e3acbbed1e182f9d"
+    },
+    {
+      "path": "design-demos/demo-a-v2.html",
+      "sha256": "125855f6a8efc8253582625c86ba022f1b109bd670767ec662f464304ffa0971"
+    },
+    {
+      "path": "design-demos/demo-a-v3-share.html",
+      "sha256": "37ebe225a1f89cf4c452edcc1e1e8114af764087f705a116d05a632feb5f21b7"
+    },
+    {
+      "path": "design-demos/demo-a-v3.html",
+      "sha256": "87d23992a748e118f8af756bdb57c74944cd2bae0e465709adc311912b370f2e"
+    },
+    {
+      "path": "design-demos/demo-a-v4 copy.html",
+      "sha256": "1781a77c86abb9b97ea09d8310e2a6c22dd7f426b33437aa2bb26ffee6af185b"
+    },
+    {
+      "path": "design-demos/demo-a-v4-share copy.html",
+      "sha256": "e14b29696f4ef8837a206e9662e741bb73d1252517240774ae018b22ae8a5992"
+    },
+    {
+      "path": "design-demos/demo-a-v4-share.html",
+      "sha256": "431875fcd991481108a3c13a480fc6153bc2203c4fa82f9f9668cce07af6dc98"
+    },
+    {
+      "path": "design-demos/demo-a-v4.html",
+      "sha256": "1781a77c86abb9b97ea09d8310e2a6c22dd7f426b33437aa2bb26ffee6af185b"
+    },
+    {
+      "path": "design-demos/demo-b-precision-tech.html",
+      "sha256": "270220f550bc64b3e03b72d87a96f34f1de23b81d3987ec24e9e4e4f7a5fd619"
+    },
+    {
+      "path": "design-demos/demo-c-hybrid-light.html",
+      "sha256": "41f86ef95ecf911f969affdb4ba2946eb11faa70c4c34c2f629392b8f829bead"
+    },
+    {
+      "path": "design-demos/engineering-a-share.html",
+      "sha256": "d1a36c3e201ff936227ad4907d72098703b8f688c275487b173afb8b0fc40caa"
+    },
+    {
+      "path": "design-demos/engineering-a.html",
+      "sha256": "89cecdfef4a220445f324a8564c532e683c88e19803c15e7829928bedf9115a6"
+    },
+    {
+      "path": "design-demos/engineering-v4-share.html",
+      "sha256": "ab92811edd8fad7b7bd453f0fc163b6602072f6249eedb930842df34440ac8ac"
+    },
+    {
+      "path": "design-demos/engineering-v4.html",
+      "sha256": "170f5dbd853080062c489a126248058585f57e17b6e7f8124d460b1b31e49c54"
+    },
+    {
+      "path": "design-demos/faq-a-share.html",
+      "sha256": "2924026a5bb77863d426853ae0f930aff1964425d79e2b0845a2a243871ec328"
+    },
+    {
+      "path": "design-demos/faq-a.html",
+      "sha256": "317f94a545444b86358be1641689d51ecdcecf3f357aba368e71aa41160971b4"
+    },
+    {
+      "path": "design-demos/faq-v4-share.html",
+      "sha256": "975e275cbe1f5f6118025dcb869e12154420f63b7942a2cbf983c116233f3527"
+    },
+    {
+      "path": "design-demos/faq-v4.html",
+      "sha256": "73a4057f9c02cebfa5351b6d827633b7ba594da771d2d149b07d5babe2e5311a"
+    },
+    {
+      "path": "design-demos/industries-a-share.html",
+      "sha256": "0b641d80aa8a007972bb53b4e402401001bceed817c501653ec458119cb03ade"
+    },
+    {
+      "path": "design-demos/industries-a.html",
+      "sha256": "3ad47299d307a55c197c55f9adc6575f96cdcac87aa54136bb484bfa193200dc"
+    },
+    {
+      "path": "design-demos/industries-v4-share.html",
+      "sha256": "082bfb80b33550a22748bce03a82e66546a20823b109bb023e6033cb6b7ff40b"
+    },
+    {
+      "path": "design-demos/industries-v4.html",
+      "sha256": "ff25e55ea9234e9153b9b023354ab4d418cd5664b6117241d4da25bdd851783f"
+    },
+    {
+      "path": "design-demos/manufacturing-a-share.html",
+      "sha256": "c50a5997d460ef9d2aad9383182f840eaa5a4c5ce9288ff58396cd6de83eaed0"
+    },
+    {
+      "path": "design-demos/manufacturing-a.html",
+      "sha256": "22274705627e7afd18c14dbde66a4d5e94a0670f0e62b1c5b0769d66d7e3d0f5"
+    },
+    {
+      "path": "design-demos/manufacturing-v4-share.html",
+      "sha256": "6c6504e31c445e09b4b102602ff5310fe607d240be6f9b432de154b3cc49d4d0"
+    },
+    {
+      "path": "design-demos/manufacturing-v4.html",
+      "sha256": "842b9a16ca78a49313b7d5d0ce6de682f80eec8aadedb7754a1721e50613301e"
+    },
+    {
+      "path": "design-demos/media/asset-registry.json",
+      "sha256": "675bb3861553b3f543c68a9f349d84f62d7b4fca99dad134d8c231f7d3641320"
+    },
+    {
+      "path": "design-demos/media/auto-suspension.webp",
+      "sha256": "52d230cd2db570c29587b3462677ca4a0e41e1e59d5ad4fe7d6d2ccee33ce9a9"
+    },
+    {
+      "path": "design-demos/media/cv-boot-driveline.webp",
+      "sha256": "86a896b2f1dcc6f96831cc2bd7848844a1dafbb488f96668c0bff959c9ac30da"
+    },
+    {
+      "path": "design-demos/media/gallery-manifest-v4.json",
+      "sha256": "d2e8d2b09f7ab6d18411c521269700f193017734352ab30ab0cf159d1ef07dcb"
+    },
+    {
+      "path": "design-demos/media/gallery-manifest.json",
+      "sha256": "875875aaca6f6fff04c4e29cb784f6432e1a625ba27b8909f01fccbd59a9b699"
+    },
+    {
+      "path": "design-demos/media/gallery/_tmp_photo_rows.json",
+      "sha256": "7e652f6b043d49cab54e697c5ce21ee9e1b280c7a94abd4084d9cd0e6a462234"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-appliance-door-profile.webp",
+      "sha256": "3f7678fcc50bbffe07b05d0ef81913210cd7943545edfb289bc5aef58b1d6883"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-bonded-bushing-set.webp",
+      "sha256": "568c65974b3709ec7bb2e6bd8cf253128def9ebff81dadb52cee0d5a093bf293"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-boot-cup.webp",
+      "sha256": "c0e705db269cb7df40e3518835c1492de416e1cd96ecca3cda114505e133830e"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-boot-stepped.webp",
+      "sha256": "89b194c7f73646228b8559ed9b320bda714988e1d2b2341091b0c8481785a690"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-buffer-mounts.webp",
+      "sha256": "042d9176730b0bc73818e00a1fe8a417d0ad8d72c52e1977391a2dc65ac88902"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-bushing-control-arm.webp",
+      "sha256": "7835651f20962f474f10c7ab15e2ceec41e59acab2fdc63d4f1788e5f0f6507f"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-bushing-stab-d.webp",
+      "sha256": "0c1d5967c552cb2459103baa8dcdd91f9482f16c75c618348233f78002f64f94"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-bracket.webp",
+      "sha256": "a4b9777ef00fe12b664f0e7cfdb6da13475368879d8403762ee32a5e6a276e6e"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-dark.webp",
+      "sha256": "4cbd3d7cff97eba17198a68e320525807b89ef0a12407501a0077fe2f03f329d"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-flange.webp",
+      "sha256": "e1d793a0981b1c7f79281b8d6fed9ce9e533b8caa600edd965baa641da732842"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-flat.webp",
+      "sha256": "cc106b41ee9d86c7580188488c2ceda3dcf28fcc214b0087cbe7b20c1dab7d65"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-held.webp",
+      "sha256": "01232825953df0c525966a4ec35dc0b390293f57bef2bf17730040215cade81b"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-diaphragm-white.webp",
+      "sha256": "e3969b1d180ee5787d38d9de1d3c14aa710a732dd8f83375d5eb74641c31b7fd"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-flange-gaskets-blue.webp",
+      "sha256": "22062dd9d32eee44f546b595f8d483288dc6d64d099e8139689684b9bd887f9d"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-foam-seal-coil.webp",
+      "sha256": "2da1577660ecc2e46e71a1494f56983ac3bb772046aee506b79a511d5e7ce290"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-foam-seal-section.webp",
+      "sha256": "508b57b33116901923baa317ceca92f76c7b0eb09bd81aa7204514a11384a72b"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-foam-strips-adhesive.webp",
+      "sha256": "4bef71dbaf53f4d5817a5c18fc464a154fd33e0d799eb0bacc9b47a3dda2dffa"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-foam-strips-grey.webp",
+      "sha256": "4fcae8f66aa771d5d68accab5192186a20c0cae48ae7265720e57782c00d076d"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-bellows.webp",
+      "sha256": "13963bd9f50150a63beec6f4e6b54ad7a3fdaf05e7abe36cb33b5985f5ae5e59"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-conduit.webp",
+      "sha256": "bf6270e6e7d892ce00f4da0c8205ba0f63e885539d20f864b12b6548ba0f9011"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-cone.webp",
+      "sha256": "e74565ff564b2e32a04908cce645a0f8af8578348c6aa99c07f4e825034ca2c0"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-oval-plugs.webp",
+      "sha256": "055c439e55aa46ab4b8da67a4d1b5f1b1cf1787ede19653e5efd30462396cf79"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-shaped-a.webp",
+      "sha256": "1be6f6ee4c58da38c863132d610612a2ce3eaad2d8b494d4bae8c3dda39db392"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-shaped-b.webp",
+      "sha256": "6e6c581716a704056900c24d8df31bffceb9357b67e471b334395805dce0312f"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-shaped-c.webp",
+      "sha256": "9d11725fc3a69b32102c666c2e2a8ada9a4f175422a30879c082adaca3a023cc"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommet-washers.webp",
+      "sha256": "6fd39f0d9d686c43ffc2009c2a88c9a69ccb2dc22fb0e54edd786df24b248af4"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-grommets-bulk.webp",
+      "sha256": "8ba5e730f692db88cf909ecb9bc875538b68cc2c8fd0a8c13b6ad12a32604b2a"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-line-extrusion-oven.webp",
+      "sha256": "bd0adf3f7c9bbf66818b291ef4958e74f78d448fc3f4110e6f2a6a380bd880d4"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-line-microwave-cure.webp",
+      "sha256": "3215fb411394a67ae5096b83d69deeb932461c873af799888a67e8c7b60cab8b"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-lsr-assorted.webp",
+      "sha256": "d2eca4163adce3ccb1aad5afb4646d8179896806167f3cabdde0d77d407e3704"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-lsr-bw-parts.webp",
+      "sha256": "c3ca231e8e3861f7acd14e16c01481e507f522db823e78bbedda78ced0c81969"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-lsr-color-parts.webp",
+      "sha256": "ca6cd71e8748c0e3e080a4b0d7b504edc64560b33d0d22cc9d39935f98fc87ed"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-mold-multicavity.webp",
+      "sha256": "b93a0278cd2ae532356f066e0c5911e47277ebe6d9467695974d3bc1e36e2865"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-mold-plate.webp",
+      "sha256": "aa095bb1c4d6bdc3505efb6c251e7ce30a5300bf17266aa72e9e2f3faab76077"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-assorted.webp",
+      "sha256": "bf99392bb00840f1a5d4c7c8f4cca4f8b898c89b45d957184dd824654de82e2c"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-boot-group.webp",
+      "sha256": "eb14941acf2d6a0e7d56410b373699ec93c63f9fc49189ebac114b0aa532626e"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-elbow-boot.webp",
+      "sha256": "bb5316a22b1290264c718862abea5122bef3d9ea2c2ee41cf26b9d1372dbbc8c"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-plug-cover.webp",
+      "sha256": "cd2196f4f6b8f63f0501e01baa00a9a37ec3e98d92717c5853b0dae972aceaba"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-rings.webp",
+      "sha256": "e81482f1899fb2678587e214befbe402c15858bc736afcf7edcf6009b7c827b5"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-molded-tray.webp",
+      "sha256": "078aca4b11ee80f86b0c2076cacc2649a61276e98166fc9fc757c2226f313d86"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-nylon-gears.webp",
+      "sha256": "a83fd49963a2b715904298da8d5135fb73e6e7af55eaabbf71dc0bacfdfa6f78"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-orings-micro.webp",
+      "sha256": "9704b747fc17039dfc96e3073f84664abd9a97ba99e85435e0480b458731c690"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-orings-white-a.webp",
+      "sha256": "8542a8c4be14d68384617b52c495a3acbb67caa6d85d4a5c97716392508ef3f4"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-orings-white-b.webp",
+      "sha256": "139def04966a951b496e4f7f1476e50be61679226b97834833e7d3666471da66"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-pipe-coupling-gasket.webp",
+      "sha256": "237ed9dfbf6aff7a900c297a17e2d227b9a945b4fc74baf96dcafcf7ce688ed5"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-plastic-housings.webp",
+      "sha256": "021b3a95ff037d6564ce360d912cd881ad676f8e88f9624094f09ac82693a3c9"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-plugs-color-pile.webp",
+      "sha256": "4e5bf6b6bf0e77e4e9386d36e648af35631295514141e87ea9f9407728b6b137"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-plugs-tapered-a.webp",
+      "sha256": "fe98b455536d0a9d762c4d70d5c1facaa2c081e4335197a2abd839c2b0787313"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-plugs-tapered-b.webp",
+      "sha256": "c33553a6b507a1fb17546f35cefbecc6d04f93b5824d467ae21ac5e567110ec4"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-plugs-tee.webp",
+      "sha256": "d479d4a6ed778f279d39d066e9512e13ffc7a78e307fa1f7c8352f09c145676c"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-roller-section.webp",
+      "sha256": "38f09c4e772d73d4ebe685f304ba92b960bf02fd28e1b448f7e96490ba12e446"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-seal-profile-fan.webp",
+      "sha256": "ac481dbca247e7d73caaf16bc92683cccc72c0908bb3667e3d54b0ca74d87134"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-seal-sponge-profiles.webp",
+      "sha256": "64824d36ce7330dc3c495d90862f837555aacf4064595d873239e599f48f8327"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-seal-steel-carrier.webp",
+      "sha256": "d994a41dab36445177fdb047bed34a9f8a11103a4c2e13b61556a4f1bf39cf0a"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-caps-a.webp",
+      "sha256": "28df714021fe61a7eb404096b817b57278715cd92cfe94cb21fc1ca185941fb1"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-caps-b.webp",
+      "sha256": "f0d7af1b869280df8c2e542e38622c382556640c3dfd4d72b4682519827b7ee9"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-flange-gasket.webp",
+      "sha256": "3dc73eb085fa5e6c762c6fdef0a30210983d1e364839642a0dd7005032679226"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-grommets.webp",
+      "sha256": "d0ef49966af2b1d09af9778c65579f39bccfc08321c699c05d3b709b9d9c2aee"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-keypads.webp",
+      "sha256": "48d30dea17f07ccb9b8b2a1c14f7b720eccac928e3097d153181163d68642aae"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-silicone-washers.webp",
+      "sha256": "b45bc44e38cd5f6399102e73629c6ecab29791e0b0d9da185a6404b961244270"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-square-rings.webp",
+      "sha256": "239c4cfb5cf813083a8435c2e0273d8756366408e41dcdc81dfa0f0b5b78d245"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-stopper-vial-scene.webp",
+      "sha256": "515681ff49afc9ae1aeed82a1880fad59df4d06b9b36807d70abce15ccb19ed1"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-stoppers-array.webp",
+      "sha256": "900bc479aae2c5d4108524789c3dcbf71955af94894ada084ae44c27216a24a2"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-stoppers-butyl-a.webp",
+      "sha256": "57d7901e4a2e4e6b31cb4e9e72bbf20d6cde27176b79ca2a1280bdeae30961b8"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-stoppers-butyl-b.webp",
+      "sha256": "175d8d4ff8edf7a36c68df4521e694da9a7d7486d8f3437c8b19de4cfa0cf1cb"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-bonded.webp",
+      "sha256": "26c4860bc8d0936ec3c369d4325ec55500f394ad7edc52701cc285cf0e8e4adf"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-flat-loose.webp",
+      "sha256": "6208deaec4acb3e946b519560112ac78d3a374d408f0ca5819e653e7fa9be7d5"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-flat-stack.webp",
+      "sha256": "40c1925926616509cd358e38947435a24fb6ad6b43ddadecd80d839ae43841a2"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-wave-rings.webp",
+      "sha256": "7ed97677fe0f4e182e634251f1fc3a7f2eeae3369805fbd81c99e43eef0c5a24"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-wave-set.webp",
+      "sha256": "8c0970e8f304d94026c54b6e1f683efa56c2a0fa7ee9a1dcb0fccf3122d5117d"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-washers-wave-stack.webp",
+      "sha256": "6700ede1ba9c2fcdd6a944233fdd4ee4096f7024dfa0663411103439d64787ce"
+    },
+    {
+      "path": "design-demos/media/gallery/ph-wm-line.webp",
+      "sha256": "c78af058dfcfc89c13b8e09fe8af926cc0840abad824c3129729c184bcd1a0f6"
+    },
+    {
+      "path": "design-demos/media/hero-rubber-mixing-poster.webp",
+      "sha256": "0e0835e453c8ee6ca943c46f441676c37dd9526df67e34c9a10b70586b747486"
+    },
+    {
+      "path": "design-demos/media/hero-rubber-mixing.mp4",
+      "sha256": "22164b8c814e677cb020d6fb1685657fad2a05c0d24280cff28739f742cc39c5"
+    },
+    {
+      "path": "design-demos/media/licenses/PEXELS-LICENSE.md",
+      "sha256": "970c05402003449602be974b6d691a1d82d349bf0a2b2e7e824627107e21d107"
+    },
+    {
+      "path": "design-demos/media/licenses/SOURCES.md",
+      "sha256": "23a532d4791463d46a3aba2967762d3ca810c8d22d47b3acf47598ffda03b56a"
+    },
+    {
+      "path": "design-demos/media/map/ningguo-osm.webp",
+      "sha256": "7dcb424fd639b47b134b1feb11b7c9fe0628e2ee0101b383fc3d6a2d59d62f8f"
+    },
+    {
+      "path": "design-demos/media/mfg-rubber-sheet-poster.webp",
+      "sha256": "7c585ed5c422f85a85c7bba25d5fb4db40331de1731e6a509825bb922cf2f5ca"
+    },
+    {
+      "path": "design-demos/media/mfg-rubber-sheet.mp4",
+      "sha256": "45e326f19cb05c3c8002a326cbe3b5d196158adbaae610f0a9cfe9fd874935b2"
+    },
+    {
+      "path": "design-demos/media/mix-banbury-poster.webp",
+      "sha256": "abf24383550dc5afa19db35e06c2df6672acede26d32b29870c0e8a129d0efb6"
+    },
+    {
+      "path": "design-demos/media/mix-banbury.mp4",
+      "sha256": "1e4f268f67617c50384c5fa2481d91647da5b73569472381c81382f883b50a9f"
+    },
+    {
+      "path": "design-demos/media/orings-dark.webp",
+      "sha256": "76d6871d3ecd8cdd92e64fd6e2044b6d0cd0bbc7ffe6ac337c51835f8d8c102d"
+    },
+    {
+      "path": "design-demos/media/ph-oilseal-dark.webp",
+      "sha256": "a073dfde04d1abd688cb01df6bd175b48e79066571a12d1acbebe55d97a39625"
+    },
+    {
+      "path": "design-demos/media/ph-oilseal-tc.webp",
+      "sha256": "e3d66ed82becf6959bea3494c96cc14fb2dbbb864f1d070b9548cea364f158c2"
+    },
+    {
+      "path": "design-demos/media/ph-orings-mixed.webp",
+      "sha256": "183750b36eea958c15df5d0ab7785903775a7d7707ce0cacd2939b9334c43eb3"
+    },
+    {
+      "path": "design-demos/media/ph-wm-gasket.webp",
+      "sha256": "21a59ce3fa08c79ec16ba68e255cebcc16981f73a5146651b5870b3da1835a7f"
+    },
+    {
+      "path": "design-demos/media/port-night.webp",
+      "sha256": "c6a2cf8a18f29543e23c6be416080bcd47cdece584d1c10e66e8fbb89c428dee"
+    },
+    {
+      "path": "design-demos/media/products-catalog-v4.json",
+      "sha256": "16c04cb1a34a1ad7cdb3e89a0c831b97584ab95dfd5adf9a104030cb01cb4264"
+    },
+    {
+      "path": "design-demos/media/products-catalog.json",
+      "sha256": "f0830af37ef2d09fbde114f71d92aff350d4fb79fb82b479ead098e470169173"
+    },
+    {
+      "path": "design-demos/media/qc-micrometer.webp",
+      "sha256": "e32cd1654c436e20a43ee79a6e907b419718223fa6bbc2026e89a7fd22291030"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-001.webp",
+      "sha256": "db61930a0f5ddf6e9bd40a64f5672c1d7af7a7aec552fe47cb8dd7cc088ea64a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-002.webp",
+      "sha256": "8679eb9b04cd07007e36b20c700faffaeab6d97cbccad7a5be4986f0f760790b"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-003.webp",
+      "sha256": "41f290418ad932d306d69b1c7f5e2766f774dad7b5c9c7aed85d2fbf6b31c35d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-004.webp",
+      "sha256": "1d4c743ff7e28432ea62e56f18f4aea22c3695d5b730d13bb9ee9c60399e2abc"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-005.webp",
+      "sha256": "27efb92c546c83af76cd305859e17067408fd1551c422455d7f97f1eab5301c7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-006.webp",
+      "sha256": "e53c55f6f15cfd6f1fa5a2d80523ac80fa38d6f22cf1b4d7e6e405b3a0a1bd9b"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-007.webp",
+      "sha256": "72db854ce2dbcff3c0d06497b84b5a3933929b892272d6c9a1b433fb756e845e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-008.webp",
+      "sha256": "2227a8c0b81561d196501b441f2c1e043c9556f24b61753509c32513b2b79c9a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-009.webp",
+      "sha256": "0926ba55144ae58e23942eafeec36a6df224cfa048c7c74e08153f30ec457623"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-010.webp",
+      "sha256": "20f7e5b40fca49c10d76c6e0c0c30025ce1f243b65e9070563f965fa0a51ef84"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-011.webp",
+      "sha256": "4eac381653c71753999bed6b7475792971b59784d4a6b5bf669fbbfa0780c8a9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-012.webp",
+      "sha256": "e2bc2ada807251bc1aa41646cbe33426f9797b110746e98f439a152260dc04d4"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-013.webp",
+      "sha256": "9f569b729f6a4fc17c4121a73e5cd38817886ba68a0e82e418a86968697678a6"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-014.webp",
+      "sha256": "cd13b70392ffe2893c2f301525fa8c6c00785260b265c736c9ddd9d9776af535"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-015.webp",
+      "sha256": "66794041deed9475cadea049978ffb0cebae408b4df8b83d8c260bf485519467"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-016.webp",
+      "sha256": "a13602537e3a6ad177d3203235f40153ba3ef6269fdc94c6b738bceae1cb2db8"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-017.webp",
+      "sha256": "14c17562e19344835dad38c9e497591b621fa5763d9070f98255110e84bf48b8"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-018.webp",
+      "sha256": "544dd86a7756df544ccadaedb9473941efe5110529369ee43560153798547cf7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-019.webp",
+      "sha256": "02eff3b9962d4376480da0cc2e124972b17a7cfe81f5662ce1feb598c7f61a67"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-020.webp",
+      "sha256": "39ec2f7214e0a43cdb5a482d2276275503d106041e2ab94b04ea8b5e507e2899"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-021.webp",
+      "sha256": "fd59852cddfb602a6f32555802ad5b73fb7e9ef32df0fafc45d986019af0d9b4"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-022.webp",
+      "sha256": "3b80349d78783e6c1261c348bd6fa82517d5dcd71a2e213cc77d633bb0e6ef39"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-023.webp",
+      "sha256": "88459d239bea9d99e52e18fa1b26fd7c682952a648e12a405e759d94875dd40e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-024.webp",
+      "sha256": "c30243a7865527b224a46ed7cf18e71e9874ab218c456c42ba7048bab6a9cdf9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-025.webp",
+      "sha256": "00d201b8df2115f755f9c110e6fcd44ca420ca05cbe89c8bbd9683a37d5b87b5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-026.webp",
+      "sha256": "5b2874ea13b78fff32daf6b3197a801af17a51046f34184ef1af5be42a9fa97a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-027.webp",
+      "sha256": "a46c10cd21939caa7c0908efa489e82eb29c5bf48e95f164d5c49c5aef3ea0a0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-028.webp",
+      "sha256": "b63172139528c27ca9b27386dcadbff98324c723c242f2b4755305997e6908e0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-029.webp",
+      "sha256": "7db712ea6418d273704c4b53aa64a8a0b0e4d095784fb0e9e0953117c758aef0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-030.webp",
+      "sha256": "d95b126caa47dec306dc54903217a8627c12df2be1806cec0a9f1bb4fbbb9546"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-031.webp",
+      "sha256": "33d7749aa98aad8aba10518a5f373dff1759ecefb2a068cb04f39a3f2d82c5c0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-032.webp",
+      "sha256": "42ab9dac5bb7546824cbcc239b14ee49aebc0a5a6091f45ddc0ec30e0159b0b7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-033.webp",
+      "sha256": "3ef061eaf6168bb87ac1eb8679272217b6314cd5c287a903771e0a61f51c646d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-034.webp",
+      "sha256": "93a009b15a17b8516e4a2b85e4f02e38b4e049d898a1007459705e85bbdfd3b7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-035.webp",
+      "sha256": "d3cde1f7f1cc4217812c3246c4791d6d4c97084c54dbf76bf72426ced64da845"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-036.webp",
+      "sha256": "7cc3e4078602384ac6a0ff8b7450be3dddfef33a989faa52dc670e637d6c3c61"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-037.webp",
+      "sha256": "d3a16e3084445cc5c22abd60d6ced1633db60d58763843c525c9985df8c9a084"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-038.webp",
+      "sha256": "db89013fec219d2bbbf8cb76fa4b2cedfe566468b7880727895e1f91a3cf37f9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-039.webp",
+      "sha256": "c8789d93910e2f27ec0784dd57c89145f35acfa466c4c61f14ee5d5ebb4e4c9f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-040.webp",
+      "sha256": "2e3eb98c210da23ce8441f920ef894d768788e1aa2bc21967f7148df30b28fc5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-041.webp",
+      "sha256": "907ff69caf974915b491eb28b820bee5859166c926ea959b9252b69bd0a0c9f2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-042.webp",
+      "sha256": "cef92de3f467406ffebd88c5ed507dc2756f722525c0d2b244be8547caf98785"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-043.webp",
+      "sha256": "5b2874ea13b78fff32daf6b3197a801af17a51046f34184ef1af5be42a9fa97a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-044.webp",
+      "sha256": "33d7749aa98aad8aba10518a5f373dff1759ecefb2a068cb04f39a3f2d82c5c0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-045.webp",
+      "sha256": "00d201b8df2115f755f9c110e6fcd44ca420ca05cbe89c8bbd9683a37d5b87b5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-046.webp",
+      "sha256": "d3a16e3084445cc5c22abd60d6ced1633db60d58763843c525c9985df8c9a084"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-047.webp",
+      "sha256": "7cc3e4078602384ac6a0ff8b7450be3dddfef33a989faa52dc670e637d6c3c61"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-048.webp",
+      "sha256": "42ab9dac5bb7546824cbcc239b14ee49aebc0a5a6091f45ddc0ec30e0159b0b7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-049.webp",
+      "sha256": "b63172139528c27ca9b27386dcadbff98324c723c242f2b4755305997e6908e0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-050.webp",
+      "sha256": "88459d239bea9d99e52e18fa1b26fd7c682952a648e12a405e759d94875dd40e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-051.webp",
+      "sha256": "d3cde1f7f1cc4217812c3246c4791d6d4c97084c54dbf76bf72426ced64da845"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-052.webp",
+      "sha256": "2e3eb98c210da23ce8441f920ef894d768788e1aa2bc21967f7148df30b28fc5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-053.webp",
+      "sha256": "d95b126caa47dec306dc54903217a8627c12df2be1806cec0a9f1bb4fbbb9546"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-054.webp",
+      "sha256": "9bfe3261214f945ab5b3ab350cd8a10c7474cb166de5fc1288cfcc6a685a7f6a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-055.webp",
+      "sha256": "87227453de57f4b00e849eb33af029a15d5cf5e366e8c8d082604b3ea9ed9779"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-056.webp",
+      "sha256": "3ef061eaf6168bb87ac1eb8679272217b6314cd5c287a903771e0a61f51c646d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-057.webp",
+      "sha256": "8722724242c20f87ab9371b8e5d21babefa4327ad2173e9a596f47d573ecbfed"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-058.webp",
+      "sha256": "6f4337f173bf4eebe42cb457f56bf93179146051ed56b67935a34c7d3d07a96a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-059.webp",
+      "sha256": "a46c10cd21939caa7c0908efa489e82eb29c5bf48e95f164d5c49c5aef3ea0a0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-060.webp",
+      "sha256": "93a009b15a17b8516e4a2b85e4f02e38b4e049d898a1007459705e85bbdfd3b7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-061.webp",
+      "sha256": "2fd9aba0a0b6bee6f171b8f6577f1080e69f36ef7bc5b6769f2c047d102d83f2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-062.webp",
+      "sha256": "2732dfd161cdbda283be492114d831c927fe7f39ff9ffe54d2a3b645f8dcc468"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-063.webp",
+      "sha256": "02674fef63fceb97d2b0f83e16f72f98921ceec3a02cef4e84f191900213904b"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-064.webp",
+      "sha256": "23f03955e3dd254e6571db8ee76002d7230b5cf72ce1c083a160099557ff2959"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-065.webp",
+      "sha256": "639d4b42670b01aea53341a483e7725289e8b6b381cad1335aa1d439a2f7024c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-066.webp",
+      "sha256": "db89013fec219d2bbbf8cb76fa4b2cedfe566468b7880727895e1f91a3cf37f9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-067.webp",
+      "sha256": "907ff69caf974915b491eb28b820bee5859166c926ea959b9252b69bd0a0c9f2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-068.webp",
+      "sha256": "cef92de3f467406ffebd88c5ed507dc2756f722525c0d2b244be8547caf98785"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-069.webp",
+      "sha256": "d0bb53c6abaa5af431ff5e1071ba9b4fc21c0acaf431e3e3fc28a2a0866404a5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-070.webp",
+      "sha256": "7db712ea6418d273704c4b53aa64a8a0b0e4d095784fb0e9e0953117c758aef0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-071.webp",
+      "sha256": "c30243a7865527b224a46ed7cf18e71e9874ab218c456c42ba7048bab6a9cdf9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-072.webp",
+      "sha256": "c8789d93910e2f27ec0784dd57c89145f35acfa466c4c61f14ee5d5ebb4e4c9f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-073.webp",
+      "sha256": "247e569dc97b1b1c0d89e0af88a7ac8013ad841040d7406e54c6990e3298940a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-074.webp",
+      "sha256": "0a11dc2f85c5af11c8c6ac5b080083fb9e09492739972a041bda68db352037d5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-075.webp",
+      "sha256": "c5e9801ca46806b8623fd9d384807fed371b5838d166e7aa02c92a8ea7bb6cc4"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-076.webp",
+      "sha256": "21c87a74b5f801573f1dafd6bf30f3598a1153f7e70a55e3401e393b0d5f63ad"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-077.webp",
+      "sha256": "1ef9ef4358bb8b914163994ce59232f898cdac58d1fd1a990cdac92fe6e748e9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-078.webp",
+      "sha256": "6f21c3134b4dcbe4ccda160b3d04195cb155af12c6302873431248a58207b7ed"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-079.webp",
+      "sha256": "3c5bb1966b91c9db9d33c6aace4a8c903071a766d7e7ebceb35fa3045411c5c5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/A-080.webp",
+      "sha256": "f4c3569cf6f6d0ffe294e907a5446daf56e9e8481e96821eae1773a702090b4c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-001.webp",
+      "sha256": "a4a33bd6f68c37506d45cbe7f58d3e24608b84ff1d9c2530c8562ab3aae65f9c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-002.webp",
+      "sha256": "f4fb3db043a31cb5caf7784b30058277cc5d7d56300a429e2be1a80690b402a7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-003.webp",
+      "sha256": "f746f8dc17e3617fb32e2ba315b6a4b30237b6a340b97506c80e14f155251610"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-004.webp",
+      "sha256": "6c3300444efda932f23670dcb107c25508c3870b06a736a4da0b97c7d6f5b6f6"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-005.webp",
+      "sha256": "548309f781d2bedbeb6c3b4ab929bae5e8a794671d4dfb281cd151b36c30fa0c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-006.webp",
+      "sha256": "3343056b37c3d10409e9cf242e7a02f0884166266de31dc0e7a6e190bef40a15"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-007.webp",
+      "sha256": "dd84eaf111b86e116aeb210e287d75108521e1efee74d58d732b53a7e8c981b8"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-008.webp",
+      "sha256": "694f6e1708a97fa38c3705dd7abf83aac29442c07db230d7a785c5b1126d831d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-009.webp",
+      "sha256": "970755a39051b680fe7aef553d0ba1e9a78a4ca35d0ea091a6f8432ce3aeb96e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-010.webp",
+      "sha256": "933feb38d10901ae9f47e74e0a1cd8d24671c5bd491b0833677a0f752a96b67b"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-011.webp",
+      "sha256": "ed44f063f4dbeab8bd4a8573199365f82863274bb5eb8599455cc0b7484a68b1"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-012.webp",
+      "sha256": "e908a1c1cf6876b62ec7a870ca33d6362f28ba77b9712152ac1099ba08ffb2ec"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-013.webp",
+      "sha256": "1cb67dddfd4c4976057dac27c3054bed07995ef7f71e49cae575782d7c66d6c4"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-014.webp",
+      "sha256": "d02fb29d23bd69d838cf0f17695701eb7173a3c3525a93c043a899313d271bd1"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-015.webp",
+      "sha256": "26a355af0815b39a8f4a81ddcec60751ba16aa968ad59a7c47f99186cc139f56"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-016.webp",
+      "sha256": "5b910a7ac977aa41671fbb34889036f4bc06994ef18b122aaa301c6e25d5cb3d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-017.webp",
+      "sha256": "5311fe4899d154a7b76a714e2e7d56d888940103592252680272cd543d65c7d3"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-018.webp",
+      "sha256": "28640b8279383e23113f88763a44c001dc7aab1924d245d3e26a9454412020b5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-019.webp",
+      "sha256": "47079eaefa6fd2720e1d64be0477bef54e552580fd3d274ec0fd8ac6e032d267"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/L-020.webp",
+      "sha256": "303b17989886f4b9fcb7df8642b1b2efd0784e3ea628d09ef1badb13427de136"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-001.webp",
+      "sha256": "de93e836c808c1b35fc80ee9e8c3a2889671675e4b94032bc3590b2158a39628"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-002.webp",
+      "sha256": "6e8a4747c0e9a1c94fa92396a0cb60bdcb97cc1319a1c9fa4ac5b90841898a10"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-003.webp",
+      "sha256": "bb71588d139c93aa95959cc21ac979c4df4d7d364017ab6081c88a23be3223de"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-004.webp",
+      "sha256": "8473f60aa46a23e711d5249ccc84306ca01cc5a3dd70d487eb7528e3ab4604d2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-005.webp",
+      "sha256": "caf9f4e433073ee2a86f251076f9afeb4c6631a3edea8f81ae05a15377e4d529"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-006.webp",
+      "sha256": "a0d553cedbc23943f75a105943b34052f7de102c9d159f231eb43f965e45adb9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-007.webp",
+      "sha256": "57477dd06e6b4798d7f1ffe9b8d858da7e4134ecd85be17ec055c929160450f2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-008.webp",
+      "sha256": "e714026eedeff59a47e0dc49abd4ebaf03e63f53e4d7b0da2f0ccbb6bf815843"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-009.webp",
+      "sha256": "088ee2644d8aea7990cac20a9c5cb99762bd2f4dd1005c45e94eff0c8647cb50"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-010.webp",
+      "sha256": "f5db480712d3b2dbce26190606fcd7d52df189fba28c54bed0ceca21f2376c0b"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-011.webp",
+      "sha256": "d044b9ff090bf5a88404c79f0c048d62e88477c1700504c68d61189dfc33291f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-012.webp",
+      "sha256": "267718c1e1ac96ed29f2dc322a1e508222a91e72d294958e725a1f76098c4397"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-013.webp",
+      "sha256": "4243e6aa82c313ee85bfc1f3003eb3dfa9c9f293161439b6e17ab3488e759bd2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-014.webp",
+      "sha256": "af5b44b7bf6b96137b70c1965951d73dec34097c81a5b1a5abea0450a9d49461"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-015.webp",
+      "sha256": "dac94f5d563a262f609ed296c2c0aa69d235243150d0bba822643feb8dc532a3"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-016.webp",
+      "sha256": "a6f68d7165dde7df1743d5c67007735fcce379b386193edaffc3af4d79d937b1"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-017.webp",
+      "sha256": "13b04c4f57071dccf175089bca0b387aa52333bf5f7805b8c2d1a386788dca63"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-018.webp",
+      "sha256": "bd21efef1d346f7cef5348ad9691530b7dcbd2201264be47b377b80a3ff87f31"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-019.webp",
+      "sha256": "5d6166de50761d35850519c16a6f90d15adad1358f6d0a9df64c9544cc65f923"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-020.webp",
+      "sha256": "c570b64ffb4d342e961bd4a72ea4276ae9abb6c42bc6cbe235941c09ca975dba"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-021.webp",
+      "sha256": "b85971321e26c5c7bfd06f491e02776400f372c8afcff5b611f40e8ffc1183e5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-022.webp",
+      "sha256": "9df1fe66c11bdb52b38a27c4ef88bc43bd951fec02f5d1ddd04f374bc1d8cc9c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-023.webp",
+      "sha256": "a80f2cd8ab270dba787d08c96a955a049b3a10a42e9fda79698753cd5994633c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-024.webp",
+      "sha256": "0e2fc031c8afa0159090bb937e216d6292ca6fb90573f3c40e7f1e01177f4ffb"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-025.webp",
+      "sha256": "235889601186ca77a56bc9828d66f8429790134146ba3202b97763bcfc460724"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-026.webp",
+      "sha256": "35c7c6856619eca2080517effc899000535fa4eb4963dca17da71d8dc975d7e9"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-027.webp",
+      "sha256": "e6df0c9e71dde6df6084e45f8552124237f6d609d585968ac1a5ec994ac8870d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-028.webp",
+      "sha256": "f540bcffad622f33598108b6579dd58349f33b91ea47d79a784d354ed5426417"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-029.webp",
+      "sha256": "138f413fcff74e34cac5f4faef3b9b562327b7fb89ca417f342d46e1d12f0396"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-030.webp",
+      "sha256": "e6336a7f135e09de1f0f63fc1e442fa0d3a7ace188befd2e7467be5298e24b45"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-031.webp",
+      "sha256": "b41b279490165f31f0fd865683e8953496c6194f31df19abf7d364dd80fbeabf"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-032.webp",
+      "sha256": "9b72344e9240b25d35746d5bc6e3d5054d0a274159e90865fa70315d262c0c3a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-033.webp",
+      "sha256": "c4248b0d050536e49b4611841a48308142682514e3f195a97131021593ceb997"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-034.webp",
+      "sha256": "b9b8a2f50de14160b82ed7ead3cafb1cc900cb3c3b30e897358bdc46c3bb1c1a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-035.webp",
+      "sha256": "5a47834bc8ed29b1d6e33618e8b71849ba124357a6976d340cd3f67c8874e346"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-036.webp",
+      "sha256": "26485ef2eb0a262083eba11a06b560449a582d730da255ae6437eb2481f99f5d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-037.webp",
+      "sha256": "8517addad4bfd0e2a6d732a2a103ddedb1c64a02d880e0d63a6de7870119a849"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-038.webp",
+      "sha256": "880def0a84a53bc2124eebe0b3c87a447cca18486706b19fdad1dbc536b9d965"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-039.webp",
+      "sha256": "d92f7662cd448c3faf7fe481526a406444bf9832994590e741528062be33870d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-040.webp",
+      "sha256": "52dd5359c9492b78e2d0286f33105efcc6de330343d8149d00b092feebbee4ab"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-041.webp",
+      "sha256": "82fb8d60cfd9052f7292e6a0017cdf7a8593236e5cdd2f4931bd9e6e12dfe09e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-042.webp",
+      "sha256": "7cefd632721bf26e5a9421a7a962f2b53e4ae9e724a3d1453e6fed427f1ea134"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-043.webp",
+      "sha256": "7c12a5f3b1f6ba01ff480fe764cc95989b59bb70278f650fc0bfb9c1ae7b800a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-044.webp",
+      "sha256": "a7329e085d5630a0730313bd61dee471e812c547dc0b437278dd4210d5f7452e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-045.webp",
+      "sha256": "f2ea40d60ab4d5950a40889d07abed9ec1a134dd8306767af4410b1073f743d5"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-046.webp",
+      "sha256": "b50ae4973ceb6c9072d4591612bc8dfe5e80116561fca9c045be4f625bbed400"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-047.webp",
+      "sha256": "ecfa419c5631088d1e6b59871318ab3f6948def3d032db79e6023cd717c06653"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-048.webp",
+      "sha256": "a084eb0b96acdccb45d62d4feb0ccba36ebe1791e94e5510d77366ef8009b328"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-049.webp",
+      "sha256": "4a786e1297ed1b3a4063ab63a53df9abe782ee523edf85c01fd8320b3478a629"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-050.webp",
+      "sha256": "42f98901124fb86c2b094c338f55322895af6feb8750a98f3f323c75011a8a43"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-051.webp",
+      "sha256": "5ecf1ccd2fae9b50029bc783ae67b5dd54c6eef46a19bc437893f994efc5b203"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-052.webp",
+      "sha256": "c8bdeb01a334b75975b618eea5d978742ff8a220a66de5c779743e6114dcfacc"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-053.webp",
+      "sha256": "251f19bf00991829eb0a3610dcb72582e8befb8546397d5e7ea60ae2470c0c29"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-054.webp",
+      "sha256": "558b322af55d0f862cf3425856f515abbb42d1cbacffff7db2d0b823e9e65046"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-055.webp",
+      "sha256": "d1b5eb84059121a7be5ae47c1c4841abc62402f8ea578cf271cd3040fca06c6f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-056.webp",
+      "sha256": "127fd618cdaaaa01356a07781298e2b9f96e5934f9ca6e916d9e62d1441458dd"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-057.webp",
+      "sha256": "6deee51e69ae3d04a94a9506418f29b1391c24d7f94e3a2c99ca4c3478e6318a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-058.webp",
+      "sha256": "5de2c342cda6634457822502136d1d06eb70dad87316085e11106b61577f1805"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-059.webp",
+      "sha256": "aeb5b939b936d2d964e1773f7898ccce80e9a265e31162e5d18ac3a0d07fa6b2"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-060.webp",
+      "sha256": "201f7ebebcaa3d62dbb04f54e39e5fe7794c36af8f249f6602427522a1a41c6e"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-061.webp",
+      "sha256": "16cd9460c9a54fe89eeb4faa2daca07cb3752391269e761b6e55558e4454ffb3"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-062.webp",
+      "sha256": "37e6a64b4148ef02ab78b28a84d78f50080343c46f9e0bd0d9d6d322f290b3bf"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-063.webp",
+      "sha256": "cafde8944814a9b02327da7522cd6d5689ddb4dc0d703436bcaf1900f7385eae"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-064.webp",
+      "sha256": "d766b4c29d8ff2d50081987f1d77ba1708bcfb0854432025c73d2e81937c0e43"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-065.webp",
+      "sha256": "30ad52ed17b0eb5b686cb43427253d858994b00a8343ea408f1a4e2614813410"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-066.webp",
+      "sha256": "82877247a407cd5b77797eb6e4400b4c532cc289f5de28fc8d26eba1cafd5d9a"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-067.webp",
+      "sha256": "9d767873c3735e3520b31e9571b2a20bca03b401c5c4f542a19d934ad48e683c"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-068.webp",
+      "sha256": "814d0cb153cfbb41fb513783fe951558dd303db4499cbd6d71fd099e403d27ac"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-069.webp",
+      "sha256": "26a91db0029e2b45c61f69f69b46f072099b02e0fba36270d59614aaea164d7f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-070.webp",
+      "sha256": "3f50a15ab2a91f06502d2697c414bc293dec8b5630b845d16887c33b871c788d"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-071.webp",
+      "sha256": "deac9954d9da865ffe0d2784880cbc126f2f37ded304df2ff4576f352ba50853"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-072.webp",
+      "sha256": "97e614a9fd6cfb7db6f23bc039fb74bd9894f559c86d84481521ea488b192b44"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-073.webp",
+      "sha256": "228330b5f024769e1272d3c743691913e03d820375aa161eda9ab44f0dfac478"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-074.webp",
+      "sha256": "75e90535df4cefeebb5b4338dd63252bbe57ad29df6b0b7ffb7e20396f903b16"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-075.webp",
+      "sha256": "4f375c403209c0bf6a110ac9496336305b565dd21e0abed1c4a3d8b91c6335fa"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-076.webp",
+      "sha256": "7a6719b2a20426bdde737b0f1ed394563ebd339032bf02ce60d2416472fe2fee"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-077.webp",
+      "sha256": "ebf334b2b81654bb0f605ce29c29f7a55e1d4dbefd15444e527e1e206a2cc138"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-078.webp",
+      "sha256": "af773c8f2ba2a05dc64b7696138ccbb86bdf15dd2314e647d7acefbd21419c75"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-079.webp",
+      "sha256": "302616260ae29fec29293d416d5e965c8b6a01a7c130f7066f6dae16e1678d02"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-080.webp",
+      "sha256": "bc8c51f37bc2bb7ce80cab61d44d01e83bdaa1eb397504785d0e4e33b1129418"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-081.webp",
+      "sha256": "ee58ec4d38169ff044b1d332d23fef7dbd2230d76d79cdc5207c8b900837f4c7"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-082.webp",
+      "sha256": "f109bb834c860bb1d805b5edc18345f0152537af13efe2d6553c3ee84827db68"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-083.webp",
+      "sha256": "c35eb8085aa471d2a80b9e371f7feae9e6e11aed84e70640da179de622ac5c21"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-084.webp",
+      "sha256": "eb10a763b2704b47b0caa07f87866c46098a02c61a243969333e7669d9426345"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-085.webp",
+      "sha256": "c9add55db7a1000c88e00ef28e7c83b2252ef3a38b9ee3cfb9e4f7faa0e551ed"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-086.webp",
+      "sha256": "bc811053edb23151fa9b4362fe53602e22c6fb933ce2b2d887c8f1f1b9b51176"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-087.webp",
+      "sha256": "db5b64d2fbdaf4a7aea0f381ce46a3dc2a69f0e215dae7bf57fceaf7a62e7785"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-088.webp",
+      "sha256": "36b329a3471aad909b380e7e03be86235cb7ca643609f76a6c83067784d674d0"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-089.webp",
+      "sha256": "847d0211cb7450a1802fb902d234083826c278494b4b8b5f56ef800e927e0ec1"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-090.webp",
+      "sha256": "463c5f9f127165bd31a7bf185d3baeb199eb49f4d88623a93490cdd2ab19879f"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-091.webp",
+      "sha256": "b980e45a33ff3ff2693e485022a19fbfef7f36cf1516c6340f3cb3a0a3379096"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-092.webp",
+      "sha256": "27ba5469aa54a7655b681d7080f0fd3d5420efbe47d491cab326864ecb4aad37"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-093.webp",
+      "sha256": "b9ec8bc0a13f561ab2f34037d34cd01301590700ab8ba9e2e052086152237efd"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-094.webp",
+      "sha256": "d6485cdf6106fe4c7a3a7394ae844171b9a71ab31adb9eea85d84f780440d850"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-095.webp",
+      "sha256": "aa00e6e98631fa2d14bbf74a2e6f03aed2cbeb37e9b19e04c1286a610c5f06c3"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-096.webp",
+      "sha256": "a55b9e3c2b1cb79fb7f1c07e6a709ed251766b6b5ba19bcb146f23f87a99fe94"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-097.webp",
+      "sha256": "8df594a1fe253eaaf228ccf530222a1ca4f0a685ddd79f232baedbb591381130"
+    },
+    {
+      "path": "design-demos/media/registry-thumbs/P-098.webp",
+      "sha256": "f0f89d46903bef8f91c679fb759bc64bd9520bc31334a692f8bc5d9e3774ebbd"
+    },
+    {
+      "path": "design-demos/media/rubber-tex-dark.webp",
+      "sha256": "38408aa438e2f12ab8d9d4dd721dbd9fff63eed13296c273f176523e6e3b3c55"
+    },
+    {
+      "path": "design-demos/media/seals-trust-bg.webp",
+      "sha256": "86f66a140e1c7bb7d9144416be7ecf1a028ab7badbb30e1edafcb3c4c1dde02c"
+    },
+    {
+      "path": "design-demos/media/step-inspection.webp",
+      "sha256": "4d2df1ac7209643b80bb008dc3786b95498a979896ac1ca0000fd1ec385a01bc"
+    },
+    {
+      "path": "design-demos/media/step-mixing.webp",
+      "sha256": "750119c56137877733dd6f2e188a9926a46f22d9c5b57dec94256bcd594a28b1"
+    },
+    {
+      "path": "design-demos/media/step-mold-cae.webp",
+      "sha256": "91d0fe7d11a1a9a72f8083c1ccc763e466f295839243d143f1ff7da2afb205ac"
+    },
+    {
+      "path": "design-demos/media/step-raw-material.webp",
+      "sha256": "245cc80f6d9ed612cba5b47a078a806f9fa2eeca580e2e610ef8a2f0e1cd0806"
+    },
+    {
+      "path": "design-demos/media/step-vulcanization.webp",
+      "sha256": "28725f607afc6fd9945fd561d695dd64ad48a9a8349b608e0be978d2b3999cea"
+    },
+    {
+      "path": "design-demos/media/vid-bushing-demold-poster.webp",
+      "sha256": "56702cedc3bf29c81faf68bb16d63312ffe6e97141cf8381f68680aeadc2b7b7"
+    },
+    {
+      "path": "design-demos/media/vid-bushing-demold.mp4",
+      "sha256": "42ab504f08052933984d715495dabd219a39328179e8f4a6e87d32fcbe5862aa"
+    },
+    {
+      "path": "design-demos/media/vid-calender-sheet-poster.webp",
+      "sha256": "7aa06b6497e801b85488a68a7dc1c894405d4fea804e37a4ea99fedb9ddaa524"
+    },
+    {
+      "path": "design-demos/media/vid-calender-sheet.mp4",
+      "sha256": "da91f4fd791929143131b8f17f32161427f77e5dd5883c2e9f3940197097a067"
+    },
+    {
+      "path": "design-demos/media/vid-cleanroom-feed-poster.webp",
+      "sha256": "9a8c30a2a5f8dcc828006141af34aa0ba058a58a34bece84e22928c136ba6fdc"
+    },
+    {
+      "path": "design-demos/media/vid-cleanroom-feed.mp4",
+      "sha256": "8d7e63cc700117993ff439d52653881a3f86761e858739838e21217a62f9ad65"
+    },
+    {
+      "path": "design-demos/media/vid-extrude-cutoff-poster.webp",
+      "sha256": "eabac40b88c34af063eeb261aa704dd5462395a528b2a29c2d55510df5093b59"
+    },
+    {
+      "path": "design-demos/media/vid-extrude-cutoff.mp4",
+      "sha256": "33cdb63fb1b22193f8d4939f0ff4330e9cc62d92c5b8053899df08878bb7237e"
+    },
+    {
+      "path": "design-demos/media/vid-inject-demold-poster.webp",
+      "sha256": "b8b44d10d3edfa07e99793fcf33d03207b65cd7a3da248edbf071316675cc228"
+    },
+    {
+      "path": "design-demos/media/vid-inject-demold.mp4",
+      "sha256": "6f743c97b0b8ce8676ad14f2563ebd4d27f65ac23434b5d523b11748198f32f6"
+    },
+    {
+      "path": "design-demos/media/vid-lagging-grind-poster.webp",
+      "sha256": "cf622017c663f0fc9424ef99b1e2ac117675723e267ba6782c7295d489470b1d"
+    },
+    {
+      "path": "design-demos/media/vid-lagging-grind.mp4",
+      "sha256": "2fbb2bb23d86f269d82df916894a72c063320ff50f045ac174555f6d3f8110a1"
+    },
+    {
+      "path": "design-demos/media/vid-mill-cooling-poster.webp",
+      "sha256": "5901c65df49dfbd836c8e732cedd18c9ce67b99a90806e0c741a6675927c8b23"
+    },
+    {
+      "path": "design-demos/media/vid-mill-cooling.mp4",
+      "sha256": "c1b822d41645e5e98dabe5fd32ac0de75761e0b916dddd41f41ea249f78ab7e1"
+    },
+    {
+      "path": "design-demos/media/vid-mill-mixing-poster.webp",
+      "sha256": "4727bf00d25d4340744381f88c0f689cd0d1cd35486ca0641cd5ec8fa918fe91"
+    },
+    {
+      "path": "design-demos/media/vid-mill-mixing.mp4",
+      "sha256": "ce926d01d5c47c003e0e02b426478525e389b73fdd959bdb3a4f36dde940697c"
+    },
+    {
+      "path": "design-demos/media/vid-mold-store-poster.webp",
+      "sha256": "f6658c3aa3dce9b485f71c27393438d3538de9888dd3ec894c49cf95891e9bf7"
+    },
+    {
+      "path": "design-demos/media/vid-mold-store.mp4",
+      "sha256": "42ccbb5c01efd5cae689150a6bc8f3afabb45e4a5fcfdfd355db7d233ebf9ebf"
+    },
+    {
+      "path": "design-demos/media/vid-oilseal-demold-poster.webp",
+      "sha256": "d917493831e68a0bb701a429be21991304926d0ddaa4fb55ad3b196106e02564"
+    },
+    {
+      "path": "design-demos/media/vid-oilseal-demold.mp4",
+      "sha256": "562288629f8b7b87e91c92cb785b38c513b6c97b39122e8d93206b734b215b25"
+    },
+    {
+      "path": "design-demos/media/vid-oring-assembly-poster.webp",
+      "sha256": "13e0225678e7f69466ac12f39cbb9ff9233d5ba5babd3b9f37cd70ef056065c6"
+    },
+    {
+      "path": "design-demos/media/vid-oring-assembly.mp4",
+      "sha256": "9068f7658c6995ef32bb054f100aa71cda8a71cd13edc35dcfcc3e5355618594"
+    },
+    {
+      "path": "design-demos/media/vid-oring-finishing-poster.webp",
+      "sha256": "85dd312a7807ef01a8986919d3d03c829756a1b42d00782fe10a947a1fb25055"
+    },
+    {
+      "path": "design-demos/media/vid-oring-finishing.mp4",
+      "sha256": "056cbee26f02f1e360e963725b3259ae27870829344946fe3e97bca79c1a8e49"
+    },
+    {
+      "path": "design-demos/media/vid-oring-molding-poster.webp",
+      "sha256": "d29636ff14d5d4ef498cf88d03415d5ee64dc1f482815d17abf666ce7fc9c807"
+    },
+    {
+      "path": "design-demos/media/vid-oring-molding.mp4",
+      "sha256": "0d2b573f1db70b0540973582df428a4a1486206ad9f45e727f96c5617e2c3da9"
+    },
+    {
+      "path": "design-demos/media/vid-press-molding-poster.webp",
+      "sha256": "ed91fdcac0e484470c94f876c26015b2906a3948c8110886d23f8f47df185a3f"
+    },
+    {
+      "path": "design-demos/media/vid-press-molding.mp4",
+      "sha256": "4c0d4d3a516bfbc51660ec63a85516348b8cc029fb60d9f3e97d210daf37cf7c"
+    },
+    {
+      "path": "design-demos/media/vid-roller-idlers-poster.webp",
+      "sha256": "bcd459167e456a3b238cc558bc400a4a65b772f295e8ae49a4bbf19707f899f8"
+    },
+    {
+      "path": "design-demos/media/vid-roller-idlers.mp4",
+      "sha256": "00760e7682d1b8fd7f4d050e5b80584f932349ea802857f76ab3799e24d70fe8"
+    },
+    {
+      "path": "design-demos/media/vid-roller-lagging-poster.webp",
+      "sha256": "ec663f05443557709ae40d60c2bf25b25325b8c1d766a524b8362c7e15718373"
+    },
+    {
+      "path": "design-demos/media/vid-roller-lagging.mp4",
+      "sha256": "60bcd564e4f5d6762a3feee60abc3c543a1e7657f8e3b67eb8041036ed647ad2"
+    },
+    {
+      "path": "design-demos/media/vid-seal-coiling-poster.webp",
+      "sha256": "2bcd4d542c14b46372fb14238084b5b1c5b76e5a5aa6aacbe2cb513f9832e435"
+    },
+    {
+      "path": "design-demos/media/vid-seal-coiling.mp4",
+      "sha256": "43cf5da76ad6d793b8680550e3e21e77d5982d4024d750c34eb92f782af79dfe"
+    },
+    {
+      "path": "design-demos/media/vid-seal-extrusion-poster.webp",
+      "sha256": "a9aaa762990b831ae713372feb8b7a73cee6c555a4c806135e8fd38e4215578c"
+    },
+    {
+      "path": "design-demos/media/vid-seal-extrusion.mp4",
+      "sha256": "65ca3a332affaacd1acd44cd6f4aea91485b21c10e91c243a7069784bbd88463"
+    },
+    {
+      "path": "design-demos/media/vid-seal-haul-off-poster.webp",
+      "sha256": "57cec5aa25162c6cb494017d1542f0b1297384f4be90fec2b26ccd5c0d10824e"
+    },
+    {
+      "path": "design-demos/media/vid-seal-haul-off.mp4",
+      "sha256": "c71a8c4e517a4cdb7887b55015d4809a0e730fbe724957345ae4ce5168b12aa5"
+    },
+    {
+      "path": "design-demos/media/vid-vulc-steam-poster.webp",
+      "sha256": "f73317a047acc6b2d55cae60fc693008e17390619165aa98198798db8e3c163b"
+    },
+    {
+      "path": "design-demos/media/vid-vulc-steam.mp4",
+      "sha256": "7c909acc4c45b1d510cd179478fbb4df3acfd5724a79b38254c00607755e2ff8"
+    },
+    {
+      "path": "design-demos/media/vulc-press-poster.webp",
+      "sha256": "dc742a96cb6b45570f556b4042d9644d262a0682e663a3d6e7cb9ae4b466b878"
+    },
+    {
+      "path": "design-demos/media/vulc-press.mp4",
+      "sha256": "2f1b1f4401b9f1493389f026477aee695850394008be4d5b9ea8fa5781268f9d"
+    },
+    {
+      "path": "design-demos/products-a-share.html",
+      "sha256": "e6fafad0208d8cd1143c3777fae733a503306120b74051cbd7680f1ed2ae7005"
+    },
+    {
+      "path": "design-demos/products-a.html",
+      "sha256": "e2d8b5598ca179b60b13f279cbb5c20108de171369546b128f762c76e88ce38e"
+    },
+    {
+      "path": "design-demos/products-v4-share.html",
+      "sha256": "75a615fc614d3052e2e90f8dc056d9a05f275d2ec628d0c9276080d4ef1860c2"
+    },
+    {
+      "path": "design-demos/products-v4.html",
+      "sha256": "d62842370049667b2a6b1bd65b8be9bac6399835c749d935de33ad4ed2499266"
+    },
+    {
+      "path": "design-demos/quote-a-share.html",
+      "sha256": "2204f937114171a32692fb66dec616fe0c77129c220826fdf302427dd449dd0c"
+    },
+    {
+      "path": "design-demos/quote-a.html",
+      "sha256": "d013904436fae288f24db6969cf803a9be9f994e464c9563da04e4074d993f6c"
+    },
+    {
+      "path": "design-demos/quote-v4-share.html",
+      "sha256": "b105bf200855e328ff9fa61a71e1f0ae5a1ed1c51bb4b750d033e647c9e3b9d8"
+    },
+    {
+      "path": "design-demos/quote-v4.html",
+      "sha256": "dc6618435821e2911ab67ee76d827e513f5d0591133ccf146ee6380e55e4c89a"
+    },
+    {
+      "path": "design-demos/README.md",
+      "sha256": "01629712211a7c09567c73539d3312e7234090220807fc3927e04c459083d770"
+    },
+    {
+      "path": "design-demos/shared-v4/shell-footer.html",
+      "sha256": "818bbcc262efb2c23774271f85a9252d23cb20498ccf8d7a153ccfbd9ff6ab7b"
+    },
+    {
+      "path": "design-demos/shared-v4/shell.css",
+      "sha256": "f8c698b2b077a1ddb377a56fb6d0ef8164d0dfba400e37d45dff281ef51c9d70"
+    },
+    {
+      "path": "design-demos/shared-v4/shell.js",
+      "sha256": "2975e82abe886c5f1ca4775d1bb45b24080d685cfe6591cc3e9fd8991d0def09"
+    },
+    {
+      "path": "design-demos/shared/shell-footer.html",
+      "sha256": "9bd50a746409a99497170b73186e9850e0f7db1999a971729b02dfdf73ee9430"
+    },
+    {
+      "path": "design-demos/shared/shell.css",
+      "sha256": "7a2da1aa7961013780d8aa82d9389aded532ccfcdc8e390b3da344a4253bf164"
+    },
+    {
+      "path": "design-demos/shared/shell.js",
+      "sha256": "aa09f147700e4648fc3220feec57f62089aef2c24c8aed73bcb582dd1077d4e7"
+    },
+    {
+      "path": "design-demos/solutions-a-share.html",
+      "sha256": "2e14c750565169dbd4037dbd844efc0c5dd7f2943b6b40df65fe9dae6e3f56f9"
+    },
+    {
+      "path": "design-demos/solutions-a.html",
+      "sha256": "15fdef48865723b23caeb93acacdcd17d8a80c2ee8f7c8a076dc9ddb2d7a2994"
+    },
+    {
+      "path": "design-demos/solutions-v4-share.html",
+      "sha256": "d81e3174c9181f3955466bb5491dc71a8aebc4cfbc19359558f376ae32266523"
+    },
+    {
+      "path": "design-demos/solutions-v4.html",
+      "sha256": "6a805337f65a11043b0492bc837a9fd78c45bfe56e01392e6453039fa7334158"
+    },
+    {
+      "path": "design-demos/verify/verify-video-gate-dom.sh",
+      "sha256": "b552e6a8229c6eeb705f05d006f4c7b055ce51e9551a0966f02c200dd6f3b64c"
+    },
+    {
+      "path": "design-demos/verify/verify-video-gate.sh",
+      "sha256": "9dfe0a166f3da3ed56375948b0376c3afb90cff14acbd19bd2ecaee4d9081ea1"
+    },
+    {
+      "path": "design-demos/调整工作流.md",
+      "sha256": "d13c749274324732b2c33b5518e3b70e38ed70079d9ebc2d2a2eb5812a197717"
+    },
+    {
+      "path": "zxrubbertech-website/.nojekyll",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "zxrubbertech-website/AGENTS.md",
+      "sha256": "1e763ed2dabbabfa7abff49088b4fe5142d0612caae5a90afdea6fb26a7b4f8c"
+    },
+    {
+      "path": "zxrubbertech-website/assets/global-bg.webp",
+      "sha256": "5030f74f65e6d1d9889bef48d323a5ddd98e06d7a873d2fd223cb51dcd6dc3fe"
+    },
+    {
+      "path": "zxrubbertech-website/assets/hero-bg.webp",
+      "sha256": "8c87df9e3bb909e88182ac48388049af7c290d8993818289f9029c1d82ee12ef"
+    },
+    {
+      "path": "zxrubbertech-website/CNAME",
+      "sha256": "d04cf08af2aeb83bd9aa08d4ce5743fe0ab178e68e8ef1c105b6c359abf34057"
+    },
+    {
+      "path": "zxrubbertech-website/de/index.html",
+      "sha256": "5bd93cc7305de0b637afbd803dde93fa953d3632702630543100bcbc748d8086"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/ball-joint-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/index.html",
+      "sha256": "0330e16b8bde7a6653592c5beb2b4e5cab7df7e5c355f6eedea2e3f4def66885"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/rubber-wheel/index.html",
+      "sha256": "f380f33e78ae258aa7f1ba6dd9151200c077b85fc9f9fead1ba0f25f3f7f8805"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/shock-absorber-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/suspension-bushing/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/de/products/wire-harness-sheath/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/about-a-share.html",
+      "sha256": "84d8f7e7052223033afab4da904214383c26c459bdcbb2708c285ba7c122dc21"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/about-a.html",
+      "sha256": "4cd7fe186ad61e212526e12a32f8113eb2a7263521005df68b20f685a8fec214"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/about-v4-share.html",
+      "sha256": "b001e568fdc93fe8829a2f58bf77c9052a00c812af6061ece196bab0c84475cc"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/about-v4.html",
+      "sha256": "091bce3e947c959a3a2990a7d1b7d8c5330d0796167a797878e2b60fdff91fee"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/assets-v4-share.html",
+      "sha256": "89750afd3e6944dee76f3306222465a3042d1a88be700c5c0f89ff29339242ff"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/assets-v4.html",
+      "sha256": "b0f1c25bdd0fdaba87b0659c00cefdb5fa3dae248ee276e84870098bc585d9b0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_assets.py",
+      "sha256": "368683d8eee61588551a8118dec344d6da3a4c61db4d2c8f3a9a73b0b10424ee"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_catalog.py",
+      "sha256": "2981259bc69582565555160efaf65816a304d374beb5a7eae08a72a5b9b54af2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_gallery.py",
+      "sha256": "daf327826ce9157d178020019d675d69e9b83155449d3ccf2e7d30bf8bf0b27a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_registry.py",
+      "sha256": "57b1f793394b519af9b101ea1461172eb5c8ef4bdf26b06dc5e55a378b6c657c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_share.py",
+      "sha256": "75a4be72d9e802581f00da8c54c6cca4155a6bd7db745aadde09b6877b053813"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/build_shell.py",
+      "sha256": "727a21aeabf7d23aa8130c9dafe819445cb2fe3ee62093e119a0535dd42db027"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/CHANGELOG.md",
+      "sha256": "dd6afd6fe201765bbc956678d2cf44b62229cb65ef9802c394ed7bf3cc90330a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/check-v4.py",
+      "sha256": "41d0e552189ac2c4e31400bccae628952cf1f167e04f1aa468abd3726dbb193c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/compounds-v4-share.html",
+      "sha256": "6cb646b061fc11a6dd1272ea18e056a88bb8007435f9fc927a3016734232e072"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/compounds-v4.html",
+      "sha256": "a2d9b4f462e672da1bf948d9839f7851c2a0569216127f38cde3fc940cb1dc28"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-cinematic-dark.html",
+      "sha256": "52ce4ac816fca591d0d7dff81d21b9dd6be8c2b8cf31a703e3acbbed1e182f9d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-v2.html",
+      "sha256": "125855f6a8efc8253582625c86ba022f1b109bd670767ec662f464304ffa0971"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-v3-share.html",
+      "sha256": "37ebe225a1f89cf4c452edcc1e1e8114af764087f705a116d05a632feb5f21b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-v3.html",
+      "sha256": "87d23992a748e118f8af756bdb57c74944cd2bae0e465709adc311912b370f2e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-v4-share.html",
+      "sha256": "6ba2b3e4cc8d58fd7cd73bf822fe1d782584ad03898e8f2953a42ff94908378b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-a-v4.html",
+      "sha256": "20cbf09ae3ecf792a31040c3403610e0dc7c2be08a020604a8c9bcc505fc76ae"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-b-precision-tech.html",
+      "sha256": "270220f550bc64b3e03b72d87a96f34f1de23b81d3987ec24e9e4e4f7a5fd619"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/demo-c-hybrid-light.html",
+      "sha256": "41f86ef95ecf911f969affdb4ba2946eb11faa70c4c34c2f629392b8f829bead"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/engineering-a-share.html",
+      "sha256": "d1a36c3e201ff936227ad4907d72098703b8f688c275487b173afb8b0fc40caa"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/engineering-a.html",
+      "sha256": "89cecdfef4a220445f324a8564c532e683c88e19803c15e7829928bedf9115a6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/engineering-v4-share.html",
+      "sha256": "f30a12a9e4ad159de1f6c1467ac94002f17b03ed6280172565290ff7f14fe14c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/engineering-v4.html",
+      "sha256": "07d073909f40ba966f95052f8b0c0618fc00ff909c4d0486fa5cef86c128373e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/faq-a-share.html",
+      "sha256": "2924026a5bb77863d426853ae0f930aff1964425d79e2b0845a2a243871ec328"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/faq-a.html",
+      "sha256": "317f94a545444b86358be1641689d51ecdcecf3f357aba368e71aa41160971b4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/faq-v4-share.html",
+      "sha256": "437c99b5775c1e567621bdffc66d0310ccc82ee668f6517880ead6f9b401678d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/faq-v4.html",
+      "sha256": "3d2017cd24570135f27c7a74340b9f289decfeedd4b3a1723d2e44ab4eb1bc10"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/industries-a-share.html",
+      "sha256": "0b641d80aa8a007972bb53b4e402401001bceed817c501653ec458119cb03ade"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/industries-a.html",
+      "sha256": "3ad47299d307a55c197c55f9adc6575f96cdcac87aa54136bb484bfa193200dc"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/industries-v4-share.html",
+      "sha256": "03fe3df3b44c8fe7be1ccbc1a019dd65a5de7644d25a517771225bdba42844c7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/industries-v4.html",
+      "sha256": "e94ab0395cb64bf246475247616ad19b2ba412f70058e1c794005f00e2324d11"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/manufacturing-a-share.html",
+      "sha256": "c50a5997d460ef9d2aad9383182f840eaa5a4c5ce9288ff58396cd6de83eaed0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/manufacturing-a.html",
+      "sha256": "22274705627e7afd18c14dbde66a4d5e94a0670f0e62b1c5b0769d66d7e3d0f5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/manufacturing-v4-share.html",
+      "sha256": "135ec2090222cdeb764e2edfc72f8357fe9511ab14a66f41caf2450ee63542e2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/manufacturing-v4.html",
+      "sha256": "a06a6ba02f5e9c45ed3fa7caeac8c3c232b21da5bf57b60abcdf1cad9f4bfeaa"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/auto-suspension.webp",
+      "sha256": "52d230cd2db570c29587b3462677ca4a0e41e1e59d5ad4fe7d6d2ccee33ce9a9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/cv-boot-driveline.webp",
+      "sha256": "86a896b2f1dcc6f96831cc2bd7848844a1dafbb488f96668c0bff959c9ac30da"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-appliance-cable-grommets.webp",
+      "sha256": "32800360eea52cfb626aa95de789cbd7884a09379f53701295090253e35de1a9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-appliance-dishwasher-gasket.webp",
+      "sha256": "ddda2444b1d3658951099fd4f8f83cb0e111f02950513b5efb87b3d1b32b28a0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-appliance-door-profile.webp",
+      "sha256": "3f7678fcc50bbffe07b05d0ef81913210cd7943545edfb289bc5aef58b1d6883"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-appliance-hvac-isolator.webp",
+      "sha256": "7d58374e8c6875cd1828f305fca501702bd3677207c6b415a79a1aa240b83f74"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-appliance-refrigerator-gasket.webp",
+      "sha256": "1c5e55e61299d50c37d0c9efa4fc7d500dea68a277ee63f1ea125591668fc0d1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-bonded-bushing-set.webp",
+      "sha256": "568c65974b3709ec7bb2e6bd8cf253128def9ebff81dadb52cee0d5a093bf293"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-boot-cup.webp",
+      "sha256": "c0e705db269cb7df40e3518835c1492de416e1cd96ecca3cda114505e133830e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-boot-stepped.webp",
+      "sha256": "89b194c7f73646228b8559ed9b320bda714988e1d2b2341091b0c8481785a690"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-bushing-control-arm.webp",
+      "sha256": "7835651f20962f474f10c7ab15e2ceec41e59acab2fdc63d4f1788e5f0f6507f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-bushing-stab-d.webp",
+      "sha256": "0c1d5967c552cb2459103baa8dcdd91f9482f16c75c618348233f78002f64f94"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-bracket.webp",
+      "sha256": "a4b9777ef00fe12b664f0e7cfdb6da13475368879d8403762ee32a5e6a276e6e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-dark.webp",
+      "sha256": "4cbd3d7cff97eba17198a68e320525807b89ef0a12407501a0077fe2f03f329d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-flange.webp",
+      "sha256": "e1d793a0981b1c7f79281b8d6fed9ce9e533b8caa600edd965baa641da732842"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-flat.webp",
+      "sha256": "cc106b41ee9d86c7580188488c2ceda3dcf28fcc214b0087cbe7b20c1dab7d65"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-held.webp",
+      "sha256": "01232825953df0c525966a4ec35dc0b390293f57bef2bf17730040215cade81b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-rolling.webp",
+      "sha256": "add7a33e542b2861c110542509969b46f19c8a8533df28f05a70c18b7e212cd5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-diaphragm-white.webp",
+      "sha256": "e3969b1d180ee5787d38d9de1d3c14aa710a732dd8f83375d5eb74641c31b7fd"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-foam-seal-coil.webp",
+      "sha256": "2da1577660ecc2e46e71a1494f56983ac3bb772046aee506b79a511d5e7ce290"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-foam-seal-section.webp",
+      "sha256": "508b57b33116901923baa317ceca92f76c7b0eb09bd81aa7204514a11384a72b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-foam-strips-grey.webp",
+      "sha256": "4fcae8f66aa771d5d68accab5192186a20c0cae48ae7265720e57782c00d076d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-grommet-bellows.webp",
+      "sha256": "13963bd9f50150a63beec6f4e6b54ad7a3fdaf05e7abe36cb33b5985f5ae5e59"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-grommet-conduit.webp",
+      "sha256": "bf6270e6e7d892ce00f4da0c8205ba0f63e885539d20f864b12b6548ba0f9011"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-grommet-oval-plugs.webp",
+      "sha256": "055c439e55aa46ab4b8da67a4d1b5f1b1cf1787ede19653e5efd30462396cf79"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-grommet-washers.webp",
+      "sha256": "6fd39f0d9d686c43ffc2009c2a88c9a69ccb2dc22fb0e54edd786df24b248af4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-line-extrusion-oven.webp",
+      "sha256": "bd0adf3f7c9bbf66818b291ef4958e74f78d448fc3f4110e6f2a6a380bd880d4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-line-microwave-cure.webp",
+      "sha256": "3215fb411394a67ae5096b83d69deeb932461c873af799888a67e8c7b60cab8b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-lsr-assorted.webp",
+      "sha256": "d2eca4163adce3ccb1aad5afb4646d8179896806167f3cabdde0d77d407e3704"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-lsr-bw-parts.webp",
+      "sha256": "c3ca231e8e3861f7acd14e16c01481e507f522db823e78bbedda78ced0c81969"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-lsr-color-parts.webp",
+      "sha256": "ca6cd71e8748c0e3e080a4b0d7b504edc64560b33d0d22cc9d39935f98fc87ed"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-mold-multicavity.webp",
+      "sha256": "b93a0278cd2ae532356f066e0c5911e47277ebe6d9467695974d3bc1e36e2865"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-mold-plate.webp",
+      "sha256": "aa095bb1c4d6bdc3505efb6c251e7ce30a5300bf17266aa72e9e2f3faab76077"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-molded-assorted.webp",
+      "sha256": "bf99392bb00840f1a5d4c7c8f4cca4f8b898c89b45d957184dd824654de82e2c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-molded-elbow-boot.webp",
+      "sha256": "bb5316a22b1290264c718862abea5122bef3d9ea2c2ee41cf26b9d1372dbbc8c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-molded-plug-cover.webp",
+      "sha256": "cd2196f4f6b8f63f0501e01baa00a9a37ec3e98d92717c5853b0dae972aceaba"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-molded-tray.webp",
+      "sha256": "078aca4b11ee80f86b0c2076cacc2649a61276e98166fc9fc757c2226f313d86"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-orings-micro.webp",
+      "sha256": "9704b747fc17039dfc96e3073f84664abd9a97ba99e85435e0480b458731c690"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-orings-white-a.webp",
+      "sha256": "8542a8c4be14d68384617b52c495a3acbb67caa6d85d4a5c97716392508ef3f4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-orings-white-b.webp",
+      "sha256": "139def04966a951b496e4f7f1476e50be61679226b97834833e7d3666471da66"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-pipe-coupling-gasket.webp",
+      "sha256": "237ed9dfbf6aff7a900c297a17e2d227b9a945b4fc74baf96dcafcf7ce688ed5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-roller-section.webp",
+      "sha256": "38f09c4e772d73d4ebe685f304ba92b960bf02fd28e1b448f7e96490ba12e446"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-seal-profile-fan.webp",
+      "sha256": "ac481dbca247e7d73caaf16bc92683cccc72c0908bb3667e3d54b0ca74d87134"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-seal-sponge-profiles.webp",
+      "sha256": "64824d36ce7330dc3c495d90862f837555aacf4064595d873239e599f48f8327"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-seal-steel-carrier.webp",
+      "sha256": "d994a41dab36445177fdb047bed34a9f8a11103a4c2e13b61556a4f1bf39cf0a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-silicone-caps-a.webp",
+      "sha256": "28df714021fe61a7eb404096b817b57278715cd92cfe94cb21fc1ca185941fb1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-silicone-caps-b.webp",
+      "sha256": "f0d7af1b869280df8c2e542e38622c382556640c3dfd4d72b4682519827b7ee9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-silicone-flange-gasket.webp",
+      "sha256": "3dc73eb085fa5e6c762c6fdef0a30210983d1e364839642a0dd7005032679226"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-silicone-keypads.webp",
+      "sha256": "48d30dea17f07ccb9b8b2a1c14f7b720eccac928e3097d153181163d68642aae"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-square-rings.webp",
+      "sha256": "239c4cfb5cf813083a8435c2e0273d8756366408e41dcdc81dfa0f0b5b78d245"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-washers-bonded.webp",
+      "sha256": "26c4860bc8d0936ec3c369d4325ec55500f394ad7edc52701cc285cf0e8e4adf"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-washers-flat-stack.webp",
+      "sha256": "40c1925926616509cd358e38947435a24fb6ad6b43ddadecd80d839ae43841a2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-washers-wave-rings.webp",
+      "sha256": "7ed97677fe0f4e182e634251f1fc3a7f2eeae3369805fbd81c99e43eef0c5a24"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-washers-wave-set.webp",
+      "sha256": "8c0970e8f304d94026c54b6e1f683efa56c2a0fa7ee9a1dcb0fccf3122d5117d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-washers-wave-stack.webp",
+      "sha256": "6700ede1ba9c2fcdd6a944233fdd4ee4096f7024dfa0663411103439d64787ce"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/gallery/ph-wm-line.webp",
+      "sha256": "c78af058dfcfc89c13b8e09fe8af926cc0840abad824c3129729c184bcd1a0f6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/hero-rubber-mixing-poster.webp",
+      "sha256": "0e0835e453c8ee6ca943c46f441676c37dd9526df67e34c9a10b70586b747486"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/hero-rubber-mixing.mp4",
+      "sha256": "22164b8c814e677cb020d6fb1685657fad2a05c0d24280cff28739f742cc39c5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-boots-bellows.webp",
+      "sha256": "1b1074907484c3912ba4352ffde3286de4c417729984807e17d3725b9f6d8422"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-cable-protection.webp",
+      "sha256": "3a374da310ff3349cf29daa270d4d6efd02c9a6b6a63e5c216c0551482e585c4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-rollers-custom.webp",
+      "sha256": "efc3a94377d837336eb5b42a6054113db43706fa31e9cfe36d8073bf489e1c26"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-rubber-compounds.webp",
+      "sha256": "0ef730318d18f3963c2c00eb1b4377304aa224d5f1764b9b7fe78734cbf6dece"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-seals-extrusions.webp",
+      "sha256": "4e99af15baf18d1d60044e320f33512a45f56e29a9cd6cf7e18ae4c6111833c4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/home-families/home-vibration-control.webp",
+      "sha256": "24bac67044fba3caf1e55e187b81d942a488fe9629c39a17fa72487320bf16f8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/02-compound-mixing.webp",
+      "sha256": "be193c9779b205f67b53a49241a35e6c710fa5325a6c4445370206629e3182a4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/a03-compound-testing.webp",
+      "sha256": "62476b4193b6790e55587d04ac521f33ff535cf484ee2a26f26a4380a6ee1100"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/a04-compound-packing.webp",
+      "sha256": "9cebde432211b60d16f25588bf45abb8564156c4186794429c20bec8e76ecd6b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/b03-forming-cure.webp",
+      "sha256": "6c4db1c52369d4c12ec98fc92ea0f89b4036a666c5d69fa26b7cb17d0802f025"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/b04-finishing-inspection.webp",
+      "sha256": "8784e6e6a114122ca5443a45dcdef411d18ac6bd4f5079933c934444d9bac65d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/manufacturing-routes/b05-components-packing.webp",
+      "sha256": "a580b86df4bf253ac3afe93246b997eeeb12fed224acfda0697711b90a38af34"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/map/ningguo-osm.webp",
+      "sha256": "7dcb424fd639b47b134b1feb11b7c9fe0628e2ee0101b383fc3d6a2d59d62f8f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/mfg-rubber-sheet-poster.webp",
+      "sha256": "7c585ed5c422f85a85c7bba25d5fb4db40331de1731e6a509825bb922cf2f5ca"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/mfg-rubber-sheet.mp4",
+      "sha256": "45e326f19cb05c3c8002a326cbe3b5d196158adbaae610f0a9cfe9fd874935b2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/mix-banbury-poster.webp",
+      "sha256": "abf24383550dc5afa19db35e06c2df6672acede26d32b29870c0e8a129d0efb6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/mix-banbury.mp4",
+      "sha256": "1e4f268f67617c50384c5fa2481d91647da5b73569472381c81382f883b50a9f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/orings-dark.webp",
+      "sha256": "76d6871d3ecd8cdd92e64fd6e2044b6d0cd0bbc7ffe6ac337c51835f8d8c102d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/ph-oilseal-dark.webp",
+      "sha256": "a073dfde04d1abd688cb01df6bd175b48e79066571a12d1acbebe55d97a39625"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/ph-oilseal-tc.webp",
+      "sha256": "e3d66ed82becf6959bea3494c96cc14fb2dbbb864f1d070b9548cea364f158c2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/ph-orings-mixed.webp",
+      "sha256": "183750b36eea958c15df5d0ab7785903775a7d7707ce0cacd2939b9334c43eb3"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/ph-wm-gasket.webp",
+      "sha256": "21a59ce3fa08c79ec16ba68e255cebcc16981f73a5146651b5870b3da1835a7f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/port-night.webp",
+      "sha256": "c6a2cf8a18f29543e23c6be416080bcd47cdece584d1c10e66e8fbb89c428dee"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/qc-micrometer.webp",
+      "sha256": "e32cd1654c436e20a43ee79a6e907b419718223fa6bbc2026e89a7fd22291030"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-001.webp",
+      "sha256": "db61930a0f5ddf6e9bd40a64f5672c1d7af7a7aec552fe47cb8dd7cc088ea64a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-002.webp",
+      "sha256": "8679eb9b04cd07007e36b20c700faffaeab6d97cbccad7a5be4986f0f760790b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-003.webp",
+      "sha256": "41f290418ad932d306d69b1c7f5e2766f774dad7b5c9c7aed85d2fbf6b31c35d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-004.webp",
+      "sha256": "1d4c743ff7e28432ea62e56f18f4aea22c3695d5b730d13bb9ee9c60399e2abc"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-005.webp",
+      "sha256": "27efb92c546c83af76cd305859e17067408fd1551c422455d7f97f1eab5301c7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-006.webp",
+      "sha256": "e53c55f6f15cfd6f1fa5a2d80523ac80fa38d6f22cf1b4d7e6e405b3a0a1bd9b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-007.webp",
+      "sha256": "72db854ce2dbcff3c0d06497b84b5a3933929b892272d6c9a1b433fb756e845e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-008.webp",
+      "sha256": "2227a8c0b81561d196501b441f2c1e043c9556f24b61753509c32513b2b79c9a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-009.webp",
+      "sha256": "0926ba55144ae58e23942eafeec36a6df224cfa048c7c74e08153f30ec457623"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-010.webp",
+      "sha256": "20f7e5b40fca49c10d76c6e0c0c30025ce1f243b65e9070563f965fa0a51ef84"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-011.webp",
+      "sha256": "4eac381653c71753999bed6b7475792971b59784d4a6b5bf669fbbfa0780c8a9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-012.webp",
+      "sha256": "e2bc2ada807251bc1aa41646cbe33426f9797b110746e98f439a152260dc04d4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-013.webp",
+      "sha256": "9f569b729f6a4fc17c4121a73e5cd38817886ba68a0e82e418a86968697678a6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-014.webp",
+      "sha256": "cd13b70392ffe2893c2f301525fa8c6c00785260b265c736c9ddd9d9776af535"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-015.webp",
+      "sha256": "66794041deed9475cadea049978ffb0cebae408b4df8b83d8c260bf485519467"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-016.webp",
+      "sha256": "a13602537e3a6ad177d3203235f40153ba3ef6269fdc94c6b738bceae1cb2db8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-017.webp",
+      "sha256": "14c17562e19344835dad38c9e497591b621fa5763d9070f98255110e84bf48b8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-018.webp",
+      "sha256": "544dd86a7756df544ccadaedb9473941efe5110529369ee43560153798547cf7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-019.webp",
+      "sha256": "02eff3b9962d4376480da0cc2e124972b17a7cfe81f5662ce1feb598c7f61a67"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-020.webp",
+      "sha256": "39ec2f7214e0a43cdb5a482d2276275503d106041e2ab94b04ea8b5e507e2899"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-021.webp",
+      "sha256": "fd59852cddfb602a6f32555802ad5b73fb7e9ef32df0fafc45d986019af0d9b4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-022.webp",
+      "sha256": "3b80349d78783e6c1261c348bd6fa82517d5dcd71a2e213cc77d633bb0e6ef39"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-023.webp",
+      "sha256": "88459d239bea9d99e52e18fa1b26fd7c682952a648e12a405e759d94875dd40e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-024.webp",
+      "sha256": "c30243a7865527b224a46ed7cf18e71e9874ab218c456c42ba7048bab6a9cdf9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-025.webp",
+      "sha256": "00d201b8df2115f755f9c110e6fcd44ca420ca05cbe89c8bbd9683a37d5b87b5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-026.webp",
+      "sha256": "5b2874ea13b78fff32daf6b3197a801af17a51046f34184ef1af5be42a9fa97a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-027.webp",
+      "sha256": "a46c10cd21939caa7c0908efa489e82eb29c5bf48e95f164d5c49c5aef3ea0a0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-028.webp",
+      "sha256": "b63172139528c27ca9b27386dcadbff98324c723c242f2b4755305997e6908e0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-029.webp",
+      "sha256": "7db712ea6418d273704c4b53aa64a8a0b0e4d095784fb0e9e0953117c758aef0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-030.webp",
+      "sha256": "d95b126caa47dec306dc54903217a8627c12df2be1806cec0a9f1bb4fbbb9546"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-031.webp",
+      "sha256": "33d7749aa98aad8aba10518a5f373dff1759ecefb2a068cb04f39a3f2d82c5c0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-032.webp",
+      "sha256": "42ab9dac5bb7546824cbcc239b14ee49aebc0a5a6091f45ddc0ec30e0159b0b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-033.webp",
+      "sha256": "3ef061eaf6168bb87ac1eb8679272217b6314cd5c287a903771e0a61f51c646d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-034.webp",
+      "sha256": "93a009b15a17b8516e4a2b85e4f02e38b4e049d898a1007459705e85bbdfd3b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-035.webp",
+      "sha256": "d3cde1f7f1cc4217812c3246c4791d6d4c97084c54dbf76bf72426ced64da845"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-036.webp",
+      "sha256": "7cc3e4078602384ac6a0ff8b7450be3dddfef33a989faa52dc670e637d6c3c61"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-037.webp",
+      "sha256": "d3a16e3084445cc5c22abd60d6ced1633db60d58763843c525c9985df8c9a084"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-038.webp",
+      "sha256": "db89013fec219d2bbbf8cb76fa4b2cedfe566468b7880727895e1f91a3cf37f9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-039.webp",
+      "sha256": "c8789d93910e2f27ec0784dd57c89145f35acfa466c4c61f14ee5d5ebb4e4c9f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-040.webp",
+      "sha256": "2e3eb98c210da23ce8441f920ef894d768788e1aa2bc21967f7148df30b28fc5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-041.webp",
+      "sha256": "907ff69caf974915b491eb28b820bee5859166c926ea959b9252b69bd0a0c9f2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-042.webp",
+      "sha256": "cef92de3f467406ffebd88c5ed507dc2756f722525c0d2b244be8547caf98785"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-043.webp",
+      "sha256": "5b2874ea13b78fff32daf6b3197a801af17a51046f34184ef1af5be42a9fa97a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-044.webp",
+      "sha256": "33d7749aa98aad8aba10518a5f373dff1759ecefb2a068cb04f39a3f2d82c5c0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-045.webp",
+      "sha256": "00d201b8df2115f755f9c110e6fcd44ca420ca05cbe89c8bbd9683a37d5b87b5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-046.webp",
+      "sha256": "d3a16e3084445cc5c22abd60d6ced1633db60d58763843c525c9985df8c9a084"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-047.webp",
+      "sha256": "7cc3e4078602384ac6a0ff8b7450be3dddfef33a989faa52dc670e637d6c3c61"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-048.webp",
+      "sha256": "42ab9dac5bb7546824cbcc239b14ee49aebc0a5a6091f45ddc0ec30e0159b0b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-049.webp",
+      "sha256": "b63172139528c27ca9b27386dcadbff98324c723c242f2b4755305997e6908e0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-050.webp",
+      "sha256": "88459d239bea9d99e52e18fa1b26fd7c682952a648e12a405e759d94875dd40e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-051.webp",
+      "sha256": "d3cde1f7f1cc4217812c3246c4791d6d4c97084c54dbf76bf72426ced64da845"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-052.webp",
+      "sha256": "2e3eb98c210da23ce8441f920ef894d768788e1aa2bc21967f7148df30b28fc5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-053.webp",
+      "sha256": "d95b126caa47dec306dc54903217a8627c12df2be1806cec0a9f1bb4fbbb9546"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-054.webp",
+      "sha256": "9bfe3261214f945ab5b3ab350cd8a10c7474cb166de5fc1288cfcc6a685a7f6a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-055.webp",
+      "sha256": "87227453de57f4b00e849eb33af029a15d5cf5e366e8c8d082604b3ea9ed9779"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-056.webp",
+      "sha256": "3ef061eaf6168bb87ac1eb8679272217b6314cd5c287a903771e0a61f51c646d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-057.webp",
+      "sha256": "8722724242c20f87ab9371b8e5d21babefa4327ad2173e9a596f47d573ecbfed"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-058.webp",
+      "sha256": "6f4337f173bf4eebe42cb457f56bf93179146051ed56b67935a34c7d3d07a96a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-059.webp",
+      "sha256": "a46c10cd21939caa7c0908efa489e82eb29c5bf48e95f164d5c49c5aef3ea0a0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-060.webp",
+      "sha256": "93a009b15a17b8516e4a2b85e4f02e38b4e049d898a1007459705e85bbdfd3b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-061.webp",
+      "sha256": "2fd9aba0a0b6bee6f171b8f6577f1080e69f36ef7bc5b6769f2c047d102d83f2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-062.webp",
+      "sha256": "2732dfd161cdbda283be492114d831c927fe7f39ff9ffe54d2a3b645f8dcc468"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-063.webp",
+      "sha256": "02674fef63fceb97d2b0f83e16f72f98921ceec3a02cef4e84f191900213904b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-064.webp",
+      "sha256": "23f03955e3dd254e6571db8ee76002d7230b5cf72ce1c083a160099557ff2959"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-065.webp",
+      "sha256": "639d4b42670b01aea53341a483e7725289e8b6b381cad1335aa1d439a2f7024c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-066.webp",
+      "sha256": "db89013fec219d2bbbf8cb76fa4b2cedfe566468b7880727895e1f91a3cf37f9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-067.webp",
+      "sha256": "907ff69caf974915b491eb28b820bee5859166c926ea959b9252b69bd0a0c9f2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-068.webp",
+      "sha256": "cef92de3f467406ffebd88c5ed507dc2756f722525c0d2b244be8547caf98785"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-069.webp",
+      "sha256": "d0bb53c6abaa5af431ff5e1071ba9b4fc21c0acaf431e3e3fc28a2a0866404a5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-070.webp",
+      "sha256": "7db712ea6418d273704c4b53aa64a8a0b0e4d095784fb0e9e0953117c758aef0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-071.webp",
+      "sha256": "c30243a7865527b224a46ed7cf18e71e9874ab218c456c42ba7048bab6a9cdf9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-072.webp",
+      "sha256": "c8789d93910e2f27ec0784dd57c89145f35acfa466c4c61f14ee5d5ebb4e4c9f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-073.webp",
+      "sha256": "247e569dc97b1b1c0d89e0af88a7ac8013ad841040d7406e54c6990e3298940a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-074.webp",
+      "sha256": "0a11dc2f85c5af11c8c6ac5b080083fb9e09492739972a041bda68db352037d5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-075.webp",
+      "sha256": "c5e9801ca46806b8623fd9d384807fed371b5838d166e7aa02c92a8ea7bb6cc4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-076.webp",
+      "sha256": "21c87a74b5f801573f1dafd6bf30f3598a1153f7e70a55e3401e393b0d5f63ad"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-077.webp",
+      "sha256": "1ef9ef4358bb8b914163994ce59232f898cdac58d1fd1a990cdac92fe6e748e9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-078.webp",
+      "sha256": "6f21c3134b4dcbe4ccda160b3d04195cb155af12c6302873431248a58207b7ed"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/A-080.webp",
+      "sha256": "f4c3569cf6f6d0ffe294e907a5446daf56e9e8481e96821eae1773a702090b4c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-001.webp",
+      "sha256": "a4a33bd6f68c37506d45cbe7f58d3e24608b84ff1d9c2530c8562ab3aae65f9c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-002.webp",
+      "sha256": "f4fb3db043a31cb5caf7784b30058277cc5d7d56300a429e2be1a80690b402a7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-003.webp",
+      "sha256": "f746f8dc17e3617fb32e2ba315b6a4b30237b6a340b97506c80e14f155251610"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-004.webp",
+      "sha256": "6c3300444efda932f23670dcb107c25508c3870b06a736a4da0b97c7d6f5b6f6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-005.webp",
+      "sha256": "548309f781d2bedbeb6c3b4ab929bae5e8a794671d4dfb281cd151b36c30fa0c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-006.webp",
+      "sha256": "3343056b37c3d10409e9cf242e7a02f0884166266de31dc0e7a6e190bef40a15"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-007.webp",
+      "sha256": "dd84eaf111b86e116aeb210e287d75108521e1efee74d58d732b53a7e8c981b8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-008.webp",
+      "sha256": "694f6e1708a97fa38c3705dd7abf83aac29442c07db230d7a785c5b1126d831d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-009.webp",
+      "sha256": "970755a39051b680fe7aef553d0ba1e9a78a4ca35d0ea091a6f8432ce3aeb96e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-010.webp",
+      "sha256": "933feb38d10901ae9f47e74e0a1cd8d24671c5bd491b0833677a0f752a96b67b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-011.webp",
+      "sha256": "ed44f063f4dbeab8bd4a8573199365f82863274bb5eb8599455cc0b7484a68b1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-012.webp",
+      "sha256": "e908a1c1cf6876b62ec7a870ca33d6362f28ba77b9712152ac1099ba08ffb2ec"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-013.webp",
+      "sha256": "1cb67dddfd4c4976057dac27c3054bed07995ef7f71e49cae575782d7c66d6c4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-014.webp",
+      "sha256": "d02fb29d23bd69d838cf0f17695701eb7173a3c3525a93c043a899313d271bd1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-015.webp",
+      "sha256": "26a355af0815b39a8f4a81ddcec60751ba16aa968ad59a7c47f99186cc139f56"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-016.webp",
+      "sha256": "5b910a7ac977aa41671fbb34889036f4bc06994ef18b122aaa301c6e25d5cb3d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-017.webp",
+      "sha256": "5311fe4899d154a7b76a714e2e7d56d888940103592252680272cd543d65c7d3"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-018.webp",
+      "sha256": "28640b8279383e23113f88763a44c001dc7aab1924d245d3e26a9454412020b5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-019.webp",
+      "sha256": "47079eaefa6fd2720e1d64be0477bef54e552580fd3d274ec0fd8ac6e032d267"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/L-020.webp",
+      "sha256": "303b17989886f4b9fcb7df8642b1b2efd0784e3ea628d09ef1badb13427de136"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-001.webp",
+      "sha256": "de93e836c808c1b35fc80ee9e8c3a2889671675e4b94032bc3590b2158a39628"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-002.webp",
+      "sha256": "6e8a4747c0e9a1c94fa92396a0cb60bdcb97cc1319a1c9fa4ac5b90841898a10"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-003.webp",
+      "sha256": "bb71588d139c93aa95959cc21ac979c4df4d7d364017ab6081c88a23be3223de"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-004.webp",
+      "sha256": "8473f60aa46a23e711d5249ccc84306ca01cc5a3dd70d487eb7528e3ab4604d2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-005.webp",
+      "sha256": "caf9f4e433073ee2a86f251076f9afeb4c6631a3edea8f81ae05a15377e4d529"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-006.webp",
+      "sha256": "a0d553cedbc23943f75a105943b34052f7de102c9d159f231eb43f965e45adb9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-007.webp",
+      "sha256": "57477dd06e6b4798d7f1ffe9b8d858da7e4134ecd85be17ec055c929160450f2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-008.webp",
+      "sha256": "e714026eedeff59a47e0dc49abd4ebaf03e63f53e4d7b0da2f0ccbb6bf815843"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-009.webp",
+      "sha256": "088ee2644d8aea7990cac20a9c5cb99762bd2f4dd1005c45e94eff0c8647cb50"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-010.webp",
+      "sha256": "f5db480712d3b2dbce26190606fcd7d52df189fba28c54bed0ceca21f2376c0b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-011.webp",
+      "sha256": "d044b9ff090bf5a88404c79f0c048d62e88477c1700504c68d61189dfc33291f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-012.webp",
+      "sha256": "267718c1e1ac96ed29f2dc322a1e508222a91e72d294958e725a1f76098c4397"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-013.webp",
+      "sha256": "4243e6aa82c313ee85bfc1f3003eb3dfa9c9f293161439b6e17ab3488e759bd2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-014.webp",
+      "sha256": "af5b44b7bf6b96137b70c1965951d73dec34097c81a5b1a5abea0450a9d49461"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-015.webp",
+      "sha256": "dac94f5d563a262f609ed296c2c0aa69d235243150d0bba822643feb8dc532a3"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-016.webp",
+      "sha256": "a6f68d7165dde7df1743d5c67007735fcce379b386193edaffc3af4d79d937b1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-017.webp",
+      "sha256": "13b04c4f57071dccf175089bca0b387aa52333bf5f7805b8c2d1a386788dca63"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-018.webp",
+      "sha256": "bd21efef1d346f7cef5348ad9691530b7dcbd2201264be47b377b80a3ff87f31"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-019.webp",
+      "sha256": "5d6166de50761d35850519c16a6f90d15adad1358f6d0a9df64c9544cc65f923"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-020.webp",
+      "sha256": "c570b64ffb4d342e961bd4a72ea4276ae9abb6c42bc6cbe235941c09ca975dba"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-021.webp",
+      "sha256": "b85971321e26c5c7bfd06f491e02776400f372c8afcff5b611f40e8ffc1183e5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-022.webp",
+      "sha256": "9df1fe66c11bdb52b38a27c4ef88bc43bd951fec02f5d1ddd04f374bc1d8cc9c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-023.webp",
+      "sha256": "a80f2cd8ab270dba787d08c96a955a049b3a10a42e9fda79698753cd5994633c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-024.webp",
+      "sha256": "0e2fc031c8afa0159090bb937e216d6292ca6fb90573f3c40e7f1e01177f4ffb"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-025.webp",
+      "sha256": "235889601186ca77a56bc9828d66f8429790134146ba3202b97763bcfc460724"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-026.webp",
+      "sha256": "35c7c6856619eca2080517effc899000535fa4eb4963dca17da71d8dc975d7e9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-027.webp",
+      "sha256": "e6df0c9e71dde6df6084e45f8552124237f6d609d585968ac1a5ec994ac8870d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-028.webp",
+      "sha256": "f540bcffad622f33598108b6579dd58349f33b91ea47d79a784d354ed5426417"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-029.webp",
+      "sha256": "138f413fcff74e34cac5f4faef3b9b562327b7fb89ca417f342d46e1d12f0396"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-030.webp",
+      "sha256": "e6336a7f135e09de1f0f63fc1e442fa0d3a7ace188befd2e7467be5298e24b45"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-031.webp",
+      "sha256": "b41b279490165f31f0fd865683e8953496c6194f31df19abf7d364dd80fbeabf"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-032.webp",
+      "sha256": "9b72344e9240b25d35746d5bc6e3d5054d0a274159e90865fa70315d262c0c3a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-033.webp",
+      "sha256": "c4248b0d050536e49b4611841a48308142682514e3f195a97131021593ceb997"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-034.webp",
+      "sha256": "b9b8a2f50de14160b82ed7ead3cafb1cc900cb3c3b30e897358bdc46c3bb1c1a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-035.webp",
+      "sha256": "5a47834bc8ed29b1d6e33618e8b71849ba124357a6976d340cd3f67c8874e346"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-036.webp",
+      "sha256": "26485ef2eb0a262083eba11a06b560449a582d730da255ae6437eb2481f99f5d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-037.webp",
+      "sha256": "8517addad4bfd0e2a6d732a2a103ddedb1c64a02d880e0d63a6de7870119a849"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-038.webp",
+      "sha256": "880def0a84a53bc2124eebe0b3c87a447cca18486706b19fdad1dbc536b9d965"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-039.webp",
+      "sha256": "d92f7662cd448c3faf7fe481526a406444bf9832994590e741528062be33870d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-040.webp",
+      "sha256": "52dd5359c9492b78e2d0286f33105efcc6de330343d8149d00b092feebbee4ab"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-041.webp",
+      "sha256": "82fb8d60cfd9052f7292e6a0017cdf7a8593236e5cdd2f4931bd9e6e12dfe09e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-042.webp",
+      "sha256": "7cefd632721bf26e5a9421a7a962f2b53e4ae9e724a3d1453e6fed427f1ea134"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-043.webp",
+      "sha256": "7c12a5f3b1f6ba01ff480fe764cc95989b59bb70278f650fc0bfb9c1ae7b800a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-044.webp",
+      "sha256": "a7329e085d5630a0730313bd61dee471e812c547dc0b437278dd4210d5f7452e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-045.webp",
+      "sha256": "f2ea40d60ab4d5950a40889d07abed9ec1a134dd8306767af4410b1073f743d5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-046.webp",
+      "sha256": "b50ae4973ceb6c9072d4591612bc8dfe5e80116561fca9c045be4f625bbed400"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-047.webp",
+      "sha256": "ecfa419c5631088d1e6b59871318ab3f6948def3d032db79e6023cd717c06653"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-048.webp",
+      "sha256": "a084eb0b96acdccb45d62d4feb0ccba36ebe1791e94e5510d77366ef8009b328"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-049.webp",
+      "sha256": "4a786e1297ed1b3a4063ab63a53df9abe782ee523edf85c01fd8320b3478a629"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-050.webp",
+      "sha256": "42f98901124fb86c2b094c338f55322895af6feb8750a98f3f323c75011a8a43"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-051.webp",
+      "sha256": "5ecf1ccd2fae9b50029bc783ae67b5dd54c6eef46a19bc437893f994efc5b203"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-052.webp",
+      "sha256": "c8bdeb01a334b75975b618eea5d978742ff8a220a66de5c779743e6114dcfacc"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-053.webp",
+      "sha256": "251f19bf00991829eb0a3610dcb72582e8befb8546397d5e7ea60ae2470c0c29"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-054.webp",
+      "sha256": "558b322af55d0f862cf3425856f515abbb42d1cbacffff7db2d0b823e9e65046"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-055.webp",
+      "sha256": "d1b5eb84059121a7be5ae47c1c4841abc62402f8ea578cf271cd3040fca06c6f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-056.webp",
+      "sha256": "127fd618cdaaaa01356a07781298e2b9f96e5934f9ca6e916d9e62d1441458dd"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-057.webp",
+      "sha256": "6deee51e69ae3d04a94a9506418f29b1391c24d7f94e3a2c99ca4c3478e6318a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-058.webp",
+      "sha256": "5de2c342cda6634457822502136d1d06eb70dad87316085e11106b61577f1805"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-059.webp",
+      "sha256": "aeb5b939b936d2d964e1773f7898ccce80e9a265e31162e5d18ac3a0d07fa6b2"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-060.webp",
+      "sha256": "201f7ebebcaa3d62dbb04f54e39e5fe7794c36af8f249f6602427522a1a41c6e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-061.webp",
+      "sha256": "16cd9460c9a54fe89eeb4faa2daca07cb3752391269e761b6e55558e4454ffb3"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-062.webp",
+      "sha256": "37e6a64b4148ef02ab78b28a84d78f50080343c46f9e0bd0d9d6d322f290b3bf"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-063.webp",
+      "sha256": "cafde8944814a9b02327da7522cd6d5689ddb4dc0d703436bcaf1900f7385eae"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-064.webp",
+      "sha256": "d766b4c29d8ff2d50081987f1d77ba1708bcfb0854432025c73d2e81937c0e43"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-065.webp",
+      "sha256": "30ad52ed17b0eb5b686cb43427253d858994b00a8343ea408f1a4e2614813410"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-066.webp",
+      "sha256": "82877247a407cd5b77797eb6e4400b4c532cc289f5de28fc8d26eba1cafd5d9a"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-067.webp",
+      "sha256": "9d767873c3735e3520b31e9571b2a20bca03b401c5c4f542a19d934ad48e683c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-068.webp",
+      "sha256": "814d0cb153cfbb41fb513783fe951558dd303db4499cbd6d71fd099e403d27ac"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-069.webp",
+      "sha256": "26a91db0029e2b45c61f69f69b46f072099b02e0fba36270d59614aaea164d7f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-070.webp",
+      "sha256": "3f50a15ab2a91f06502d2697c414bc293dec8b5630b845d16887c33b871c788d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-071.webp",
+      "sha256": "deac9954d9da865ffe0d2784880cbc126f2f37ded304df2ff4576f352ba50853"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-072.webp",
+      "sha256": "97e614a9fd6cfb7db6f23bc039fb74bd9894f559c86d84481521ea488b192b44"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-073.webp",
+      "sha256": "228330b5f024769e1272d3c743691913e03d820375aa161eda9ab44f0dfac478"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-074.webp",
+      "sha256": "75e90535df4cefeebb5b4338dd63252bbe57ad29df6b0b7ffb7e20396f903b16"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-075.webp",
+      "sha256": "4f375c403209c0bf6a110ac9496336305b565dd21e0abed1c4a3d8b91c6335fa"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-076.webp",
+      "sha256": "7a6719b2a20426bdde737b0f1ed394563ebd339032bf02ce60d2416472fe2fee"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-077.webp",
+      "sha256": "ebf334b2b81654bb0f605ce29c29f7a55e1d4dbefd15444e527e1e206a2cc138"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-078.webp",
+      "sha256": "af773c8f2ba2a05dc64b7696138ccbb86bdf15dd2314e647d7acefbd21419c75"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-079.webp",
+      "sha256": "302616260ae29fec29293d416d5e965c8b6a01a7c130f7066f6dae16e1678d02"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-080.webp",
+      "sha256": "bc8c51f37bc2bb7ce80cab61d44d01e83bdaa1eb397504785d0e4e33b1129418"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-081.webp",
+      "sha256": "ee58ec4d38169ff044b1d332d23fef7dbd2230d76d79cdc5207c8b900837f4c7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-082.webp",
+      "sha256": "f109bb834c860bb1d805b5edc18345f0152537af13efe2d6553c3ee84827db68"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-083.webp",
+      "sha256": "c35eb8085aa471d2a80b9e371f7feae9e6e11aed84e70640da179de622ac5c21"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-084.webp",
+      "sha256": "eb10a763b2704b47b0caa07f87866c46098a02c61a243969333e7669d9426345"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-085.webp",
+      "sha256": "c9add55db7a1000c88e00ef28e7c83b2252ef3a38b9ee3cfb9e4f7faa0e551ed"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-086.webp",
+      "sha256": "bc811053edb23151fa9b4362fe53602e22c6fb933ce2b2d887c8f1f1b9b51176"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-087.webp",
+      "sha256": "db5b64d2fbdaf4a7aea0f381ce46a3dc2a69f0e215dae7bf57fceaf7a62e7785"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-088.webp",
+      "sha256": "36b329a3471aad909b380e7e03be86235cb7ca643609f76a6c83067784d674d0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-089.webp",
+      "sha256": "847d0211cb7450a1802fb902d234083826c278494b4b8b5f56ef800e927e0ec1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-090.webp",
+      "sha256": "463c5f9f127165bd31a7bf185d3baeb199eb49f4d88623a93490cdd2ab19879f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-091.webp",
+      "sha256": "b980e45a33ff3ff2693e485022a19fbfef7f36cf1516c6340f3cb3a0a3379096"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-092.webp",
+      "sha256": "27ba5469aa54a7655b681d7080f0fd3d5420efbe47d491cab326864ecb4aad37"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-093.webp",
+      "sha256": "b9ec8bc0a13f561ab2f34037d34cd01301590700ab8ba9e2e052086152237efd"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-094.webp",
+      "sha256": "d6485cdf6106fe4c7a3a7394ae844171b9a71ab31adb9eea85d84f780440d850"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-095.webp",
+      "sha256": "aa00e6e98631fa2d14bbf74a2e6f03aed2cbeb37e9b19e04c1286a610c5f06c3"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-096.webp",
+      "sha256": "a55b9e3c2b1cb79fb7f1c07e6a709ed251766b6b5ba19bcb146f23f87a99fe94"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-097.webp",
+      "sha256": "8df594a1fe253eaaf228ccf530222a1ca4f0a685ddd79f232baedbb591381130"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-098.webp",
+      "sha256": "f0f89d46903bef8f91c679fb759bc64bd9520bc31334a692f8bc5d9e3774ebbd"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-099.webp",
+      "sha256": "c8147cec6d6de22ec46f75ca6b19bc0c79caab0b010742e90d8d5f47fa4cb253"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-100.webp",
+      "sha256": "df1239aa6a06b9301527f7d060c78c62d3ffe6c6ae51edd8415a2d381fad7634"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-101.webp",
+      "sha256": "e847a86751866869f2708084376c9529faa6eca428647798dc1e8426b64e0fea"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-102.webp",
+      "sha256": "f1df1559d23dfa2a728e512b92e09c7ec22ea14a1d5787628d834fdddf74a666"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-103.webp",
+      "sha256": "faef6d04f9f0f1fcd66aee3ee7088c6fa0a8a94bc23de528c83fb75ecc9151ce"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-104.webp",
+      "sha256": "973c38b07bbc3df57aefef4bbdaa33d75d6336805841e84dd699926215fa88a6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-105.webp",
+      "sha256": "553f0eea961bcb917601b16aee39438fb42e2d3ef7e10a0d75d6c5c2578df50f"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-106.webp",
+      "sha256": "4ab453e8b213a6b8e84f28c5f24b88776d5a02b2a87b66d3d5a15248fb0cac36"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-107.webp",
+      "sha256": "708f3a1254f6ccf54f56748c34ca27d7bb67d03885d0b956ee3639874c11e316"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-108.webp",
+      "sha256": "69d72806fea628d8a28aa8f0a05457a9ec923673f412cd8806225a2d10bc2ba6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/registry-thumbs/P-109.webp",
+      "sha256": "565a87cddcc10cdaf70db76e53e9cdca63eaf1d480b61e94413989f92cd1442c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/rubber-tex-dark.webp",
+      "sha256": "38408aa438e2f12ab8d9d4dd721dbd9fff63eed13296c273f176523e6e3b3c55"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/seals-trust-bg.webp",
+      "sha256": "86f66a140e1c7bb7d9144416be7ecf1a028ab7badbb30e1edafcb3c4c1dde02c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/step-inspection.webp",
+      "sha256": "4d2df1ac7209643b80bb008dc3786b95498a979896ac1ca0000fd1ec385a01bc"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/step-mixing.webp",
+      "sha256": "750119c56137877733dd6f2e188a9926a46f22d9c5b57dec94256bcd594a28b1"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/step-mold-cae.webp",
+      "sha256": "91d0fe7d11a1a9a72f8083c1ccc763e466f295839243d143f1ff7da2afb205ac"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/step-raw-material.webp",
+      "sha256": "245cc80f6d9ed612cba5b47a078a806f9fa2eeca580e2e610ef8a2f0e1cd0806"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/step-vulcanization.webp",
+      "sha256": "28725f607afc6fd9945fd561d695dd64ad48a9a8349b608e0be978d2b3999cea"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-bushing-demold-poster.webp",
+      "sha256": "56702cedc3bf29c81faf68bb16d63312ffe6e97141cf8381f68680aeadc2b7b7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-bushing-demold.mp4",
+      "sha256": "42ab504f08052933984d715495dabd219a39328179e8f4a6e87d32fcbe5862aa"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-extrude-cutoff-poster.webp",
+      "sha256": "eabac40b88c34af063eeb261aa704dd5462395a528b2a29c2d55510df5093b59"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-extrude-cutoff.mp4",
+      "sha256": "33cdb63fb1b22193f8d4939f0ff4330e9cc62d92c5b8053899df08878bb7237e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-inject-demold-poster.webp",
+      "sha256": "b8b44d10d3edfa07e99793fcf33d03207b65cd7a3da248edbf071316675cc228"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-inject-demold.mp4",
+      "sha256": "6f743c97b0b8ce8676ad14f2563ebd4d27f65ac23434b5d523b11748198f32f6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-oring-assembly-poster.webp",
+      "sha256": "13e0225678e7f69466ac12f39cbb9ff9233d5ba5babd3b9f37cd70ef056065c6"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-oring-assembly.mp4",
+      "sha256": "9068f7658c6995ef32bb054f100aa71cda8a71cd13edc35dcfcc3e5355618594"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-products-components-montage-poster.webp",
+      "sha256": "4ded6d3639f3619c601efeedc223d4763068588b052c7c82baf176786d0267d4"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-products-components-montage.mp4",
+      "sha256": "8e8123b3e23880e9ba98ffe60376e39acc60e955952fa354e94cbb52c7b8d1f0"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-roller-idlers-poster.webp",
+      "sha256": "bcd459167e456a3b238cc558bc400a4a65b772f295e8ae49a4bbf19707f899f8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-roller-idlers.mp4",
+      "sha256": "00760e7682d1b8fd7f4d050e5b80584f932349ea802857f76ab3799e24d70fe8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-seal-haul-off-poster.webp",
+      "sha256": "57cec5aa25162c6cb494017d1542f0b1297384f4be90fec2b26ccd5c0d10824e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-seal-haul-off.mp4",
+      "sha256": "c71a8c4e517a4cdb7887b55015d4809a0e730fbe724957345ae4ce5168b12aa5"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-vulc-steam-poster.webp",
+      "sha256": "f73317a047acc6b2d55cae60fc693008e17390619165aa98198798db8e3c163b"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vid-vulc-steam.mp4",
+      "sha256": "7c909acc4c45b1d510cd179478fbb4df3acfd5724a79b38254c00607755e2ff8"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vulc-press-poster.webp",
+      "sha256": "dc742a96cb6b45570f556b4042d9644d262a0682e663a3d6e7cb9ae4b466b878"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/media/vulc-press.mp4",
+      "sha256": "2f1b1f4401b9f1493389f026477aee695850394008be4d5b9ea8fa5781268f9d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/products-a-share.html",
+      "sha256": "e6fafad0208d8cd1143c3777fae733a503306120b74051cbd7680f1ed2ae7005"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/products-a.html",
+      "sha256": "e2d8b5598ca179b60b13f279cbb5c20108de171369546b128f762c76e88ce38e"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/products-v4-share.html",
+      "sha256": "00f1ed169d391ecae3f0d9b11867a9e9a7de57790cf0ef61ed5cb1f8cda132af"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/products-v4.html",
+      "sha256": "db45ef093120d92af7d387b035c63eeef9c57982a8fc20eb8ac8d8fb4ff7875d"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/quote-a-share.html",
+      "sha256": "2204f937114171a32692fb66dec616fe0c77129c220826fdf302427dd449dd0c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/quote-a.html",
+      "sha256": "d013904436fae288f24db6969cf803a9be9f994e464c9563da04e4074d993f6c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/quote-v4-share.html",
+      "sha256": "196820aa2c9255e4261e7ddb4ee3c5d59d28ccfb33b5d2ef2e8c889489eb9c75"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/quote-v4.html",
+      "sha256": "cbf6b2026787d40dc7d13fef969ee56e0a2b14228c3582eb7c49db28be1f4c78"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/README.md",
+      "sha256": "01629712211a7c09567c73539d3312e7234090220807fc3927e04c459083d770"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared-v4/shell-footer.html",
+      "sha256": "a2ad4f35c98b2eecc5a986e56de12977118fd637187d3581e7032b8e1f6de72c"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared-v4/shell.css",
+      "sha256": "f0b8cd80ab6fd32e9d711df5fc9a9d452efc60a272cb05721c62e4be19fe9c23"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared-v4/shell.js",
+      "sha256": "a7094c75fd030a7aa2f96ecb84b3f3fa456d740d983be2bb48f2e9abdc29e923"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared/shell-footer.html",
+      "sha256": "9bd50a746409a99497170b73186e9850e0f7db1999a971729b02dfdf73ee9430"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared/shell.css",
+      "sha256": "7a2da1aa7961013780d8aa82d9389aded532ccfcdc8e390b3da344a4253bf164"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/shared/shell.js",
+      "sha256": "aa09f147700e4648fc3220feec57f62089aef2c24c8aed73bcb582dd1077d4e7"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/solutions-a-share.html",
+      "sha256": "2e14c750565169dbd4037dbd844efc0c5dd7f2943b6b40df65fe9dae6e3f56f9"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/solutions-a.html",
+      "sha256": "15fdef48865723b23caeb93acacdcd17d8a80c2ee8f7c8a076dc9ddb2d7a2994"
+    },
+    {
+      "path": "zxrubbertech-website/design-demos/调整工作流.md",
+      "sha256": "d13c749274324732b2c33b5518e3b70e38ed70079d9ebc2d2a2eb5812a197717"
+    },
+    {
+      "path": "zxrubbertech-website/index.html",
+      "sha256": "ddf1fa936556067b259a2905a641dc6436311a5603ada3f76bc61f07cfe7c3a2"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_44.png",
+      "sha256": "0005f92864c7d37b1c6de8e5e35f909e6df435c0db371c965cda44eab46ff6d9"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_44.webp",
+      "sha256": "a5a9621ba7eefb7d7fc02759f2d1f7b761de37e018b905fd03d2f2b9dad3cbff"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_88.png",
+      "sha256": "cc7182d1712f5c099457c0c19ee75284878ddbb5084f1e9269facf5f3598a476"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_88.webp",
+      "sha256": "a410cf4d51025ac9002e302ce4687f394038d070e765e1828c9d84d63ed28f60"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_web.png",
+      "sha256": "94b9454823fd7b9f0ed0c49dd9f1e2e114f3d41cdad0cbbd419ac5f8250289f4"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO_web.webp",
+      "sha256": "caa2454aacee7dc2af32d6d0a40d3e76fd9b880ade963225ba609f3eb2501b18"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO.png",
+      "sha256": "53ec2045256ce4303051aac95bf4822b87c08abed55cd387b36479955a133ef8"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/LileiLOGO.webp",
+      "sha256": "7c6e387ad065e365ce3b415f742714ec1fee2ff54832787739087892047af714"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_44.png",
+      "sha256": "b0d289cc988bb4862d1c31f86f9aaec58474cc342249c340c1bcf6ed204ad08f"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_44.webp",
+      "sha256": "c2d86f57e95925764a666df0f3bfdd64e2a345b548eafd9be964b93d1e2928d4"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_88.png",
+      "sha256": "3520a1c90a496c5a56a8766b485ff53eec81061f7f644b4e788fae59cc2aa902"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_88.webp",
+      "sha256": "995307c8d11c5f18964bac1415c86f88a58df60caf69bccf4154e56355ba384b"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_web.png",
+      "sha256": "6b78151c16f76083e67442bc5ed42c5ef8231b840a1e59acd1b09041b5af146b"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO_web.webp",
+      "sha256": "4518aa225cb5725076d74c705b4f1b00026068e2b081c2e05bdb9d5af5e3293a"
+    },
+    {
+      "path": "zxrubbertech-website/LOGO/ZXLOGO.webp",
+      "sha256": "7e1eabd133e186c4a3791ae46a3ff3fca8050ecc52b16c0e724953c59ba9b17c"
+    },
+    {
+      "path": "zxrubbertech-website/og-image.jpg",
+      "sha256": "d550e0f0b36691ee70bb7d7e2a789704ba5e138e5d6a385b506078ffd4b024da"
+    },
+    {
+      "path": "zxrubbertech-website/OptimizedPicture/减震衬套.jpeg",
+      "sha256": "93ab8eb1b157a5d23895c843159609c7e0dfa1c2f9b22a66ba400803cbda1866"
+    },
+    {
+      "path": "zxrubbertech-website/OptimizedPicture/减震衬套.webp",
+      "sha256": "d55634f276d5ad9120bef9487c6329c50472cae04f19c3407790b9b56b669554"
+    },
+    {
+      "path": "zxrubbertech-website/OptimizedPicture/减震防尘罩.jpg",
+      "sha256": "d2935bd6607ea0eabfce42a0ab40bb1839cbecebf94233800b9fd5bd66569281"
+    },
+    {
+      "path": "zxrubbertech-website/OptimizedPicture/减震防尘罩.webp",
+      "sha256": "b5c665762423c867b51483fbbc12a95b8ac073b189fb2a294442e527dcd03aeb"
+    },
+    {
+      "path": "zxrubbertech-website/products/ball-joint-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/products/index.html",
+      "sha256": "201b3db7e8440c62fce057e9c570db0b19c2c137c3bc733dfbb0380628b44868"
+    },
+    {
+      "path": "zxrubbertech-website/products/rubber-wheel/index.html",
+      "sha256": "f380f33e78ae258aa7f1ba6dd9151200c077b85fc9f9fead1ba0f25f3f7f8805"
+    },
+    {
+      "path": "zxrubbertech-website/products/shock-absorber-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/products/suspension-bushing/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/products/wire-harness-sheath/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/robots.txt",
+      "sha256": "a32a65c85f0e957c923e8a87c3b9c5d6c9e86d23dad2a77759d33464e4cac141"
+    },
+    {
+      "path": "zxrubbertech-website/ru/index.html",
+      "sha256": "5bd93cc7305de0b637afbd803dde93fa953d3632702630543100bcbc748d8086"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/ball-joint-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/index.html",
+      "sha256": "0330e16b8bde7a6653592c5beb2b4e5cab7df7e5c355f6eedea2e3f4def66885"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/rubber-wheel/index.html",
+      "sha256": "f380f33e78ae258aa7f1ba6dd9151200c077b85fc9f9fead1ba0f25f3f7f8805"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/shock-absorber-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/suspension-bushing/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/ru/products/wire-harness-sheath/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/scripts/build_i18n_pages.py",
+      "sha256": "c04ad78a15c90f703f88fd0d50f724107fa6f1630020b85d660dcf575e6156e1"
+    },
+    {
+      "path": "zxrubbertech-website/scripts/build_products.py",
+      "sha256": "277196e5d90c853e445165c334171240f723076623911b415c16996d1a50530d"
+    },
+    {
+      "path": "zxrubbertech-website/scripts/build_sitemap.py",
+      "sha256": "5d635f3d1b4e2b2df85b4a5811789cb77871a942e41bf0ced2892a3f9aa611bd"
+    },
+    {
+      "path": "zxrubbertech-website/scripts/extract_i18n.mjs",
+      "sha256": "e1b54189f54b54fbdcf0b0861f1975f539dfe92ce53427ff3474c63285c678e0"
+    },
+    {
+      "path": "zxrubbertech-website/sitemap.xml",
+      "sha256": "0b728988c3b22cdb50028ebf44fcde2886b1ffd633e86d70d24dfb5d099cc58f"
+    },
+    {
+      "path": "zxrubbertech-website/tr/index.html",
+      "sha256": "5bd93cc7305de0b637afbd803dde93fa953d3632702630543100bcbc748d8086"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/ball-joint-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/index.html",
+      "sha256": "0330e16b8bde7a6653592c5beb2b4e5cab7df7e5c355f6eedea2e3f4def66885"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/rubber-wheel/index.html",
+      "sha256": "f380f33e78ae258aa7f1ba6dd9151200c077b85fc9f9fead1ba0f25f3f7f8805"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/shock-absorber-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/suspension-bushing/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/tr/products/wire-harness-sheath/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/zh/index.html",
+      "sha256": "5bd93cc7305de0b637afbd803dde93fa953d3632702630543100bcbc748d8086"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/ball-joint-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/index.html",
+      "sha256": "0330e16b8bde7a6653592c5beb2b4e5cab7df7e5c355f6eedea2e3f4def66885"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/rubber-wheel/index.html",
+      "sha256": "f380f33e78ae258aa7f1ba6dd9151200c077b85fc9f9fead1ba0f25f3f7f8805"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/shock-absorber-dust-cover/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/suspension-bushing/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/zh/products/wire-harness-sheath/index.html",
+      "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/传动轴支撑.png",
+      "sha256": "4abf7e59079b86562f23cb84c2d0b2a43df0faa1c62029c01a138d565c22e4c8"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/传动轴支撑.webp",
+      "sha256": "49f36b461be03fa49e9433097f63a56ee4b50fbef268fc8a5bc1bfe92e902ace"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-塑料件.png",
+      "sha256": "e3a57e6a81ce4f8fc0b89f79057db41c6abdb39172aae8f5a5019661fc7caa21"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-塑料件.webp",
+      "sha256": "13409309a8a53f6dccbb480f2e72100d658b280e88787875858ff599cad36747"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属件.png",
+      "sha256": "0514cd5390753313b9040623202b30f94ae943df3316fea53dab42e83ff0d5f0"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属件.webp",
+      "sha256": "d702c5cff04acd444eb0f6520b0f6c29ef15abd14ef1b45a7577b44c36f8d09d"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属冲压件.png",
+      "sha256": "5f895087b45799b00324844460277958882932159dde9ce1aaeead1db0d53332"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属冲压件.webp",
+      "sha256": "ca17c038d93d7e3beb1caf43225b3888615ad2244142570b73f41ff414231895"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属管件.png",
+      "sha256": "b3b1c2fe4257c26cbd944bf5b9ff82b03e2866fa29f60f2f9ea92255a4b7b97b"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/其他配套-金属管件.webp",
+      "sha256": "22b46bd21650aacb0d022c756d4da5f3a95dd8b888eb8113a925ed2a32e859b9"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震器防尘罩_image7.png",
+      "sha256": "fb4778c8de1b152f6ee5e8afdfa9611f9a9485bad27e76dd4fd3b360456cff94"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震器防尘罩_image7.webp",
+      "sha256": "cc7d105d5e3259e05c2bb7637924eaab8ff694447fc029237ac36f5eec70cd07"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震器防尘罩.png",
+      "sha256": "748399c7142932993b6e5302faa6bb7910db9a4a1a074ccd4ac65488ffd6c69b"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震器防尘罩.webp",
+      "sha256": "5e90b187c70228eb5a00d6359bfc3d39955cb87ac746da61298eb0487a0f1b3a"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震衬套.png",
+      "sha256": "e963227de2094f4080cd3e19d1e9d319601b8e649d8de5174e27330aadb35416"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/减震衬套.webp",
+      "sha256": "af78dfd066564b4528d8737b72331101041d1ccb1ad386cd22c7549dbe51814f"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/橡胶轮.png",
+      "sha256": "cd43a75e9d77231db1bcbda212c3f06bcc122135425ef2b7ae2256d172edcb5c"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/橡胶轮.webp",
+      "sha256": "c719d7490f9e6e752761024b89fafce3b97fd2ad679c38e487f25a34ff7444cf"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/球形防尘罩.png",
+      "sha256": "ef2bf516063dafafceae340dc6248bc17aca5b78aa0f604a56db50b9d54f09dd"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/球形防尘罩.webp",
+      "sha256": "b68c1c76f6938c83a85ab317b987ab58960416f1067be818594fa52b0c0b9145"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/线束护套 (2).png",
+      "sha256": "810f181c4f666713540a56df2239607af6b98662a45dee403dd6d67d5497148e"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/线束护套 (2).webp",
+      "sha256": "9902ea39f47d5e100b06dbe59ee28baed52d3947c85d5ae742c29b6a58f999f5"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/线束护套.png",
+      "sha256": "ae9e1d3f7959cbb237a631f9f1e9ab4ad6ede7f5452f204e7df2544b125ed412"
+    },
+    {
+      "path": "zxrubbertech-website/产品照片/线束护套.webp",
+      "sha256": "bed6c64629dc3be41296b89d1d291b998b07b5086188241a40acaaa9d443d273"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化.jpg",
+      "sha256": "2fa2ae4aaa2b1944bc64e93d0e5c49c6a5feecf7f60049e8a3df053ef6658174"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化.png",
+      "sha256": "21b53d5d5f839399b2790923bf2e429b991ed8bb32193ca4034ed0edae6cd06b"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化.webp",
+      "sha256": "c94449ca8fbebbd28ec366b0a31b4d5872a17ef3e4e4b6cbe5177971960dbfcb"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化1.jpg",
+      "sha256": "2997b068eea0a11c6780d080766c69157f91d68f2c4c279dc4e7ea375048efee"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化1.webp",
+      "sha256": "fc6a2ae224997b37607bae1988b51b92fad73fabd0c9c300ff5254985fbc448e"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化3.png",
+      "sha256": "485bc33927f37ad845ae7539d1c805465c1113aee5a953ec4feff50484a27e46"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/硫化3.webp",
+      "sha256": "a49ed29f3b4e2bff73db4d1dbfdcc54c808af50dc7b3966ce1a53ea2aeafe08f"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线.png",
+      "sha256": "63b7f241e0505886ead5c4714a65348439e112bd3b45589a7372c0aa35be93d1"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线.webp",
+      "sha256": "b13f9118eecd94a6f7e7cd8b8616ad3e6922e201b7879fac3477d98951e2c3a8"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线2.png",
+      "sha256": "cb373caf2a6b2022c5a85db8fb41730d1b62f578ff8fb28d9f5a427b20effd76"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线2.webp",
+      "sha256": "04b1fff94fed8f56fa3a06d421fe8d709de0dd1a707dcd3314836d64c66400c8"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线3.png",
+      "sha256": "a67cbc481072b5c69f1ec1764709f45358ff273324ae8e56fc402d2d99b9c98a"
+    },
+    {
+      "path": "zxrubbertech-website/设备照片/自动炼胶线3.webp",
+      "sha256": "ae0a551ca56946ac2bb85f5661a4432c7170f8c67db495df4658b2b412b403a9"
+    }
+  ]
+}
