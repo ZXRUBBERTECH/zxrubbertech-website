@@ -19,24 +19,41 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const packageName = 'zxrubbertech-v5-release-candidate-2026-08-12-r2';
-const archivePath = join(repo, '存档', `${packageName}.zip`);
-const sidecarPath = `${archivePath}.sha256`;
+const packageName = 'zxrubbertech-v5-multilingual-release-candidate-2026-08-12-rc1';
+const rollbackRevision = '40f5aa60b8902d2a187568ec1561e0fb389ae8e4';
+const localeCatalogs = Object.freeze([
+  'scripts/v5-i18n/en.json',
+  'scripts/v5-i18n/de.json',
+  'scripts/v5-i18n/zh-CN.json',
+  'scripts/v5-i18n/ru.json',
+  'scripts/v5-i18n/tr.json',
+]);
 const requiredFiles = [
   'AGENTS.md',
   'LOGO/ZXLOGO.png',
   'scripts/build-v5-hybrid.mjs',
-  'scripts/check-v5-hybrid.mjs',
-  'scripts/check-v5-scope.mjs',
-  'scripts/v5-protected-baseline.json',
-  'scripts/v5-footer-template.html',
   'scripts/build-v5-release.mjs',
+  'scripts/build-v5-retirement.mjs',
+  'scripts/check-v5-hybrid.mjs',
+  'scripts/check-v5-i18n.mjs',
+  'scripts/check-v5-retirement.mjs',
+  'scripts/check-v5-scope.mjs',
   'scripts/check-v5-seo.mjs',
+  'scripts/v5-footer-template.html',
+  'scripts/v5-i18n-baseline.json',
+  'scripts/v5-i18n-config.mjs',
+  'scripts/v5-i18n-operations.mjs',
+  'scripts/v5-i18n-transform.mjs',
   'scripts/v5-image-dimensions.json',
+  'scripts/v5-language-controls.mjs',
+  'scripts/v5-protected-baseline.json',
+  'scripts/v5-retirement-map.mjs',
   'scripts/v5-route-map.json',
   'scripts/v5-seo-assets.mjs',
   'scripts/v5-seo-config.mjs',
   'scripts/v5-seo-transform.mjs',
+  'scripts/v5-i18n/glossary.json',
+  ...localeCatalogs,
 ];
 const publicV5Files = [
   'design-demos/demo-a-v5.html',
@@ -222,6 +239,18 @@ function validateInputs(inputs) {
   if (!inputs.some((file) => file.startsWith('design-demos/media/'))) {
     throw new Error('The complete design-demos/media directory is missing or empty');
   }
+
+  const catalogRoot = assertExistingPath(join(repo, 'scripts', 'v5-i18n'), repo, 'directory', 'V5 locale catalog directory');
+  const actualCatalogs = readdirSync(catalogRoot)
+    .filter((name) => name.endsWith('.json') && name !== 'glossary.json')
+    .map((name) => `scripts/v5-i18n/${name}`)
+    .sort();
+  const expectedCatalogs = [...localeCatalogs].sort();
+  if (JSON.stringify(actualCatalogs) !== JSON.stringify(expectedCatalogs)) {
+    throw new Error(
+      `V5 locale catalog set must be exactly ${expectedCatalogs.join(', ')}; found ${actualCatalogs.join(', ') || '(none)'}`,
+    );
+  }
 }
 
 function parsePassingCheck(name, output) {
@@ -249,6 +278,10 @@ function runPreflightChecks(releaseRoot) {
     'V5 preview SEO checker',
     run(process.execPath, ['scripts/check-v5-seo.mjs', '--gate=all', '--profile=preview'], { capture: true }),
   );
+  const previewI18n = parsePassingCheck(
+    'V5 preview multilingual checker',
+    run(process.execPath, ['scripts/check-v5-i18n.mjs', '--gate=all', '--profile=preview'], { capture: true }),
+  );
   const releaseSeo = parsePassingCheck(
     'V5 release SEO checker',
     run(
@@ -257,7 +290,19 @@ function runPreflightChecks(releaseRoot) {
       { capture: true },
     ),
   );
-  return { scope, content, previewSeo, releaseSeo };
+  const releaseI18n = parsePassingCheck(
+    'V5 release multilingual checker',
+    run(
+      process.execPath,
+      ['scripts/check-v5-i18n.mjs', '--gate=all', '--profile=release', `--root=${releaseRoot}`],
+      { capture: true },
+    ),
+  );
+  const retirement = parsePassingCheck(
+    'V5 retirement checker',
+    run(process.execPath, ['scripts/check-v5-retirement.mjs', `--root=${releaseRoot}`], { capture: true }),
+  );
+  return { scope, content, previewSeo, previewI18n, releaseSeo, releaseI18n, retirement };
 }
 
 function validateReleaseBundle(releaseRoot) {
@@ -270,9 +315,14 @@ function validateReleaseBundle(releaseRoot) {
     'capabilities/index.html',
     'faq/index.html',
     'quote/index.html',
+    'de/index.html',
+    'zh/index.html',
+    'ru/index.html',
+    'tr/index.html',
     'sitemap.xml',
     'robots.txt',
     'v5-release-report.json',
+    'cloudflare/zxrubbertech-v5-legacy-redirects.csv',
     'LOGO/ZXLOGO.png',
   ];
   for (const file of requiredReleaseFiles) {
@@ -286,11 +336,36 @@ function validateReleaseBundle(releaseRoot) {
     throw new Error('Accepted V5 release report is not valid JSON');
   }
   if (releaseReport?.status !== 'PASS') throw new Error('Accepted V5 release report did not record PASS');
-  if (releaseReport.publicPages !== 7) {
-    throw new Error(`Accepted V5 release report recorded ${releaseReport.publicPages} public pages, expected 7`);
+  const exactReport = { locales: 5, publicPages: 35, hreflangLinks: 210, sitemapUrls: 35 };
+  for (const [key, expected] of Object.entries(exactReport)) {
+    if (releaseReport[key] !== expected) {
+      throw new Error(`Accepted V5 release report recorded ${key}=${String(releaseReport[key])}, expected ${expected}`);
+    }
   }
-  if (realpathSync(resolve(releaseReport.outputDir ?? '')) !== safeRoot) {
-    throw new Error('Accepted V5 release report outputDir does not match --release-root');
+  if (!Array.isArray(releaseReport.pages) || releaseReport.pages.length !== 35) {
+    throw new Error('Accepted V5 release report must contain exactly 35 page records');
+  }
+  const pageFiles = new Set();
+  for (const page of releaseReport.pages) {
+    if (!page || typeof page.file !== 'string' || !/^[a-f0-9]{64}$/.test(page.sha256 ?? '')) {
+      throw new Error('Accepted V5 release report contains a malformed page record');
+    }
+    if (pageFiles.has(page.file)) throw new Error(`Accepted V5 release report contains duplicate page file: ${page.file}`);
+    pageFiles.add(page.file);
+    const pageFile = assertExistingPath(join(safeRoot, ...page.file.split('/')), safeRoot, 'file', `release page ${page.file}`);
+    if (sha256(pageFile) !== page.sha256) throw new Error(`Accepted V5 release page hash mismatch: ${page.file}`);
+  }
+
+  const csvRows = readFileSync(join(safeRoot, 'cloudflare', 'zxrubbertech-v5-legacy-redirects.csv'), 'utf8')
+    .split(/\r?\n/).filter(Boolean);
+  if (csvRows.length !== 50) throw new Error(`Accepted release must contain exactly 50 Cloudflare CSV rows; found ${csvRows.length}`);
+  const fallbackFiles = walkFiles(safeRoot, safeRoot).filter((file) => {
+    if (!file.endsWith(`${sep}index.html`)) return false;
+    const rel = relative(safeRoot, file).split(sep).join('/');
+    return !pageFiles.has(rel);
+  });
+  if (fallbackFiles.length !== 25) {
+    throw new Error(`Accepted release must contain exactly 25 retirement fallbacks; found ${fallbackFiles.length}`);
   }
 
   const files = walkFiles(safeRoot, safeRoot);
@@ -300,6 +375,79 @@ function validateReleaseBundle(releaseRoot) {
     relativeFiles: files.map((file) => relative(safeRoot, file).split(sep).join('/')).sort(),
     report: releaseReport,
   };
+}
+
+function validateAcceptanceReport(reportFile) {
+  const requested = resolve(reportFile);
+  const absolute = realpathSync(requested);
+  const repoRelative = relative(repo, absolute);
+  if (!repoRelative.startsWith(`..${sep}`) && repoRelative !== '..' && !repoRelative.startsWith('/')) {
+    throw new Error('Acceptance report must be outside the repository');
+  }
+  const parent = assertSafeRoot(dirname(absolute), 'acceptance report parent');
+  assertExistingPath(absolute, parent, 'file', 'acceptance report');
+  let report;
+  try {
+    report = JSON.parse(readFileSync(absolute, 'utf8'));
+  } catch {
+    throw new Error('Acceptance report is not valid JSON');
+  }
+  if (report?.status !== 'PASS') throw new Error('Acceptance report did not record PASS');
+  const expected = [
+    ['http.canonicalRoutes', report.http?.canonicalRoutes, 35],
+    ['http.fallbackRoutes', report.http?.fallbackRoutes, 25],
+    ['http.totalRoutes', report.http?.totalRoutes, 60],
+    ['http.passed', report.http?.passed, 60],
+    ['browser.pages', report.browser?.pages, 35],
+    ['browser.pageViewportChecks', report.browser?.pageViewportChecks, 70],
+    ['browser.passed', report.browser?.passed, 70],
+  ];
+  for (const [label, actual, value] of expected) {
+    if (actual !== value) throw new Error(`Acceptance report ${label} must equal ${value}; got ${String(actual)}`);
+  }
+  if (JSON.stringify(report.browser?.viewports) !== JSON.stringify(['1280x900', '390x844'])) {
+    throw new Error('Acceptance report browser.viewports must be exactly 1280x900 and 390x844');
+  }
+  if (!Array.isArray(report.http?.results) || report.http.results.length !== 60
+      || report.http.results.some((result) => result?.ok !== true || result?.status !== 200)) {
+    throw new Error('Acceptance report must contain 60 successful HTTP result records');
+  }
+  if (!Array.isArray(report.browser?.results) || report.browser.results.length !== 70) {
+    throw new Error('Acceptance report must contain exactly 70 browser page/viewport result records');
+  }
+  const browserKeys = new Set();
+  for (const result of report.browser.results) {
+    const key = `${result?.locale}/${result?.stem}/${result?.viewport}`;
+    if (browserKeys.has(key)) throw new Error(`Acceptance report contains duplicate browser result: ${key}`);
+    browserKeys.add(key);
+    if (result?.ok !== true || result?.h1Count !== 1 || result?.horizontalOverflow !== false
+        || result?.brokenImages !== 0 || result?.failedVideos !== 0 || result?.controlsValid !== true
+        || result?.canonicalValid !== true || result?.hreflangCount !== 6
+        || (result?.migrationConsoleErrors ?? []).length !== 0) {
+      throw new Error(`Acceptance report contains a failed browser invariant: ${key}`);
+    }
+  }
+  if (report.browser?.explicitLongText?.de !== 14 || report.browser?.explicitLongText?.ru !== 14) {
+    throw new Error('Acceptance report must record 14 German and 14 Russian long-text viewport checks');
+  }
+  const clicks = report.clickPaths ?? {};
+  for (const [key, expectedValue] of Object.entries({
+    samePageLanguageRoles: 7,
+    productsFragment: true,
+    compoundsFragment: true,
+    quoteIndustry: true,
+    email: true,
+    whatsapp: true,
+    map: true,
+    localizedInternalNavigation: true,
+  })) {
+    if (clicks[key] !== expectedValue) {
+      throw new Error(`Acceptance report clickPaths.${key} must equal ${String(expectedValue)}`);
+    }
+  }
+  if (report.formSubmission !== 'deferred') throw new Error('Acceptance report must record formSubmission=deferred');
+  if ((report.failures ?? []).length) throw new Error('Acceptance report contains failures');
+  return { path: absolute, report };
 }
 
 function shanghaiTimestamp(date = new Date()) {
@@ -330,7 +478,7 @@ function snapshotMetadata() {
   };
 }
 
-function summarizeInputs(inputs, releaseBundle, preflightChecks, metadata) {
+function summarizeInputs(inputs, releaseBundle, acceptance, preflightChecks, metadata, archivePath, sidecarPath) {
   const v5HtmlFiles = inputs.filter((file) => /^design-demos\/[^/]+-v5\.html$/.test(file));
   const mediaFiles = inputs.filter((file) => file.startsWith('design-demos/media/'));
   const documentFiles = inputs.filter((file) => file.startsWith('docs/superpowers/'));
@@ -347,6 +495,7 @@ function summarizeInputs(inputs, releaseBundle, preflightChecks, metadata) {
     releaseFiles: releaseBundle.relativeFiles.length,
     releaseBytes: releaseBundle.files.reduce((total, file) => total + statSync(file).size, 0),
     releaseReport: releaseBundle.report,
+    acceptanceReport: acceptance.report,
     preflightChecks,
     ...metadata,
   };
@@ -382,6 +531,40 @@ function copyReleaseBundle(releaseBundle, packageRoot) {
   }
 }
 
+function copyAcceptanceReport(acceptance, packageRoot) {
+  const destination = join(packageRoot, 'acceptance', 'v5-multilingual-acceptance.json');
+  mkdirSync(dirname(destination), { recursive: true });
+  assertExistingPath(dirname(destination), packageRoot, 'directory', 'acceptance report destination parent');
+  assertSafeAbsentTarget(destination, packageRoot, 'acceptance report destination');
+  copyFileSync(acceptance.path, destination, constants.COPYFILE_EXCL);
+  assertExistingPath(destination, packageRoot, 'file', 'staged acceptance report');
+}
+
+function writeDeploymentManifest(packageRoot, summary, metadata) {
+  const manifestPath = join(packageRoot, 'V5-DEPLOYMENT-MANIFEST.json');
+  const parentRevision = run('git', ['rev-parse', 'HEAD^'], { capture: true });
+  const manifest = {
+    status: 'PASS',
+    candidateCommit: metadata.gitRevision,
+    candidateParent: parentRevision,
+    rollbackCommit: rollbackRevision,
+    packageName,
+    routes: 35,
+    hreflangLinks: 210,
+    sitemapUrls: 35,
+    legacyFallbacks: 25,
+    cloudflareRows: 50,
+    httpRoutes: 60,
+    browserPageViewportChecks: 70,
+    formSubmission: 'deferred',
+    sourceFiles: summary.fileCount,
+    releaseFiles: summary.releaseFiles,
+  };
+  assertSafeAbsentTarget(manifestPath, packageRoot, 'deployment manifest');
+  writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+  return manifest;
+}
+
 function makeReadme(metadata, inputs, releaseFiles) {
   const included = inputs.map((file) => `- \`${file}\``).join('\n');
   const includedRelease = releaseFiles.map((file) => `- \`release/${file}\``).join('\n');
@@ -395,7 +578,7 @@ function makeReadme(metadata, inputs, releaseFiles) {
 - Scope: local V5 release candidate; not deployed
 - Preview entry page: design-demos/demo-a-v5.html
 - Clean-route release entry page: release/index.html
-- Validation: scope, hybrid, preview SEO and extracted release SEO checks
+- Validation: full scope, hybrid, SEO, multilingual, retirement, HTTP and two-viewport browser checks
 
 ## Exact Git status at snapshot time
 
@@ -426,6 +609,8 @@ node scripts/check-v5-scope.mjs
 node scripts/check-v5-hybrid.mjs
 node scripts/check-v5-seo.mjs --gate=all --profile=preview
 node scripts/check-v5-seo.mjs --gate=all --profile=release --root "$ZX_V5_EXTRACT_ROOT/${packageName}/release"
+node scripts/check-v5-i18n.mjs --gate=all --profile=release --root "$ZX_V5_EXTRACT_ROOT/${packageName}/release"
+node scripts/check-v5-retirement.mjs --root="$ZX_V5_EXTRACT_ROOT/${packageName}/release"
 \`\`\`
 
 Do not overwrite newer work without reviewing the \`rsync --dry-run\` output.
@@ -517,23 +702,40 @@ function verifyExtractedArchive(extractRoot) {
   return entries.length;
 }
 
-function assertTargetsAbsent() {
-  assertSafeAbsentTarget(archivePath, repo, 'V5 archive ZIP');
-  assertSafeAbsentTarget(sidecarPath, repo, 'V5 archive SHA-256 sidecar');
+function validateArchiveTarget(requestedPath) {
+  const archivePath = resolve(requestedPath);
+  if (basename(archivePath) !== `${packageName}.zip`) {
+    throw new Error(`Archive filename must be exactly ${packageName}.zip`);
+  }
+  const repoRelative = relative(repo, archivePath);
+  if (!repoRelative.startsWith(`..${sep}`) && repoRelative !== '..' && !repoRelative.startsWith('/')) {
+    throw new Error('Archive output must be outside the repository');
+  }
+  const outputRoot = assertSafeRoot(dirname(archivePath), 'archive output directory');
+  const sidecarPath = `${archivePath}.sha256`;
+  assertSafeAbsentTarget(archivePath, outputRoot, 'V5 multilingual archive ZIP');
+  assertSafeAbsentTarget(sidecarPath, outputRoot, 'V5 multilingual archive SHA-256 sidecar');
+  return { archivePath, sidecarPath, outputRoot };
 }
 
-function removeOwnedOutput(file, attempted, label) {
+function assertTargetsAbsent(archivePath, sidecarPath, outputRoot) {
+  assertSafeAbsentTarget(archivePath, outputRoot, 'V5 multilingual archive ZIP');
+  assertSafeAbsentTarget(sidecarPath, outputRoot, 'V5 multilingual archive SHA-256 sidecar');
+}
+
+function removeOwnedOutput(file, attempted, label, outputRoot) {
   if (!attempted) return;
   const stat = lstatOrNull(file);
   if (!stat) return;
   if (stat.isSymbolicLink()) throw new Error(`Refusing to remove symbolic-link ${label}: ${file}`);
-  assertInside(repo, realpathSync(file), `${label} cleanup path`);
+  assertInside(outputRoot, realpathSync(file), `${label} cleanup path`);
   if (!stat.isFile()) throw new Error(`Refusing to remove non-file ${label}: ${file}`);
   unlinkSync(file);
 }
 
-function createArchive(inputs, releaseBundle, summary, metadata) {
-  assertTargetsAbsent();
+function createArchive(inputs, releaseBundle, acceptance, summary, metadata, target) {
+  const { archivePath, sidecarPath, outputRoot } = target;
+  assertTargetsAbsent(archivePath, sidecarPath, outputRoot);
 
   let stageRoot;
   let extractRoot;
@@ -549,6 +751,8 @@ function createArchive(inputs, releaseBundle, summary, metadata) {
     assertExistingPath(packageRoot, stageRoot, 'directory', 'archive staging package root');
     copyInputs(inputs, packageRoot);
     copyReleaseBundle(releaseBundle, packageRoot);
+    copyAcceptanceReport(acceptance, packageRoot);
+    const deploymentManifest = writeDeploymentManifest(packageRoot, summary, metadata);
 
     const readmePath = join(packageRoot, 'V5-ARCHIVE-README.md');
     assertSafeAbsentTarget(readmePath, packageRoot, 'V5 archive README');
@@ -574,26 +778,23 @@ function createArchive(inputs, releaseBundle, summary, metadata) {
     }
 
     const archiveSha256 = sha256(stagedZipPath);
-    assertTargetsAbsent();
-    mkdirSync(dirname(archivePath), { recursive: true });
-    assertExistingPath(dirname(archivePath), repo, 'directory', 'V5 archive output directory');
-    assertTargetsAbsent();
+    assertTargetsAbsent(archivePath, sidecarPath, outputRoot);
     try {
       copyFileSync(stagedZipPath, archivePath, constants.COPYFILE_EXCL);
       archiveCreated = true;
-      assertExistingPath(archivePath, repo, 'file', 'V5 archive ZIP');
+      assertExistingPath(archivePath, outputRoot, 'file', 'V5 archive ZIP');
     } catch (error) {
-      if (error.code !== 'EEXIST') removeOwnedOutput(archivePath, true, 'V5 archive ZIP');
+      if (error.code !== 'EEXIST') removeOwnedOutput(archivePath, true, 'V5 archive ZIP', outputRoot);
       throw error;
     }
     if (sha256(archivePath) !== archiveSha256) throw new Error('Published V5 archive ZIP hash differs from verified staging ZIP');
-    assertSafeAbsentTarget(sidecarPath, repo, 'V5 archive SHA-256 sidecar');
+    assertSafeAbsentTarget(sidecarPath, outputRoot, 'V5 archive SHA-256 sidecar');
     try {
       writeFileSync(sidecarPath, `${archiveSha256}  ${basename(archivePath)}\n`, { encoding: 'utf8', flag: 'wx' });
       sidecarCreated = true;
-      assertExistingPath(sidecarPath, repo, 'file', 'V5 archive SHA-256 sidecar');
+      assertExistingPath(sidecarPath, outputRoot, 'file', 'V5 archive SHA-256 sidecar');
     } catch (error) {
-      if (error.code !== 'EEXIST') removeOwnedOutput(sidecarPath, true, 'V5 archive SHA-256 sidecar');
+      if (error.code !== 'EEXIST') removeOwnedOutput(sidecarPath, true, 'V5 archive SHA-256 sidecar', outputRoot);
       throw error;
     }
 
@@ -603,10 +804,11 @@ function createArchive(inputs, releaseBundle, summary, metadata) {
       archivedFiles: checksummedFiles + 1,
       archiveBytes: statSync(archivePath).size,
       archiveSha256,
+      deploymentManifest,
     };
   } catch (error) {
-    removeOwnedOutput(sidecarPath, sidecarCreated, 'V5 archive SHA-256 sidecar');
-    removeOwnedOutput(archivePath, archiveCreated, 'V5 archive ZIP');
+    removeOwnedOutput(sidecarPath, sidecarCreated, 'V5 archive SHA-256 sidecar', outputRoot);
+    removeOwnedOutput(archivePath, archiveCreated, 'V5 archive ZIP', outputRoot);
     throw error;
   } finally {
     if (extractRoot) {
@@ -623,6 +825,8 @@ function createArchive(inputs, releaseBundle, summary, metadata) {
 function parseArgs(args) {
   let dryRun = false;
   let releaseRoot;
+  let acceptanceReport;
+  let archivePath;
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === '--dry-run') {
@@ -638,30 +842,63 @@ function parseArgs(args) {
       index += 1;
       continue;
     }
+    if (arg === '--acceptance-report') {
+      if (acceptanceReport) throw new Error('Duplicate --acceptance-report argument');
+      const value = args[index + 1];
+      if (!value || value.startsWith('--')) throw new Error('--acceptance-report requires a file path');
+      acceptanceReport = resolve(value);
+      index += 1;
+      continue;
+    }
+    if (arg === '--archive-path') {
+      if (archivePath) throw new Error('Duplicate --archive-path argument');
+      const value = args[index + 1];
+      if (!value || value.startsWith('--')) throw new Error('--archive-path requires a ZIP path');
+      archivePath = resolve(value);
+      index += 1;
+      continue;
+    }
     throw new Error(`Unknown argument: ${arg}`);
   }
-  if (!releaseRoot) {
-    throw new Error('Usage: node scripts/archive-v5.mjs --release-root <accepted-release-directory> [--dry-run]');
+  if (!releaseRoot || !acceptanceReport || !archivePath) {
+    throw new Error(
+      'Usage: node scripts/archive-v5.mjs --release-root <accepted-release-directory> ' +
+      '--acceptance-report <machine-readable-report.json> --archive-path <outside-repo.zip> [--dry-run]',
+    );
   }
-  return { dryRun, releaseRoot };
+  return { dryRun, releaseRoot, acceptanceReport, archivePath };
 }
 
 function main() {
-  const { dryRun, releaseRoot } = parseArgs(process.argv.slice(2));
+  const { dryRun, releaseRoot, acceptanceReport, archivePath } = parseArgs(process.argv.slice(2));
   assertSafeRoot(repo, 'repository root');
+  const target = validateArchiveTarget(archivePath);
   const inputs = discoverInputs();
   validateInputs(inputs);
   const releaseBundle = validateReleaseBundle(releaseRoot);
+  const acceptance = validateAcceptanceReport(acceptanceReport);
   const preflightChecks = runPreflightChecks(releaseBundle.root);
   const metadata = snapshotMetadata();
-  const summary = summarizeInputs(inputs, releaseBundle, preflightChecks, metadata);
+  const summary = summarizeInputs(
+    inputs,
+    releaseBundle,
+    acceptance,
+    preflightChecks,
+    metadata,
+    target.archivePath,
+    target.sidecarPath,
+  );
 
   if (dryRun) {
     console.log(JSON.stringify({ status: 'DRY_RUN', ...summary }, null, 2));
     return;
   }
 
-  console.log(JSON.stringify(createArchive(inputs, releaseBundle, summary, metadata), null, 2));
+  if (metadata.gitWorktreeState !== 'clean') {
+    throw new Error('Refusing to create an accepted archive from a dirty Git worktree');
+  }
+
+  console.log(JSON.stringify(createArchive(inputs, releaseBundle, acceptance, summary, metadata, target), null, 2));
 }
 
 try {
