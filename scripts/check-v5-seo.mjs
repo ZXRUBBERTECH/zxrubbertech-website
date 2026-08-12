@@ -10,8 +10,17 @@ import {
   SEO_SOCIAL_LOCALE,
   V5_ROUTE_MAP,
   getSeoCanonicalUrl,
+  getLocalizedV5StructuredData,
   seoPages,
 } from './v5-seo-config.mjs';
+import {
+  V5_LOCALES,
+  V5_PAGE_STEMS,
+  getHreflangCluster,
+  getLocalizedRoute,
+  getLocalizedUrl,
+} from './v5-i18n-config.mjs';
+import { loadV5Catalog } from './v5-i18n-transform.mjs';
 import {
   V5_PRODUCTS_GALLERY_RULE_BEFORE_DIMENSIONS,
   V5_PRODUCTS_GALLERY_RULE_WITH_DIMENSIONS,
@@ -1843,6 +1852,206 @@ function validateCanonicalUniqueness(documents) {
   }
 }
 
+function decodeSeoValue(value) {
+  return value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'")
+    .replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+}
+
+function simpleAttribute(tag, name) {
+  const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>]+))`, 'i'));
+  return match ? decodeSeoValue(match[1] ?? match[2] ?? match[3] ?? '') : null;
+}
+
+function simpleMetaValues(html, selector, value) {
+  return (html.match(/<meta\b[^>]*>/gi) ?? [])
+    .filter((tag) => (simpleAttribute(tag, selector) ?? '').toLowerCase() === value.toLowerCase())
+    .map((tag) => simpleAttribute(tag, 'content') ?? '');
+}
+
+function stripLanguageAdditions(html) {
+  return html
+    .replace(/\n      <div class="lang" data-name="lang">[\s\S]*?\n      <\/div>(?=\n      <a class="btn btn-solid" href="quote-v5\.html">)/g, '')
+    .replace(/\n  <div class="mlang" data-name="mlang">[\s\S]*?<\/div>(?=\n<\/div>\n<!-- SHELL:NAV AUTO END -->)/g, '')
+    .replace(/<!-- V5:LANGUAGE (?:DESKTOP|MOBILE|FOOTER) START -->[\s\S]*?<!-- V5:LANGUAGE (?:DESKTOP|MOBILE|FOOTER) END -->/g, '')
+    .replace(/<!-- V5:LANGUAGE SCRIPT START -->[\s\S]*?<!-- V5:LANGUAGE SCRIPT END -->/g, '')
+    .replace(/\/\* V5:LANGUAGE CONTROLS START \*\/[\s\S]*?\/\* V5:LANGUAGE CONTROLS END \*\//g, '');
+}
+
+function bodyStructureSignature(html, label) {
+  const body = html.match(/<body\b[^>]*>[\s\S]*?<\/body>/i)?.[0];
+  if (!body) throw new Error(`${label}: body is missing`);
+  const normalized = stripLanguageAdditions(body)
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '<style></style>');
+  const stableAttributes = ['class', 'id', 'data-name', 'data-asset', 'src', 'poster', 'width', 'height', 'type', 'name', 'action', 'method', 'data-sitekey'];
+  const tokens = [];
+  for (const match of normalized.matchAll(/<\/?([a-z][a-z0-9:-]*)\b[^>]*>/gi)) {
+    const tag = match[0];
+    const name = match[1].toLowerCase();
+    if (tag.startsWith('</')) {
+      tokens.push(`/${name}`);
+      continue;
+    }
+    const attrs = stableAttributes.map((attributeName) => {
+      let value = simpleAttribute(tag, attributeName);
+      if (value === null) return null;
+      if (attributeName === 'src' || attributeName === 'poster') value = value.replace(/^\/(?:media|LOGO)\//, (prefix) => prefix.slice(1));
+      if (attributeName === 'src' || attributeName === 'poster') value = value.replace(/^\.\.\/LOGO\//, 'LOGO/');
+      if (attributeName === 'class') value = value.replaceAll('industries-spacer', 'industries-v5-spacer');
+      return `${attributeName}=${value}`;
+    }).filter(Boolean);
+    tokens.push(`${name}${attrs.length ? `[${attrs.join('|')}]` : ''}`);
+  }
+  return createHash('sha256').update(tokens.join('\n')).digest('hex');
+}
+
+function collectSimpleSchemaTypes(value, output = []) {
+  if (Array.isArray(value)) {
+    for (const child of value) collectSimpleSchemaTypes(child, output);
+  } else if (value && typeof value === 'object') {
+    if (typeof value['@type'] === 'string') output.push(value['@type']);
+    for (const child of Object.values(value)) collectSimpleSchemaTypes(child, output);
+  }
+  return output;
+}
+
+function localizedReleaseSeoChecks(root, gate) {
+  const failures = [];
+  const localeIds = Object.keys(V5_LOCALES);
+  const documents = [];
+  const englishStructure = new Map();
+  const previewStructure = new Map();
+  for (const stem of V5_PAGE_STEMS) {
+    const previewFile = join(defaultRoot, `${stem}-v5.html`);
+    previewStructure.set(stem, bodyStructureSignature(readFileSync(previewFile, 'utf8'), `preview/${stem}`));
+  }
+  const canonicalOwners = new Map();
+  let hreflangLinks = 0;
+  let mediaReferences = 0;
+  let schemaNodes = 0;
+
+  for (const locale of localeIds) {
+    const definition = V5_LOCALES[locale];
+    const catalog = loadV5Catalog(locale);
+    for (const stem of V5_PAGE_STEMS) {
+      const label = `${locale}/${stem}`;
+      const route = getLocalizedRoute(locale, stem);
+      const relativeFile = route === '/' ? 'index.html' : `${route.slice(1)}index.html`;
+      const file = resolve(root, relativeFile);
+      if (!isInside(resolve(root), file) || !existsSync(file) || !lstatSync(file).isFile()) {
+        failures.push(`${label}: missing release page ${relativeFile}`);
+        continue;
+      }
+      const html = readFileSync(file, 'utf8');
+      const expectedSeo = catalog.seo[stem];
+      const expectedCanonical = getLocalizedUrl(locale, stem);
+      const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] ?? '';
+      if (simpleAttribute(htmlTag, 'lang') !== definition.htmlLang) failures.push(`${label}: html lang must be ${definition.htmlLang}`);
+      const title = decodeSeoValue(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? '');
+      if (title !== expectedSeo.title) failures.push(`${label}: localized title mismatch`);
+      if (JSON.stringify(simpleMetaValues(html, 'name', 'description')) !== JSON.stringify([expectedSeo.description])) failures.push(`${label}: localized description mismatch`);
+      const canonicalTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) =>
+        (simpleAttribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/).includes('canonical'));
+      const canonical = canonicalTags.length === 1 ? simpleAttribute(canonicalTags[0], 'href') : null;
+      if (canonical !== expectedCanonical) failures.push(`${label}: canonical must equal ${expectedCanonical}; got ${String(canonical)}`);
+      if (canonical && canonicalOwners.has(canonical)) failures.push(`${label}: duplicate canonical also used by ${canonicalOwners.get(canonical)}`);
+      if (canonical) canonicalOwners.set(canonical, label);
+      const hreflang = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) => simpleAttribute(tag, 'hreflang') !== null)
+        .map((tag) => ({ hreflang: simpleAttribute(tag, 'hreflang'), url: simpleAttribute(tag, 'href') }));
+      const expectedHreflang = getHreflangCluster(stem).map(({ hreflang: code, url }) => ({ hreflang: code, url }));
+      hreflangLinks += hreflang.length;
+      if (JSON.stringify(hreflang) !== JSON.stringify(expectedHreflang)) failures.push(`${label}: reciprocal hreflang cluster mismatch`);
+      const expectedAlternates = localeIds.filter((candidate) => candidate !== locale).map((candidate) => V5_LOCALES[candidate].ogLocale);
+      if (JSON.stringify(simpleMetaValues(html, 'property', 'og:locale')) !== JSON.stringify([definition.ogLocale])) failures.push(`${label}: og:locale mismatch`);
+      if (JSON.stringify(simpleMetaValues(html, 'property', 'og:locale:alternate')) !== JSON.stringify(expectedAlternates)) failures.push(`${label}: og:locale alternates mismatch`);
+      for (const [selector, key, expected] of [
+        ['property', 'og:title', expectedSeo.title], ['property', 'og:description', expectedSeo.description],
+        ['property', 'og:url', expectedCanonical], ['name', 'twitter:title', expectedSeo.title],
+        ['name', 'twitter:description', expectedSeo.description],
+      ]) {
+        if (JSON.stringify(simpleMetaValues(html, selector, key)) !== JSON.stringify([expected])) failures.push(`${label}: ${key} mismatch`);
+      }
+      if (JSON.stringify(simpleMetaValues(html, 'name', 'robots')) !== JSON.stringify(['index,follow'])) failures.push(`${label}: robots meta must be index,follow`);
+      if ((html.match(/<h1\b[^>]*>/gi) ?? []).length !== 1) failures.push(`${label}: expected exactly one H1`);
+      if (/design-demos|-v5|Demo A/i.test(html)) failures.push(`${label}: release page contains a demo identifier`);
+      const bodyWithoutControls = stripLanguageAdditions(html.match(/<body\b[^>]*>[\s\S]*?<\/body>/i)?.[0] ?? '');
+      const localizedRoutes = V5_PAGE_STEMS.map((candidateStem) => getLocalizedRoute(locale, candidateStem));
+      for (const anchor of bodyWithoutControls.match(/<a\b[^>]*>/gi) ?? []) {
+        const href = simpleAttribute(anchor, 'href');
+        if (!href?.startsWith('/') || href.startsWith('/media/') || href.startsWith('/LOGO/')) continue;
+        let pathname;
+        try {
+          pathname = new URL(href, SEO_BASE_URL).pathname;
+        } catch {
+          failures.push(`${label}: malformed internal href ${href}`);
+          continue;
+        }
+        if (!localizedRoutes.includes(pathname)) failures.push(`${label}: internal href leaves active locale routes: ${href}`);
+      }
+      const jsonBlocks = [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+      if (jsonBlocks.length !== 1) {
+        failures.push(`${label}: expected exactly one JSON-LD block`);
+      } else {
+        try {
+          const actual = JSON.parse(jsonBlocks[0][1]);
+          const expected = getLocalizedV5StructuredData(stem, catalog, {
+            canonical: expectedCanonical,
+            homeUrl: getLocalizedUrl(locale, 'demo-a'),
+          });
+          if (stableJson(actual) !== stableJson(expected)) failures.push(`${label}: localized JSON-LD differs from the exact schema`);
+          const types = collectSimpleSchemaTypes(actual);
+          schemaNodes += types.length;
+          for (const type of types) if (prohibitedSchemaTypes.has(type)) failures.push(`${label}: prohibited schema type ${type}`);
+        } catch (error) {
+          failures.push(`${label}: malformed JSON-LD: ${error.message}`);
+        }
+      }
+      const structure = bodyStructureSignature(html, label);
+      if (locale === 'en') {
+        englishStructure.set(stem, structure);
+        if (structure !== previewStructure.get(stem)) failures.push(`${label}: release body structure/media differs from the accepted preview`);
+      } else if (structure !== englishStructure.get(stem)) {
+        failures.push(`${label}: localized body structure/media differs from English ${stem}`);
+      }
+      for (const tag of html.match(/<(?:img|video|source)\b[^>]*>/gi) ?? []) {
+        const source = simpleAttribute(tag, 'src') ?? simpleAttribute(tag, 'poster');
+        if (!source || !/^\/(?:media|LOGO)\//.test(source)) continue;
+        mediaReferences += 1;
+        const relativeAsset = source.slice(1);
+        const candidate = resolve(root, relativeAsset);
+        const approved = resolve(repo, relativeAsset === 'LOGO/ZXLOGO.png' ? relativeAsset : `design-demos/${relativeAsset}`);
+        if (!isInside(resolve(root), candidate) || !existsSync(candidate) || !existsSync(approved)
+            || createHash('sha256').update(readFileSync(candidate)).digest('hex') !== createHash('sha256').update(readFileSync(approved)).digest('hex')) {
+          failures.push(`${label}: media bytes differ from approved source: ${relativeAsset}`);
+        }
+      }
+      documents.push({ locale, stem, route, file: relativeFile });
+    }
+  }
+  const expectedUrls = localeIds.flatMap((locale) => V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem)));
+  const sitemap = readReleaseArtifact(root, 'sitemap.xml', 'V5 multilingual sitemap');
+  const sitemapUrls = parseSitemapUrls(sitemap, 'V5 multilingual sitemap');
+  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) failures.push('schema: sitemap must equal the deterministic 35 canonical URLs');
+  const robots = readReleaseArtifact(root, 'robots.txt', 'V5 robots candidate');
+  if (robots !== `User-agent: *\nAllow: /\n\nSitemap: ${SEO_BASE_URL}/sitemap.xml\n`) failures.push('schema: release robots candidate differs from approved content');
+  return {
+    status: failures.length ? 'FAIL' : 'PASS',
+    gate,
+    profile: 'release',
+    failures,
+    metrics: {
+      locales: localeIds.length,
+      pageRoles: V5_PAGE_STEMS.length,
+      publicPages: documents.length,
+      hreflangLinks,
+      sitemapUrls: sitemapUrls.length,
+      mediaReferences,
+      schemaNodes,
+      structuralBaseline: 'accepted-preview-plus-exact-multilingual-tag-and-media-invariants',
+    },
+  };
+}
+
 export function runSeoChecks({
   gate,
   profile,
@@ -1851,6 +2060,9 @@ export function runSeoChecks({
 } = {}) {
   try {
     validateOptions({ gate, profile, root, publicPages });
+    if (profile === 'release' && publicPages === PUBLIC_V5_PAGES) {
+      return localizedReleaseSeoChecks(root, gate);
+    }
     const documents = loadDocuments(root, publicPages, profile);
     validateCanonicalUniqueness(documents);
     const metrics = buildMetrics(documents, profile);

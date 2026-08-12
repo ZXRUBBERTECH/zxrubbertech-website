@@ -148,3 +148,47 @@ export function getV5StructuredData(stem) {
     ],
   };
 }
+
+export function getLocalizedSeoPage(stem, catalog) {
+  if (!seoPages[stem]) throw new Error(`Unknown V5 SEO page: ${stem}`);
+  const page = catalog?.seo?.[stem];
+  if (!page || typeof page !== 'object' || Array.isArray(page)) {
+    throw new Error(`${stem}: localized SEO catalog entry is missing`);
+  }
+  const exactKeys = ['title', 'description', 'breadcrumb'];
+  if (JSON.stringify(Object.keys(page)) !== JSON.stringify(exactKeys)
+      || exactKeys.some((key) => typeof page[key] !== 'string' || !page[key].trim())) {
+    throw new Error(`${stem}: localized SEO entry must contain nonempty title, description, breadcrumb`);
+  }
+  return Object.freeze({ ...page });
+}
+
+export function getLocalizedV5StructuredData(stem, catalog, { canonical, homeUrl } = {}) {
+  const page = getLocalizedSeoPage(stem, catalog);
+  if (typeof canonical !== 'string' || !canonical.startsWith(`${SEO_BASE_URL}/`)) {
+    throw new Error(`${stem}: localized canonical is missing or outside ${SEO_BASE_URL}`);
+  }
+  if (typeof homeUrl !== 'string' || !homeUrl.startsWith(`${SEO_BASE_URL}/`)) {
+    throw new Error(`${stem}: localized Home URL is missing or outside ${SEO_BASE_URL}`);
+  }
+  if (stem === 'demo-a') return getV5StructuredData(stem);
+  const home = getLocalizedSeoPage('demo-a', catalog);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: home.breadcrumb,
+        item: homeUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: page.breadcrumb,
+        item: canonical,
+      },
+    ],
+  };
+}

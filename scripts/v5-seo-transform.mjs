@@ -3,9 +3,16 @@ import {
   SEO_SOCIAL_IMAGE,
   SEO_SOCIAL_LOCALE,
   getSeoCanonicalUrl,
+  getLocalizedSeoPage,
+  getLocalizedV5StructuredData,
   getV5StructuredData,
   seoPages,
 } from './v5-seo-config.mjs';
+import {
+  V5_LOCALES,
+  getHreflangCluster,
+  getLocalizedUrl,
+} from './v5-i18n-config.mjs';
 
 const SEO_BLOCK_START = '<!-- V5:SEO HEAD START -->';
 const SEO_BLOCK_END = '<!-- V5:SEO HEAD END -->';
@@ -51,31 +58,51 @@ function removeExistingSeoHead(head) {
   });
   const withoutCanonicalOrIcon = removeMatchingTags(withoutSeoMeta, linkTagPattern, (tag) => {
     const rel = (attribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/);
-    return rel.includes('canonical') || rel.includes('icon');
+    return rel.includes('canonical') || rel.includes('icon') || attribute(tag, 'hreflang') !== null;
   });
   return removeMatchingTags(withoutCanonicalOrIcon, scriptTagPattern, (tag) =>
     (attribute(tag, 'type') ?? '').toLowerCase() === 'application/ld+json');
 }
 
-function metadataBlock(stem, profile) {
-  const page = seoPages[stem];
-  const canonical = getSeoCanonicalUrl(stem);
+function metadataBlock(stem, profile, locale, catalog) {
+  const definition = V5_LOCALES[locale];
+  if (!definition) throw new Error(`${stem}: unknown V5 SEO locale ${String(locale)}`);
+  const localized = profile === 'release' || catalog
+    ? getLocalizedSeoPage(stem, catalog)
+    : seoPages[stem];
+  const canonical = profile === 'release' ? getLocalizedUrl(locale, stem) : getSeoCanonicalUrl(stem);
   const robots = profile === 'preview' ? 'noindex,nofollow' : 'index,follow';
-  const title = escapeText(page.title);
-  const description = escapeAttribute(page.description);
-  const titleAttribute = escapeAttribute(page.title);
+  const title = escapeText(localized.title);
+  const description = escapeAttribute(localized.description);
+  const titleAttribute = escapeAttribute(localized.title);
   const canonicalAttribute = escapeAttribute(canonical);
-  const structuredData = JSON.stringify(getV5StructuredData(stem), null, 2).replaceAll('<', '\\u003c');
+  const structured = profile === 'release'
+    ? getLocalizedV5StructuredData(stem, catalog, {
+      canonical,
+      homeUrl: getLocalizedUrl(locale, 'demo-a'),
+    })
+    : getV5StructuredData(stem);
+  const structuredData = JSON.stringify(structured, null, 2).replaceAll('<', '\\u003c');
+  const hreflangLinks = profile === 'release'
+    ? getHreflangCluster(stem).map(({ hreflang, url }) =>
+      `<link rel="alternate" hreflang="${escapeAttribute(hreflang)}" href="${escapeAttribute(url)}">`).join('\n')
+    : '';
+  const alternateLocales = profile === 'release'
+    ? Object.entries(V5_LOCALES)
+      .filter(([candidate]) => candidate !== locale)
+      .map(([, candidate]) => `<meta property="og:locale:alternate" content="${escapeAttribute(candidate.ogLocale)}">`)
+      .join('\n')
+    : '';
 
   return `${SEO_BLOCK_START}
 <title>${title}</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${canonicalAttribute}">
-<link rel="icon" href="data:,">
+${hreflangLinks}${hreflangLinks ? '\n' : ''}<link rel="icon" href="data:,">
 <meta name="robots" content="${robots}">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="${SEO_SOCIAL_LOCALE}">
-<meta property="og:site_name" content="${escapeAttribute(SEO_SITE_NAME)}">
+<meta property="og:locale" content="${profile === 'release' ? definition.ogLocale : SEO_SOCIAL_LOCALE}">
+${alternateLocales}${alternateLocales ? '\n' : ''}<meta property="og:site_name" content="${escapeAttribute(SEO_SITE_NAME)}">
 <meta property="og:title" content="${titleAttribute}">
 <meta property="og:description" content="${description}">
 <meta property="og:url" content="${canonicalAttribute}">
@@ -103,10 +130,12 @@ function insertionOffset(head) {
   return offset;
 }
 
-export function applyV5SeoHead(html, stem, { profile } = {}) {
+export function applyV5SeoHead(html, stem, { profile, locale = 'en', catalog = null } = {}) {
   if (typeof html !== 'string' || !html.trim()) throw new Error(`${stem}: V5 HTML must be a non-empty string`);
   if (!seoPages[stem]) throw new Error(`Unknown V5 SEO page: ${stem}`);
   if (profile !== 'preview' && profile !== 'release') throw new Error(`${stem}: unknown V5 SEO profile ${profile ?? '(missing)'}`);
+  if (!Object.hasOwn(V5_LOCALES, locale)) throw new Error(`${stem}: unknown V5 SEO locale ${String(locale)}`);
+  if (profile === 'release' && !catalog) throw new Error(`${stem}: release SEO requires a localized catalog`);
 
   const headOpen = [...html.matchAll(/<head\b[^>]*>/gi)];
   const headClose = [...html.matchAll(/<\/head\s*>/gi)];
@@ -122,7 +151,16 @@ export function applyV5SeoHead(html, stem, { profile } = {}) {
   const after = cleanedHead.slice(offset);
   const separatorBefore = before.endsWith('\n') ? '' : '\n';
   const separatorAfter = after.startsWith('\n') ? '' : '\n';
-  const transformedHead = `${before}${separatorBefore}${metadataBlock(stem, profile)}${separatorAfter}${after}`;
+  const transformedHead = `${before}${separatorBefore}${metadataBlock(stem, profile, locale, catalog)}${separatorAfter}${after}`;
 
-  return `${html.slice(0, contentStart)}${transformedHead}${html.slice(contentEnd)}`;
+  let transformed = `${html.slice(0, contentStart)}${transformedHead}${html.slice(contentEnd)}`;
+  if (profile === 'release') {
+    const current = transformed.slice(0, contentStart).match(/<html\b[^>]*>/i)?.[0];
+    if (!current) throw new Error(`${stem}: expected one html element before head`);
+    const next = /\blang\s*=/.test(current)
+      ? current.replace(/\blang\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i, `lang="${escapeAttribute(V5_LOCALES[locale].htmlLang)}"`)
+      : current.replace(/>$/, ` lang="${escapeAttribute(V5_LOCALES[locale].htmlLang)}">`);
+    transformed = transformed.replace(current, next);
+  }
+  return transformed;
 }

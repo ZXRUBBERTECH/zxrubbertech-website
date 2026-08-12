@@ -1,4 +1,5 @@
 import { existsSync, lstatSync, readFileSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -1055,6 +1056,135 @@ function validateControlsGate(normalized, config, inventory) {
   };
 }
 
+function htmlAttribute(tag, name) {
+  const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>]+))`, 'i'));
+  return match ? (match[1] ?? match[2] ?? match[3] ?? '')
+    .replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'")
+    .replaceAll('&lt;', '<').replaceAll('&gt;', '>') : null;
+}
+
+function releaseHeadValues(html, selectorName, selectorValue) {
+  const values = [];
+  for (const tag of html.match(/<meta\b[^>]*>/gi) ?? []) {
+    if ((htmlAttribute(tag, selectorName) ?? '').toLowerCase() === selectorValue.toLowerCase()) {
+      values.push(htmlAttribute(tag, 'content') ?? '');
+    }
+  }
+  return values;
+}
+
+function validateReleaseGate(normalized, config, inventory) {
+  const failures = [];
+  const localeIds = Object.keys(config.V5_LOCALES);
+  const expectedPages = localeIds.length * config.V5_PAGE_STEMS.length;
+  if (normalized.profile !== 'release') failures.push('Release gate requires profile=release');
+  if (normalized.locale) failures.push('Full release gate must not use --locale');
+  if (inventory.length !== expectedPages) failures.push(`Release page inventory expected ${expectedPages}, found ${inventory.length}`);
+  let hreflangLinks = 0;
+  let passedPages = 0;
+  const reportPages = new Map();
+  const reportFile = join(normalized.root, 'v5-release-report.json');
+  let report = null;
+  try {
+    report = readJsonFile(reportFile, 'V5 release report');
+    for (const page of report.pages ?? []) reportPages.set(`${page.locale}/${page.stem}`, page);
+  } catch (error) {
+    failures.push(error.message);
+  }
+
+  for (const locale of localeIds) {
+    const definition = config.V5_LOCALES[locale];
+    const catalog = readJsonFile(join(dirname(fileURLToPath(import.meta.url)), 'v5-i18n', `${locale}.json`), `${locale} catalog`);
+    for (const stem of config.V5_PAGE_STEMS) {
+      const label = `${locale}/${stem}`;
+      const file = releaseFileFor(normalized.root, config.getLocalizedRoute(locale, stem));
+      const before = failures.length;
+      if (!existsSync(file) || !lstatSync(file).isFile()) {
+        failures.push(`${label}: missing release page ${relative(normalized.root, file)}`);
+        continue;
+      }
+      const html = readFileSync(file, 'utf8');
+      const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] ?? '';
+      if (htmlAttribute(htmlTag, 'lang') !== definition.htmlLang) {
+        failures.push(`${label}: html lang must equal ${definition.htmlLang}`);
+      }
+      const expectedCanonical = config.getLocalizedUrl(locale, stem);
+      const canonicalTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) =>
+        (htmlAttribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/).includes('canonical'));
+      const actualCanonical = canonicalTags.length === 1 ? htmlAttribute(canonicalTags[0], 'href') : null;
+      if (canonicalTags.length !== 1 || actualCanonical !== expectedCanonical) {
+        failures.push(`${label}: canonical must equal ${expectedCanonical}; got ${String(actualCanonical)}`);
+      }
+      const expectedSeo = catalog.seo?.[stem];
+      const title = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]
+        ?.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'") ?? '';
+      if (title !== expectedSeo?.title) failures.push(`${label}: title does not match the localized catalog`);
+      const descriptions = releaseHeadValues(html, 'name', 'description');
+      if (descriptions.length !== 1 || descriptions[0] !== expectedSeo?.description) {
+        failures.push(`${label}: meta description does not match the localized catalog`);
+      }
+      const alternateTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) => htmlAttribute(tag, 'hreflang') !== null);
+      const actualCluster = alternateTags.map((tag) => ({
+        hreflang: htmlAttribute(tag, 'hreflang'),
+        url: htmlAttribute(tag, 'href'),
+      }));
+      const expectedCluster = config.getHreflangCluster(stem).map(({ hreflang, url }) => ({ hreflang, url }));
+      hreflangLinks += alternateTags.length;
+      if (JSON.stringify(actualCluster) !== JSON.stringify(expectedCluster)) {
+        failures.push(`${label}: hreflang cluster is not the exact reciprocal six-link set`);
+      }
+      const ogLocale = releaseHeadValues(html, 'property', 'og:locale');
+      const ogAlternates = releaseHeadValues(html, 'property', 'og:locale:alternate');
+      const expectedOgAlternates = localeIds.filter((candidate) => candidate !== locale)
+        .map((candidate) => config.V5_LOCALES[candidate].ogLocale);
+      if (JSON.stringify(ogLocale) !== JSON.stringify([definition.ogLocale])) failures.push(`${label}: og:locale is incorrect`);
+      if (JSON.stringify(ogAlternates) !== JSON.stringify(expectedOgAlternates)) failures.push(`${label}: og:locale:alternate set is incorrect`);
+      for (const [key, value] of [['og:title', expectedSeo?.title], ['og:description', expectedSeo?.description], ['og:url', expectedCanonical]]) {
+        if (JSON.stringify(releaseHeadValues(html, 'property', key)) !== JSON.stringify([value])) failures.push(`${label}: ${key} is incorrect`);
+      }
+      for (const [key, value] of [['twitter:title', expectedSeo?.title], ['twitter:description', expectedSeo?.description]]) {
+        if (JSON.stringify(releaseHeadValues(html, 'name', key)) !== JSON.stringify([value])) failures.push(`${label}: ${key} is incorrect`);
+      }
+      for (const group of ['DESKTOP', 'MOBILE', 'FOOTER']) {
+        const content = extractControlGroup(html, group, label, failures);
+        validateControlGroup(content, group, locale, stem, config, label, failures);
+      }
+      const reportPage = reportPages.get(label);
+      const digest = createHash('sha256').update(html).digest('hex');
+      const expectedRelativeFile = relative(normalized.root, file);
+      if (!reportPage || reportPage.route !== config.getLocalizedRoute(locale, stem)
+          || reportPage.file !== expectedRelativeFile || reportPage.sha256 !== digest) {
+        failures.push(`${label}: release report route/file/hash does not match final bytes`);
+      }
+      if (failures.length === before) passedPages += 1;
+    }
+  }
+
+  const expectedUrls = localeIds.flatMap((locale) => config.V5_PAGE_STEMS.map((stem) => config.getLocalizedUrl(locale, stem)));
+  const sitemapFile = join(normalized.root, 'sitemap.xml');
+  const sitemap = existsSync(sitemapFile) ? readFileSync(sitemapFile, 'utf8') : '';
+  const sitemapUrls = [...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map((match) => match[1]);
+  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) failures.push('Release sitemap must equal the deterministic 35-URL locale/page matrix');
+  const robots = existsSync(join(normalized.root, 'robots.txt')) ? readFileSync(join(normalized.root, 'robots.txt'), 'utf8') : '';
+  const expectedRobots = 'User-agent: *\nAllow: /\n\nSitemap: https://www.zxrubbertech.com/sitemap.xml\n';
+  if (robots !== expectedRobots) failures.push('Release robots.txt differs from the exact approved content');
+  const exactReport = { locales: 5, publicPages: 35, hreflangLinks: 210, sitemapUrls: 35 };
+  for (const [key, expected] of Object.entries(exactReport)) {
+    if (report?.[key] !== expected) failures.push(`Release report ${key} must equal ${expected}; got ${String(report?.[key])}`);
+  }
+  return {
+    failures,
+    metrics: {
+      locales: localeIds.length,
+      pageRoles: config.V5_PAGE_STEMS.length,
+      publicPages: inventory.length,
+      passedPages,
+      hreflangLinks,
+      sitemapUrls: sitemapUrls.length,
+    },
+  };
+}
+
 export async function runV5I18nChecks(options) {
   const normalized = normalizeOptions(options);
   const files = listFiles(normalized.root);
@@ -1062,7 +1192,7 @@ export async function runV5I18nChecks(options) {
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
-  if (!['registry', 'catalog', 'controls'].includes(normalized.gate)) {
+  if (!['registry', 'catalog', 'controls', 'release'].includes(normalized.gate)) {
     return {
       checker: 'v5-i18n',
       status: 'FAIL',
@@ -1072,7 +1202,7 @@ export async function runV5I18nChecks(options) {
       locale: normalized.locale,
       inventoryPages: inventory.length,
       registry: null,
-      failures: [`Gate ${normalized.gate} is not implemented through Gate M3`],
+      failures: [`Gate ${normalized.gate} is not implemented through Gate M8`],
     };
   }
 
@@ -1080,6 +1210,7 @@ export async function runV5I18nChecks(options) {
   let metrics;
   let catalog = null;
   let controls = null;
+  let release = null;
   if (normalized.gate === 'registry') {
     ({ failures, metrics } = validateRegistry(config));
   } else if (normalized.gate === 'catalog') {
@@ -1089,12 +1220,18 @@ export async function runV5I18nChecks(options) {
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     catalog = result.metrics;
-  } else {
+  } else if (normalized.gate === 'controls') {
     const registryResult = validateRegistry(config);
     const result = validateControlsGate(normalized, config, inventory);
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     controls = result.metrics;
+  } else {
+    const registryResult = validateRegistry(config);
+    const result = validateReleaseGate(normalized, config, inventory);
+    failures = [...registryResult.failures, ...result.failures];
+    metrics = registryResult.metrics;
+    release = result.metrics;
   }
   return {
     checker: 'v5-i18n',
@@ -1107,6 +1244,7 @@ export async function runV5I18nChecks(options) {
     registry: metrics,
     catalog,
     controls,
+    release,
     failures,
   };
 }
