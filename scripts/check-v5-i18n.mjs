@@ -18,6 +18,32 @@ const SUPPORTED_PROFILES = new Set(['preview', 'release']);
 const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr']);
 const SUPPORTED_FLAGS = new Set(['gate', 'profile', 'root', 'locale']);
 
+const REQUIRED_GLOSSARY_TERMS = Object.freeze([
+  'rubber compound', 'molded rubber parts', 'rubber-to-metal bonding',
+  'compression molding', 'injection molding', 'extrusion', 'tooling',
+  'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
+]);
+
+// Proper names, protected values and internationally established technical
+// abbreviations may legitimately remain unchanged in a localized catalog.
+// Everything else is subject to the residue comparison below.
+const ENGLISH_RESIDUE_ALLOWLIST = Object.freeze([
+  'ZHIXIN', 'ZHIXIN RUBBER MATERIAL', 'RUBBER MATERIAL',
+  'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD',
+  'martin@zxrubbertech.com', 'https://wa.me/8615256225135',
+  'WhatsApp', 'Formspree', 'Cloudflare', 'Turnstile', 'Google Maps',
+  'Google', 'Amap', 'OpenStreetMap', 'ODbL',
+  'Anhui', 'China', 'Ningguo', 'Xuancheng', 'Helixi', 'Waihuan',
+  'East Road', 'Street',
+  'English', 'Deutsch', '简体中文', 'Русский', 'Türkçe',
+  'NR', 'SBR', 'CR', 'NBR', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
+  'MQ', 'NV', 'OEM', 'ODM', 'MOQ', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE',
+  'HVAC', 'PPAP', 'NDA', 'EXW', 'FOB', 'ISO 9001:2015', 'TC', 'PVC',
+  '3D', 'FAQ', 'HTTP', 'Extrusion', 'Material', 'Polymer', 'Navigation',
+  'Engineering', 'Workstation', 'Name', 'Team', 'Links', 'flexible', 'Standard',
+  'Pigment',
+]);
+
 class V5I18nCliError extends Error {
   constructor(message) {
     super(message);
@@ -188,7 +214,7 @@ function catalogPaths(root, locale) {
   };
 }
 
-function validateGlossary(glossary) {
+function validateGlossary(glossary, locale) {
   const failures = [];
   if (!glossary || typeof glossary !== 'object' || Array.isArray(glossary)) return ['V5 i18n glossary must be an object'];
   if (glossary.schemaVersion !== 1 || glossary.sourceLocale !== 'en') failures.push('V5 i18n glossary must use schemaVersion 1 and sourceLocale en');
@@ -211,23 +237,122 @@ function validateGlossary(glossary) {
       if (!glossary.preservedLiterals.includes(literal)) failures.push(`V5 i18n glossary is missing preserved literal: ${literal}`);
     }
   }
-  const requiredTerms = [
-    'rubber compound', 'molded rubber parts', 'rubber-to-metal bonding',
-    'compression molding', 'injection molding', 'extrusion', 'tooling',
-    'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
-  ];
   if (!glossary.terms || typeof glossary.terms !== 'object' || Array.isArray(glossary.terms)) {
     failures.push('V5 i18n glossary terms must be an object');
   } else {
-    for (const term of requiredTerms) {
+    for (const term of REQUIRED_GLOSSARY_TERMS) {
       const definition = glossary.terms[term];
       if (!definition || typeof definition !== 'object' || Array.isArray(definition)
           || typeof definition.en !== 'string' || !definition.en.trim()) {
         failures.push(`V5 i18n glossary is missing English term: ${term}`);
+      } else if (locale !== 'en'
+          && (typeof definition[locale] !== 'string' || !definition[locale].trim())) {
+        failures.push(`V5 i18n glossary is missing ${locale} term: ${term}`);
       }
     }
   }
   return failures;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function countLiteral(value, literal) {
+  return value.split(literal).length - 1;
+}
+
+function normalizeCatalogText(value) {
+  return value
+    .replace(/<[^>]+>/g, ' ')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&apos;', "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function maskResidueAllowlist(value, glossary) {
+  let masked = normalizeCatalogText(value)
+    .replace(/https?:\/\/\S+|\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b/g, ' ');
+  const phrases = [...ENGLISH_RESIDUE_ALLOWLIST, ...(glossary.preservedLiterals ?? [])]
+    .sort((left, right) => right.length - left.length);
+  for (const phrase of phrases) {
+    masked = masked.replace(new RegExp(escapeRegExp(phrase), 'giu'), ' ');
+  }
+  return masked.replace(/\s+/g, ' ').trim();
+}
+
+function asciiWordSet(value) {
+  return new Set([...value.matchAll(/[A-Za-z][A-Za-z'-]{2,}/g)].map((match) => match[0].toLowerCase()));
+}
+
+function validateEnglishResidue(locale, english, localized, glossary, operations) {
+  if (locale === 'en') return [];
+  const failures = [];
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, englishValue] of Object.entries(english)) {
+    const localizedValue = localized[key];
+    if (preservedOperationKeys.has(key)) continue;
+    const maskedEnglish = maskResidueAllowlist(englishValue, glossary);
+    const maskedLocalized = maskResidueAllowlist(localizedValue, glossary);
+    if (!maskedEnglish || !maskedLocalized) continue;
+    const englishWords = asciiWordSet(maskedEnglish);
+    const localizedWords = asciiWordSet(maskedLocalized);
+    if (!englishWords.size || !localizedWords.size) continue;
+    if (maskedEnglish.toLocaleLowerCase('en') === maskedLocalized.toLocaleLowerCase('en')) {
+      failures.push(`${locale}: unapproved unchanged English value: ${key}`);
+      continue;
+    }
+    const residues = [...localizedWords].filter((word) => englishWords.has(word)).sort();
+    if (residues.length) {
+      failures.push(`${locale}: unapproved English residue at ${key}: ${residues.join(', ')}`);
+    }
+  }
+  return failures;
+}
+
+function validatePreservedCatalogLiterals(locale, english, localized, glossary, operations) {
+  if (locale === 'en') return { failures: [], occurrences: 0 };
+  const failures = [];
+  let occurrences = 0;
+  for (const literal of glossary.preservedLiterals ?? []) {
+    for (const [key, englishValue] of Object.entries(english)) {
+      const expected = countLiteral(englishValue, literal);
+      const actual = countLiteral(localized[key], literal);
+      occurrences += expected;
+      if (actual !== expected) {
+        failures.push(`${locale}: preserved literal ${JSON.stringify(literal)} at ${key} expected ${expected} occurrences, found ${actual}`);
+      }
+    }
+  }
+  for (const operation of operations.filter(({ preserve }) => preserve)) {
+    if (localized[operation.key] !== english[operation.key]) {
+      failures.push(`${locale}: operation-preserved value changed at ${operation.key}`);
+    }
+  }
+  return { failures, occurrences };
+}
+
+function validateGlossaryConformance(locale, english, localized, glossary) {
+  if (locale === 'en') return { failures: [], checks: 0 };
+  const failures = [];
+  let checks = 0;
+  for (const term of REQUIRED_GLOSSARY_TERMS) {
+    const preferred = glossary.terms?.[term]?.[locale];
+    if (typeof preferred !== 'string' || !preferred.trim()) continue;
+    const englishNeedle = term.toLocaleLowerCase('en');
+    const localizedNeedle = normalizeCatalogText(preferred).toLocaleLowerCase(locale);
+    for (const [key, englishValue] of Object.entries(english)) {
+      if (!normalizeCatalogText(englishValue).toLocaleLowerCase('en').includes(englishNeedle)) continue;
+      checks += 1;
+      if (!normalizeCatalogText(localized[key]).toLocaleLowerCase(locale).includes(localizedNeedle)) {
+        failures.push(`${locale}: glossary term ${JSON.stringify(term)} is not rendered as ${JSON.stringify(preferred)} at ${key}`);
+      }
+    }
+  }
+  return { failures, checks };
 }
 
 function normalizeEnglishSerialization(value) {
@@ -250,6 +375,7 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   const { catalogRoot, catalogFile, glossaryFile, baselineFile } = catalogPaths(normalized.root, locale);
   let catalog;
   let flattened;
+  let glossary = null;
   try {
     catalog = readJsonFile(catalogFile, `${locale} V5 catalog`);
     flattened = transformModule.validateV5Catalog(locale, catalog);
@@ -257,7 +383,8 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
     return { failures: [error.message], metrics: null };
   }
   try {
-    failures.push(...validateGlossary(readJsonFile(glossaryFile, 'V5 i18n glossary')));
+    glossary = readJsonFile(glossaryFile, 'V5 i18n glossary');
+    failures.push(...validateGlossary(glossary, locale));
   } catch (error) {
     failures.push(error.message);
   }
@@ -329,6 +456,9 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   }
 
   let englishRoundTrip = null;
+  let glossaryChecks = 0;
+  let preservedOccurrences = 0;
+  let englishResidueFindings = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
     for (const stem of config.V5_PAGE_STEMS) {
@@ -351,10 +481,30 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       }
     }
   } else {
-    const english = transformModule.loadV5Catalog('en');
-    const englishKeys = Object.keys(transformModule.flattenV5Catalog(english)).sort();
+    const english = readJsonFile(join(catalogRoot, 'en.json'), 'English V5 catalog');
+    const flattenedEnglish = transformModule.validateV5Catalog('en', english);
+    const englishKeys = Object.keys(flattenedEnglish).sort();
     const localeKeys = Object.keys(flattened).sort();
     if (JSON.stringify(localeKeys) !== JSON.stringify(englishKeys)) failures.push(`${locale}: catalog key set differs from English`);
+    if (glossary) {
+      const glossaryResult = validateGlossaryConformance(locale, flattenedEnglish, flattened, glossary);
+      glossaryChecks = glossaryResult.checks;
+      failures.push(...glossaryResult.failures);
+
+      const preservedResult = validatePreservedCatalogLiterals(
+        locale,
+        flattenedEnglish,
+        flattened,
+        glossary,
+        operations,
+      );
+      preservedOccurrences = preservedResult.occurrences;
+      failures.push(...preservedResult.failures);
+
+      const residueFailures = validateEnglishResidue(locale, flattenedEnglish, flattened, glossary, operations);
+      englishResidueFindings = residueFailures.length;
+      failures.push(...residueFailures);
+    }
   }
 
   return {
@@ -367,6 +517,12 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       operationsByStem: currentBaseline.operationCountsByStem,
       englishRoundTrip,
       catalogRoot,
+      glossaryTerms: REQUIRED_GLOSSARY_TERMS.length,
+      glossaryChecks,
+      preservedLiterals: glossary?.preservedLiterals?.length ?? 0,
+      preservedOccurrences,
+      englishResidueAllowlist: ENGLISH_RESIDUE_ALLOWLIST.length,
+      englishResidueFindings,
     } : null,
   };
 }

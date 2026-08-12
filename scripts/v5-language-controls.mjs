@@ -235,7 +235,7 @@ export function injectV5LanguageControls(html, { stem, locale } = {}) {
   result = replaceExact(result, '</style>', `${CONTROL_STYLE}\n</style>`, 1, `${stem}/${locale} style insertion`);
   result = replaceRegexExact(
     result,
-    /      <a class="btn btn-solid" href="quote-v5\.html"(?: style="[^"]+")?>Get a Quote<\/a>/g,
+    /      <a class="btn btn-solid" href="quote-v5\.html"(?: style="[^"]+")?>[^<]*<\/a>/g,
     (match) => `${desktopControl(locale, stem)}\n${match}`,
     1,
     `${stem}/${locale} desktop control insertion`,

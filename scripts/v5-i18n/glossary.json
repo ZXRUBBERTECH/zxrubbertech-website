@@ -31,40 +31,52 @@
   },
   "terms": {
     "rubber compound": {
-      "en": "rubber compound"
+      "en": "rubber compound",
+      "de": "Gummimischung"
     },
     "molded rubber parts": {
-      "en": "molded rubber parts"
+      "en": "molded rubber parts",
+      "de": "Gummiformteile"
     },
     "rubber-to-metal bonding": {
-      "en": "rubber-to-metal bonding"
+      "en": "rubber-to-metal bonding",
+      "de": "Gummi-Metall-Verbindung"
     },
     "compression molding": {
-      "en": "compression molding"
+      "en": "compression molding",
+      "de": "Formpressen"
     },
     "injection molding": {
-      "en": "injection molding"
+      "en": "injection molding",
+      "de": "Spritzgießen"
     },
     "extrusion": {
-      "en": "extrusion"
+      "en": "extrusion",
+      "de": "Extrusion"
     },
     "tooling": {
-      "en": "tooling"
+      "en": "tooling",
+      "de": "Werkzeug"
     },
     "traceability": {
-      "en": "traceability"
+      "en": "traceability",
+      "de": "Rückverfolgbarkeit"
     },
     "batch release": {
-      "en": "batch release"
+      "en": "batch release",
+      "de": "Chargenfreigabe"
     },
     "drawing": {
-      "en": "drawing"
+      "en": "drawing",
+      "de": "Zeichnung"
     },
     "sample": {
-      "en": "sample"
+      "en": "sample",
+      "de": "Muster"
     },
     "project requirements": {
-      "en": "project requirements"
+      "en": "project requirements",
+      "de": "Projektanforderungen"
     }
   }
 }
