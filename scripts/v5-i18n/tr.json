@@ -599,6 +599,10 @@
       }
     },
     "quote": {
+      "validation": {
+        "required-field": "Lütfen bu zorunlu alanı doldurun.",
+        "invalid-email": "Lütfen geçerli bir e-posta adresi girin."
+      },
       "js_string": {
         "verification-complete-you-can-send-your-request": "Doğrulama tamamlandı. Talebinizi gönderebilirsiniz.",
         "verification-is-unavailable-please-try-again-or-use-": "Doğrulama kullanılamıyor. Lütfen tekrar deneyin veya aşağıdaki e-postayı veya WhatsApp bağlantılarını kullanın.",

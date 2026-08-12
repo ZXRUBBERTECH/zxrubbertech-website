@@ -22,11 +22,16 @@ const TRANSLATABLE_ATTRIBUTES = Object.freeze([
   'data-wheel',
 ]);
 
-const RUNTIME_LITERALS = Object.freeze([
-  'Section navigation',
-  ' reserved expansion area',
-  'Open in Amap',
-  'Open in Google Maps',
+export const V5_QUOTE_BACKEND_FIELDS = Object.freeze([
+  'name', 'company', 'email', 'phone', 'message', 'language',
+]);
+
+export const V5_QUOTE_VALIDATION_KEYS = Object.freeze({
+  required: 'runtime.quote.validation.required-field',
+  invalidEmail: 'runtime.quote.validation.invalid-email',
+});
+
+export const V5_QUOTE_RUNTIME_LITERALS = Object.freeze([
   'Verification complete. You can send your request.',
   'Verification is unavailable. Please try again or use the email or WhatsApp links below.',
   'Verification expired. Please complete it again.',
@@ -39,6 +44,14 @@ const RUNTIME_LITERALS = Object.freeze([
   'Verification reset after successful submission.',
   'Request could not reach Formspree (network error). Please try again or email us directly. Your entered details have been kept.',
   'Send Request',
+]);
+
+const RUNTIME_LITERALS = Object.freeze([
+  'Section navigation',
+  ' reserved expansion area',
+  'Open in Amap',
+  'Open in Google Maps',
+  ...V5_QUOTE_RUNTIME_LITERALS,
 ]);
 
 const PRESERVED_CATALOG_VALUES = new Set([

@@ -1877,10 +1877,29 @@ function stripLanguageAdditions(html) {
     .replace(/\/\* V5:LANGUAGE CONTROLS START \*\/[\s\S]*?\/\* V5:LANGUAGE CONTROLS END \*\//g, '');
 }
 
-function bodyStructureSignature(html, label) {
+function stripApprovedQuoteLanguageField(body, stem, locale, label) {
+  const languageFields = body.match(/<input\b[^>]*\bname=["']language["'][^>]*>/gi) ?? [];
+  if (stem !== 'quote') {
+    if (languageFields.length) throw new Error(`${label}: hidden language field is forbidden outside Quote`);
+    return body;
+  }
+  const expected = `<input type="hidden" name="language" value="${locale}">`;
+  if (languageFields.length !== 1) {
+    throw new Error(`${label}: expected exactly one hidden language field, found ${languageFields.length}`);
+  }
+  if (languageFields[0] !== expected) {
+    throw new Error(`${label}: hidden language field must equal ${expected}`);
+  }
+  return body.replace(expected, '');
+}
+
+function bodyStructureSignature(html, label, { stem = null, locale = null, release = false } = {}) {
   const body = html.match(/<body\b[^>]*>[\s\S]*?<\/body>/i)?.[0];
   if (!body) throw new Error(`${label}: body is missing`);
-  const normalized = stripLanguageAdditions(body)
+  const releaseNormalized = release
+    ? stripApprovedQuoteLanguageField(body, stem, locale, label)
+    : body;
+  const normalized = stripLanguageAdditions(releaseNormalized)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>')
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '<style></style>');
   const stableAttributes = ['class', 'id', 'data-name', 'data-asset', 'src', 'poster', 'width', 'height', 'type', 'name', 'action', 'method', 'data-sitekey'];
@@ -2006,7 +2025,7 @@ function localizedReleaseSeoChecks(root, gate) {
           failures.push(`${label}: malformed JSON-LD: ${error.message}`);
         }
       }
-      const structure = bodyStructureSignature(html, label);
+      const structure = bodyStructureSignature(html, label, { stem, locale, release: true });
       if (locale === 'en') {
         englishStructure.set(stem, structure);
         if (structure !== previewStructure.get(stem)) failures.push(`${label}: release body structure/media differs from the accepted preview`);

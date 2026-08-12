@@ -544,6 +544,25 @@ function normalizeEnglishSerialization(value) {
     .replaceAll('&apos;', "'");
 }
 
+function removeApprovedQuoteRuntimeAdditionsForEnglishRoundTrip(value) {
+  const languageField = '<input type="hidden" name="language" value="en">';
+  const turnstileLanguage = ' data-language="en"';
+  const fieldCount = value.split(languageField).length - 1;
+  const languageCount = value.split(turnstileLanguage).length - 1;
+  if (fieldCount !== 1 || languageCount !== 1) {
+    throw new Error(`quote/en: expected one approved language field and Turnstile language; found ${fieldCount}/${languageCount}`);
+  }
+  const withoutFields = value
+    .replace(`\n      ${languageField}`, '')
+    .replace(turnstileLanguage, '');
+  const validationPattern = /\n\n  \/\* V5:QUOTE VALIDATION START \*\/[\s\S]*?\n  \/\* V5:QUOTE VALIDATION END \*\//g;
+  const validationMatches = withoutFields.match(validationPattern) ?? [];
+  if (validationMatches.length !== 1) {
+    throw new Error(`quote/en: expected one localized validation runtime, found ${validationMatches.length}`);
+  }
+  return withoutFields.replace(validationPattern, '');
+}
+
 function validateCatalogGate(normalized, config, inventory, operationsModule, transformModule) {
   const failures = [];
   const locale = normalized.locale;
@@ -600,6 +619,7 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   }
 
   const consumedBodyKeys = new Set(operationKeys);
+  for (const key of Object.values(operationsModule.V5_QUOTE_VALIDATION_KEYS ?? {})) consumedBodyKeys.add(key);
   for (const key of Object.keys(flattened)) {
     if (key.startsWith('seo.')) continue;
     if (!consumedBodyKeys.has(key)) failures.push(`Unconsumed V5 catalog key: ${key}`);
@@ -659,7 +679,10 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       try {
         const source = readFileSync(file, 'utf8');
         const localized = transformModule.applyV5LocalizationOperations(source, { stem, locale, catalog });
-        if (normalizeEnglishSerialization(localized) !== normalizeEnglishSerialization(source)) {
+        const roundTrip = stem === 'quote'
+          ? removeApprovedQuoteRuntimeAdditionsForEnglishRoundTrip(localized)
+          : localized;
+        if (normalizeEnglishSerialization(roundTrip) !== normalizeEnglishSerialization(source)) {
           failures.push(`${stem}: English localization changed approved text semantics`);
           englishRoundTrip = false;
         }
@@ -1185,6 +1208,137 @@ function validateReleaseGate(normalized, config, inventory) {
   };
 }
 
+function validateFormGate(normalized, config) {
+  const failures = [];
+  const localeIds = Object.keys(config.V5_LOCALES);
+  let passedPages = 0;
+  let formspreeTargets = 0;
+  let turnstileWidgets = 0;
+  let localeFields = 0;
+  let runtimeMessages = 0;
+
+  if (normalized.profile !== 'release') failures.push('Form gate requires profile=release');
+  if (normalized.locale) failures.push('Form gate must validate all five release locales');
+
+  for (const locale of localeIds) {
+    const label = `${locale}/quote`;
+    const before = failures.length;
+    const file = releaseFileFor(normalized.root, config.getLocalizedRoute(locale, 'quote'));
+    if (!existsSync(file) || !lstatSync(file).isFile()) {
+      failures.push(`${label}: missing release Quote page ${relative(normalized.root, file)}`);
+      continue;
+    }
+    const html = readFileSync(file, 'utf8');
+    const formMatch = html.match(/<form\b[^>]*\bid=["']contact-form["'][^>]*>[\s\S]*?<\/form\s*>/i);
+    if (!formMatch) {
+      failures.push(`${label}: missing contact form`);
+      continue;
+    }
+    const form = formMatch[0];
+    const formTag = form.match(/^<form\b[^>]*>/i)?.[0] ?? '';
+    const action = htmlAttribute(formTag, 'action');
+    const formspreeIdMatches = html.match(/mrpzqado/g) ?? [];
+    if (action !== 'https://formspree.io/f/mrpzqado' || formspreeIdMatches.length !== 1) {
+      failures.push(`${label}: Formspree target must contain mrpzqado exactly once`);
+    } else {
+      formspreeTargets += 1;
+    }
+
+    const widgetMatches = html.match(/<div\b[^>]*\bclass=["'][^"']*\bcf-turnstile\b[^"']*["'][^>]*>/gi) ?? [];
+    const siteKeyMatches = html.match(/0x4AAAAAAENHOMMn_zK0WuNN/g) ?? [];
+    const widget = widgetMatches[0] ?? '';
+    if (widgetMatches.length !== 1 || siteKeyMatches.length !== 1
+        || htmlAttribute(widget, 'data-sitekey') !== '0x4AAAAAAENHOMMn_zK0WuNN') {
+      failures.push(`${label}: Turnstile Site Key must equal the approved key exactly once`);
+    } else {
+      turnstileWidgets += 1;
+    }
+    if (htmlAttribute(widget, 'data-language') !== config.V5_LOCALES[locale].turnstileLanguage) {
+      failures.push(`${label}: Turnstile data-language must equal ${config.V5_LOCALES[locale].turnstileLanguage}`);
+    }
+
+    const controls = [...form.matchAll(/<(?:input|textarea)\b[^>]*\bname=(?:"([^"]+)"|'([^']+)')[^>]*>/gi)]
+      .map((match) => ({ tag: match[0], name: match[1] ?? match[2] }));
+    const backendNames = controls.map(({ name }) => name);
+    const expectedVisibleNames = ['name', 'company', 'email', 'phone', 'message'];
+    const visibleNames = controls.filter(({ name }) => name !== 'language').map(({ name }) => name);
+    if (JSON.stringify(visibleNames) !== JSON.stringify(expectedVisibleNames)
+        || backendNames.length !== expectedVisibleNames.length + 1) {
+      failures.push(`${label}: stable backend fields must equal ${expectedVisibleNames.join(', ')} plus hidden language`);
+    }
+    const languageControls = controls.filter(({ name }) => name === 'language');
+    if (languageControls.length !== 1 || htmlAttribute(languageControls[0].tag, 'type') !== 'hidden'
+        || htmlAttribute(languageControls[0].tag, 'value') !== locale) {
+      failures.push(`${label}: hidden language field must equal locale ID ${locale}`);
+    } else {
+      localeFields += 1;
+    }
+    const emailControl = controls.find(({ name }) => name === 'email');
+    for (const requiredName of ['name', 'email', 'message']) {
+      const control = controls.find(({ name }) => name === requiredName);
+      if (!control || !/\brequired(?:\s|>|=)/i.test(control.tag)) failures.push(`${label}: ${requiredName} must remain required`);
+    }
+    if (!emailControl || htmlAttribute(emailControl.tag, 'type') !== 'email') failures.push(`${label}: email must remain a typed email field`);
+    if (!html.includes('if (!quoteForm.reportValidity()) return;')) failures.push(`${label}: native required/email validation guard is missing`);
+    if (!html.includes("if (!formData.get('cf-turnstile-response'))")) failures.push(`${label}: unverified submission guard is missing`);
+    if (!html.includes("field.addEventListener('invalid', () => setQuoteValidationMessage(field));")
+        || !html.includes("field.addEventListener('input', () => field.setCustomValidity(''));")) {
+      failures.push(`${label}: locale-controlled native constraint validation messages are missing`);
+    }
+
+    const catalog = readJsonFile(
+      join(dirname(fileURLToPath(import.meta.url)), 'v5-i18n', `${locale}.json`),
+      `${locale} catalog`,
+    );
+    const validation = catalog.runtime?.quote?.validation ?? {};
+    if (JSON.stringify(Object.keys(validation)) !== JSON.stringify(['required-field', 'invalid-email'])) {
+      failures.push(`${label}: Quote validation catalog must contain exactly required-field and invalid-email`);
+    }
+    const messages = [
+      ...Object.values(catalog.runtime?.quote?.js_string ?? {}),
+      ...Object.values(validation),
+    ];
+    if (messages.length !== 14) failures.push(`${label}: expected 14 catalogized Quote runtime messages; found ${messages.length}`);
+    for (const message of messages) {
+      const singleQuoted = message.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+      const count = (html.split(message).length - 1) + (singleQuoted === message ? 0 : html.split(singleQuoted).length - 1);
+      if (count < 1) failures.push(`${label}: catalogized Quote runtime message is missing: ${message}`);
+      else runtimeMessages += 1;
+    }
+
+    if (!form.includes('data-error-preserves-values="true"')) failures.push(`${label}: form must declare error value retention`);
+    const resetIndexes = [...html.matchAll(/quoteForm\.reset\(\)/g)].map((match) => match.index);
+    const successIndex = html.indexOf(catalog.runtime?.quote?.js_string?.['thank-you-your-inquiry-has-been-sent-we-will-reply-w'] ?? '');
+    if (resetIndexes.length !== 1 || successIndex < 0 || resetIndexes[0] < successIndex) {
+      failures.push(`${label}: form values may reset only after the success state`);
+    }
+    if ((html.match(/href="mailto:martin@zxrubbertech\.com"/g) ?? []).length < 1
+        || (html.match(/href="https:\/\/wa\.me\/8615256225135"/g) ?? []).length < 1) {
+      failures.push(`${label}: clickable Email and WhatsApp fallbacks are missing`);
+    }
+    const opaqueTurnstileValues = html.match(/0x[A-Za-z0-9_-]{20,}/g) ?? [];
+    if (opaqueTurnstileValues.some((value) => value !== '0x4AAAAAAENHOMMn_zK0WuNN')
+        || /\b(?:data-)?(?:secret(?:-?key)?|turnstile-secret|cf-secret)\s*=/i.test(html)) {
+      failures.push(`${label}: possible secret key appears in HTML`);
+    }
+    if (failures.length === before) passedPages += 1;
+  }
+
+  return {
+    failures,
+    metrics: {
+      locales: localeIds.length,
+      quotePages: localeIds.length,
+      passedPages,
+      formspreeTargets,
+      turnstileWidgets,
+      localeFields,
+      runtimeMessages,
+      realSubmissions: 0,
+    },
+  };
+}
+
 export async function runV5I18nChecks(options) {
   const normalized = normalizeOptions(options);
   const files = listFiles(normalized.root);
@@ -1192,7 +1346,7 @@ export async function runV5I18nChecks(options) {
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
-  if (!['registry', 'catalog', 'controls', 'release'].includes(normalized.gate)) {
+  if (!['registry', 'catalog', 'controls', 'release', 'form'].includes(normalized.gate)) {
     return {
       checker: 'v5-i18n',
       status: 'FAIL',
@@ -1211,6 +1365,7 @@ export async function runV5I18nChecks(options) {
   let catalog = null;
   let controls = null;
   let release = null;
+  let form = null;
   if (normalized.gate === 'registry') {
     ({ failures, metrics } = validateRegistry(config));
   } else if (normalized.gate === 'catalog') {
@@ -1226,12 +1381,18 @@ export async function runV5I18nChecks(options) {
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     controls = result.metrics;
-  } else {
+  } else if (normalized.gate === 'release') {
     const registryResult = validateRegistry(config);
     const result = validateReleaseGate(normalized, config, inventory);
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     release = result.metrics;
+  } else {
+    const registryResult = validateRegistry(config);
+    const result = validateFormGate(normalized, config);
+    failures = [...registryResult.failures, ...result.failures];
+    metrics = registryResult.metrics;
+    form = result.metrics;
   }
   return {
     checker: 'v5-i18n',
@@ -1245,6 +1406,7 @@ export async function runV5I18nChecks(options) {
     catalog,
     controls,
     release,
+    form,
     failures,
   };
 }

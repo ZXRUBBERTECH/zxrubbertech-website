@@ -599,6 +599,10 @@
       }
     },
     "quote": {
+      "validation": {
+        "required-field": "Bitte füllen Sie dieses Pflichtfeld aus.",
+        "invalid-email": "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+      },
       "js_string": {
         "verification-complete-you-can-send-your-request": "Verifizierung abgeschlossen. Sie können Ihre Anfrage senden.",
         "verification-is-unavailable-please-try-again-or-use-": "Die Verifizierung ist nicht verfügbar. Bitte versuchen Sie es erneut oder verwenden Sie die unten stehenden E-Mail- oder WhatsApp-Links.",

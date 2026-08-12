@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "locale": "en",
-  "keyCount": 529,
+  "keyCount": 531,
   "keys": [
     "pages.capabilities.attribute.black-rubber-compound-running-through-an-industrial-",
     "pages.capabilities.attribute.company-and-capacity",
@@ -490,6 +490,8 @@
     "runtime.quote.js_string.verification-expired-please-complete-it-again",
     "runtime.quote.js_string.verification-is-unavailable-please-try-again-or-use-",
     "runtime.quote.js_string.verification-reset-after-successful-submission",
+    "runtime.quote.validation.invalid-email",
+    "runtime.quote.validation.required-field",
     "runtime.shared.js_string.section-navigation",
     "seo.capabilities.breadcrumb",
     "seo.capabilities.description",
@@ -1021,6 +1023,8 @@
     "runtime.quote.js_string.verification-expired-please-complete-it-again": "5bd47ed7d892b2995de70e7c80619d3dfd5ef1fce47afd243308bafcc550a766",
     "runtime.quote.js_string.verification-is-unavailable-please-try-again-or-use-": "db2eb1e9d4a29ee1ea77e14441aa2c4ced057af70419c72816915ccc4872d5cb",
     "runtime.quote.js_string.verification-reset-after-successful-submission": "5b9d081dfadfc2bfd36babbe18329b59851c29e6c644f909fc3c5f63c9203456",
+    "runtime.quote.validation.invalid-email": "958e4ccf2953d7470be4931035b3f6cb762f04d6bac8060e428412af3c904c40",
+    "runtime.quote.validation.required-field": "79a7cb24b8a734d2fc88fe8273f0e3a8acf081387d80967310bb43dd27542e8d",
     "runtime.shared.js_string.section-navigation": "c01fb55fbdc8c4e47af21edf6ea805809a0a024348421f141f5a6df6d084d590",
     "seo.capabilities.breadcrumb": "9460f16ac9b5171e7f3d3f2336ec66b547231be8996ea9a0ad25079f84641be4",
     "seo.capabilities.description": "84d6632d80a0215b40d2318f504bfc68e54c34e1532548d0f41a48bd6e0399d9",

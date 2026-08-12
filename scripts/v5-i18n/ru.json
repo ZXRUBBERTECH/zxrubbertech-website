@@ -599,6 +599,10 @@
       }
     },
     "quote": {
+      "validation": {
+        "required-field": "Пожалуйста, заполните это обязательное поле.",
+        "invalid-email": "Пожалуйста, введите действительный адрес электронной почты."
+      },
       "js_string": {
         "verification-complete-you-can-send-your-request": "Проверка завершена. Вы можете отправить свой запрос.",
         "verification-is-unavailable-please-try-again-or-use-": "Верификация недоступна. Пожалуйста, попробуйте еще раз или воспользуйтесь электронной почтой или ссылками WhatsApp ниже.",

@@ -599,6 +599,10 @@
       }
     },
     "quote": {
+      "validation": {
+        "required-field": "Please complete this required field.",
+        "invalid-email": "Please enter a valid email address."
+      },
       "js_string": {
         "verification-complete-you-can-send-your-request": "Verification complete. You can send your request.",
         "verification-is-unavailable-please-try-again-or-use-": "Verification is unavailable. Please try again or use the email or WhatsApp links below.",

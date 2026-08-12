@@ -599,6 +599,10 @@
       }
     },
     "quote": {
+      "validation": {
+        "required-field": "请填写此必填字段。",
+        "invalid-email": "请输入有效的电子邮箱地址。"
+      },
       "js_string": {
         "verification-complete-you-can-send-your-request": "验证完成。您可以发送请求。",
         "verification-is-unavailable-please-try-again-or-use-": "暂时无法验证。请重试，或使用下方电子邮箱或 WhatsApp 联系我们。",

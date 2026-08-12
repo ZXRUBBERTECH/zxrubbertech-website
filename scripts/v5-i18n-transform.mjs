@@ -3,7 +3,12 @@ import { existsSync, lstatSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
-import { V5_I18N_OPERATION_KINDS, V5_I18N_OPERATIONS } from './v5-i18n-operations.mjs';
+import {
+  V5_I18N_OPERATION_KINDS,
+  V5_I18N_OPERATIONS,
+  V5_QUOTE_BACKEND_FIELDS,
+  V5_QUOTE_VALIDATION_KEYS,
+} from './v5-i18n-operations.mjs';
 import { injectV5LanguageControls } from './v5-language-controls.mjs';
 
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
@@ -154,6 +159,65 @@ function replacementFor(operation, value) {
   throw new Error(`${operation.key}: unsupported V5 i18n operation kind ${operation.kind}`);
 }
 
+export function applyV5QuoteRuntimeContract(html, { locale, flattenedCatalog = null } = {}) {
+  const definition = V5_LOCALES[locale];
+  if (!definition) throw new Error(`Unsupported V5 Quote locale: ${String(locale)}`);
+  if (typeof html !== 'string' || !html.trim()) throw new Error('V5 Quote HTML must be nonempty');
+  if (!flattenedCatalog || typeof flattenedCatalog !== 'object' || Array.isArray(flattenedCatalog)) {
+    throw new Error(`${locale}/quote: flattened catalog is required`);
+  }
+  const requiredMessage = flattenedCatalog[V5_QUOTE_VALIDATION_KEYS.required];
+  const invalidEmailMessage = flattenedCatalog[V5_QUOTE_VALIDATION_KEYS.invalidEmail];
+  if (typeof requiredMessage !== 'string' || !requiredMessage.trim()
+      || typeof invalidEmailMessage !== 'string' || !invalidEmailMessage.trim()) {
+    throw new Error(`${locale}/quote: validation messages are missing from the catalog`);
+  }
+  if (/\bname=["']language["']/i.test(html)) throw new Error(`${locale}/quote: language field already exists`);
+  if (/\bdata-language\s*=/i.test(html.match(/<div\b[^>]*\bclass=["'][^"']*\bcf-turnstile\b[^"']*["'][^>]*>/i)?.[0] ?? '')) {
+    throw new Error(`${locale}/quote: Turnstile language already exists`);
+  }
+
+  const formMarker = /(<form\b[^>]*\bid=["']contact-form["'][^>]*>)/i;
+  const widgetMarker = /(<div\b[^>]*\bclass=["'][^"']*\bcf-turnstile\b[^"']*["'][^>]*)(>)/i;
+  const validationAnchor = "  const verificationStatus = document.getElementById('quote-verification-status');";
+  const formCount = (html.match(new RegExp(formMarker.source, 'gi')) ?? []).length;
+  const widgetCount = (html.match(new RegExp(widgetMarker.source, 'gi')) ?? []).length;
+  if (formCount !== 1) throw new Error(`${locale}/quote: expected one contact form, found ${formCount}`);
+  if (widgetCount !== 1) throw new Error(`${locale}/quote: expected one Turnstile widget, found ${widgetCount}`);
+  if (html.split(validationAnchor).length - 1 !== 1) {
+    throw new Error(`${locale}/quote: expected one Quote validation insertion anchor`);
+  }
+
+  let transformed = html.replace(
+    formMarker,
+    `$1\n      <input type="hidden" name="${V5_QUOTE_BACKEND_FIELDS.at(-1)}" value="${locale}">`,
+  );
+  transformed = transformed.replace(
+    widgetMarker,
+    `$1 data-language="${definition.turnstileLanguage}"$2`,
+  );
+  const validationScript = `
+
+  /* V5:QUOTE VALIDATION START */
+  const quoteValidationMessages = Object.freeze({
+    required: '${escapeJsString(requiredMessage, "'")}',
+    invalidEmail: '${escapeJsString(invalidEmailMessage, "'")}',
+  });
+  const quoteValidationFields = [...(quoteForm?.querySelectorAll('[data-fs-field]') ?? [])];
+  const setQuoteValidationMessage = (field) => {
+    field.setCustomValidity('');
+    if (field.validity.valueMissing) field.setCustomValidity(quoteValidationMessages.required);
+    else if (field.type === 'email' && field.validity.typeMismatch) field.setCustomValidity(quoteValidationMessages.invalidEmail);
+  };
+  quoteValidationFields.forEach((field) => {
+    field.addEventListener('invalid', () => setQuoteValidationMessage(field));
+    field.addEventListener('input', () => field.setCustomValidity(''));
+  });
+  /* V5:QUOTE VALIDATION END */`;
+  transformed = transformed.replace(validationAnchor, `${validationAnchor}${validationScript}`);
+  return transformed;
+}
+
 export function applyV5LocalizationOperations(html, { stem, locale, catalog = null } = {}) {
   if (typeof html !== 'string' || !html.trim()) throw new Error(`${stem ?? '(missing)'}: V5 HTML must be nonempty`);
   if (!V5_PAGE_STEMS.includes(stem)) throw new Error(`Unknown V5 page stem: ${String(stem)}`);
@@ -175,7 +239,9 @@ export function applyV5LocalizationOperations(html, { stem, locale, catalog = nu
       `${stem}/${locale}/${operation.key}`,
     );
   }
-  return localized;
+  return stem === 'quote'
+    ? applyV5QuoteRuntimeContract(localized, { locale, flattenedCatalog: flattened })
+    : localized;
 }
 
 export function applyV5LocalizationAndControls(html, { stem, locale, catalog = null } = {}) {
