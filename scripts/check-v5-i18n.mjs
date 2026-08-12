@@ -24,6 +24,20 @@ const REQUIRED_GLOSSARY_TERMS = Object.freeze([
   'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
 ]);
 
+// Explicit mainland Simplified Chinese guardrail. These variants are rejected
+// only in the zh-CN catalog; other locales keep their existing QA rules.
+const TRADITIONAL_CHINESE_VARIANTS = Object.freeze([
+  '臺', '灣', '體', '製', '產', '業', '應', '對', '發', '佈', '圖', '樣',
+  '項', '報', '驗', '證', '檢', '規', '範', '參', '數', '轉', '動', '門',
+  '開', '關', '聯', '繫', '質', '線', '頁', '導', '與', '為', '從', '個',
+  '機', '電', '車', '廠', '國', '華', '實', '際', '確', '認', '標',
+  '準', '選', '擇', '詢', '價', '將', '內', '時', '間', '後', '處', '顯',
+  '資', '訊', '輸', '錯', '誤', '請', '聯', '絡', '郵', '萬', '噸', '膠',
+  '壓', '縮', '擠', '鋁', '鋼', '鐵', '環', '墊', '軸', '總', '專', '層',
+  '單', '雙', '無', '復', '雜', '維', '護', '測', '試', '據', '備',
+  '啟', '閉', '僅', '獲', '儲', '檔', '號', '碼', '統', '編', '輯', '刪',
+]);
+
 // Proper names, protected values and internationally established technical
 // abbreviations may legitimately remain unchanged in a localized catalog.
 // Everything else is subject to the residue comparison below.
@@ -313,6 +327,74 @@ function validateEnglishResidue(locale, english, localized, glossary, operations
   return failures;
 }
 
+function validateSimplifiedChineseCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'zh-CN') return {
+    failures: [], cjkChecks: 0, traditionalFindings: 0, residueFindings: 0,
+  };
+  const failures = [];
+  let cjkChecks = 0;
+  let traditionalFindings = 0;
+  let residueFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    const text = normalizeCatalogText(localizedValue);
+    for (const variant of TRADITIONAL_CHINESE_VARIANTS) {
+      if (!text.includes(variant)) continue;
+      traditionalFindings += countLiteral(text, variant);
+      failures.push(`zh-CN: Traditional Chinese variant ${JSON.stringify(variant)} at ${key}`);
+    }
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    cjkChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Han}/u.test(localizedText)) {
+      failures.push(`zh-CN: localized prose must contain Simplified Chinese characters at ${key}`);
+    }
+    const residues = [...asciiWordSet(localizedText)].sort();
+    if (residues.length) {
+      residueFindings += residues.length;
+      failures.push(`zh-CN: unapproved ASCII residue at ${key}: ${residues.join(', ')}`);
+    }
+  }
+  return { failures, cjkChecks, traditionalFindings, residueFindings };
+}
+
+function validateVerifiedFacts(locale, english, localized, glossary) {
+  if (locale !== 'zh-CN') return { failures: [], checks: 0 };
+  const failures = [];
+  let checks = 0;
+  const facts = glossary.verifiedFacts;
+  const renderings = glossary.verifiedFactRenderings?.[locale];
+  if (!facts || typeof facts !== 'object' || Array.isArray(facts)
+      || !renderings || typeof renderings !== 'object' || Array.isArray(renderings)) {
+    return { failures: [`${locale}: glossary must define verified facts and localized renderings`], checks };
+  }
+  for (const [fact, englishNeedle] of Object.entries(facts)) {
+    const localizedNeedle = renderings[fact];
+    if (typeof englishNeedle !== 'string' || !englishNeedle
+        || typeof localizedNeedle !== 'string' || !localizedNeedle) {
+      failures.push(`${locale}: malformed verified fact rendering: ${fact}`);
+      continue;
+    }
+    let occurrences = 0;
+    for (const [key, englishValue] of Object.entries(english)) {
+      const expected = countLiteral(englishValue, englishNeedle);
+      if (!expected) continue;
+      occurrences += expected;
+      checks += expected;
+      const actual = countLiteral(localized[key], localizedNeedle);
+      if (actual !== expected) {
+        failures.push(`${locale}: verified fact ${fact} at ${key} expected ${expected} renderings, found ${actual}`);
+      }
+    }
+    if (!occurrences) failures.push(`${locale}: verified fact source text is unused: ${fact}`);
+  }
+  const unknown = Object.keys(renderings).filter((fact) => !Object.hasOwn(facts, fact));
+  if (unknown.length) failures.push(`${locale}: unknown verified fact rendering: ${unknown[0]}`);
+  return { failures, checks };
+}
+
 function validatePreservedCatalogLiterals(locale, english, localized, glossary, operations) {
   if (locale === 'en') return { failures: [], occurrences: 0 };
   const failures = [];
@@ -459,6 +541,9 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let glossaryChecks = 0;
   let preservedOccurrences = 0;
   let englishResidueFindings = 0;
+  let cjkChecks = 0;
+  let traditionalVariantFindings = 0;
+  let verifiedFactChecks = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
     for (const stem of config.V5_PAGE_STEMS) {
@@ -504,6 +589,22 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       const residueFailures = validateEnglishResidue(locale, flattenedEnglish, flattened, glossary, operations);
       englishResidueFindings = residueFailures.length;
       failures.push(...residueFailures);
+
+      const chineseResult = validateSimplifiedChineseCatalog(
+        locale,
+        flattenedEnglish,
+        flattened,
+        glossary,
+        operations,
+      );
+      cjkChecks = chineseResult.cjkChecks;
+      traditionalVariantFindings = chineseResult.traditionalFindings;
+      englishResidueFindings += chineseResult.residueFindings;
+      failures.push(...chineseResult.failures);
+
+      const factResult = validateVerifiedFacts(locale, flattenedEnglish, flattened, glossary);
+      verifiedFactChecks = factResult.checks;
+      failures.push(...factResult.failures);
     }
   }
 
@@ -523,6 +624,10 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       preservedOccurrences,
       englishResidueAllowlist: ENGLISH_RESIDUE_ALLOWLIST.length,
       englishResidueFindings,
+      cjkChecks,
+      traditionalChineseVariantList: TRADITIONAL_CHINESE_VARIANTS.length,
+      traditionalVariantFindings,
+      verifiedFactChecks,
     } : null,
   };
 }
