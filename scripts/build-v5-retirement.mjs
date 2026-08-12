@@ -1,27 +1,30 @@
 #!/usr/bin/env node
 
-import { existsSync, lstatSync, mkdirSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, isAbsolute, relative, resolve } from 'node:path';
+import { existsSync, mkdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map.mjs';
 
-const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
-function isInside(parent, candidate) {
-  const path = relative(parent, candidate);
-  return path === '' || (!path.startsWith('..') && !isAbsolute(path));
+if (process.argv.length !== 2) {
+  process.stderr.write(`Unknown arguments: ${process.argv.slice(2).join(' ')}\n`);
+  process.exit(2);
 }
 
-function prepareRoot(root) {
-  if (typeof root !== 'string' || !root.trim()) throw new Error('Retirement root must be a non-empty path');
-  const output = resolve(root);
-  if (output === dirname(output)) throw new Error('Retirement root cannot be a filesystem root');
-  if (isInside(repositoryRoot, output)) throw new Error('Retirement root must be outside the repository');
-  if (!existsSync(output) || !lstatSync(output).isDirectory() || lstatSync(output).isSymbolicLink()) {
-    throw new Error(`Retirement root must be an existing real directory: ${output}`);
-  }
-  if (isInside(repositoryRoot, realpathSync(output))) throw new Error('Retirement root resolves inside the repository');
-  return output;
+const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const allowedTargets = new Set(V5_URLS);
+const paths = new Set();
+
+if (V5_URLS.length !== 7 || LEGACY_REDIRECTS.length !== 33 || CLOUDFLARE_HOSTS.length !== 2) {
+  throw new Error('Redirect inventory counts are invalid');
+}
+
+for (const item of LEGACY_REDIRECTS) {
+  if (paths.has(item.path)) throw new Error(`Duplicate legacy path: ${item.path}`);
+  paths.add(item.path);
+  if (!/^\/[a-z0-9/-]+\/$/.test(item.path)) throw new Error(`Malformed legacy path: ${item.path}`);
+  if (!allowedTargets.has(item.target.split('#')[0])) throw new Error(`Target is outside V5: ${item.target}`);
+  const output = resolve(repositoryRoot, `.${item.path}index.html`);
+  if (!existsSync(output) || !statSync(output).isFile()) throw new Error(`Missing legacy page: ${item.path}`);
 }
 
 const htmlEscape = (value) => value
@@ -54,62 +57,26 @@ const atomicWrite = (file, contents) => {
   renameSync(temporary, file);
 };
 
-const xmlEscape = (value) => htmlEscape(value).replaceAll("'", '&apos;');
+for (const item of LEGACY_REDIRECTS) {
+  atomicWrite(resolve(repositoryRoot, `.${item.path}index.html`), fallbackHtml(item.target));
+}
 
-export function buildV5Retirement({ root } = {}) {
-  const outputRoot = prepareRoot(root);
-  const allowedTargets = new Set(V5_URLS);
-  const v5Paths = new Set(V5_URLS.map((url) => new URL(url).pathname));
-  const paths = new Set();
-  if (V5_URLS.length !== 35 || LEGACY_REDIRECTS.length !== 25 || CLOUDFLARE_HOSTS.length !== 2) {
-    throw new Error('Redirect inventory counts are invalid');
-  }
-  for (const url of V5_URLS) {
-    const path = new URL(url).pathname;
-    const page = resolve(outputRoot, `.${path}index.html`);
-    if (!existsSync(page) || !statSync(page).isFile()) throw new Error(`Missing V5 release page: ${path}`);
-  }
-  for (const item of LEGACY_REDIRECTS) {
-    if (paths.has(item.path)) throw new Error(`Duplicate legacy path: ${item.path}`);
-    paths.add(item.path);
-    if (v5Paths.has(item.path)) throw new Error(`Legacy path overlaps a V5 route: ${item.path}`);
-    if (!/^\/[a-z0-9/-]+\/$/.test(item.path)) throw new Error(`Malformed legacy path: ${item.path}`);
-    if (!allowedTargets.has(item.target.split('#')[0])) throw new Error(`Target is outside V5: ${item.target}`);
-  }
-  for (const item of LEGACY_REDIRECTS) {
-    atomicWrite(resolve(outputRoot, `.${item.path}index.html`), fallbackHtml(item.target));
-  }
-  const csv = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
-    `${host}${path},${target},301,true,false,false,false`
-  ))).join('\n') + '\n';
-  atomicWrite(resolve(outputRoot, 'cloudflare/zxrubbertech-v5-legacy-redirects.csv'), csv);
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+const csv = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
+  `${host}${path},${target},301,true,false,false,false`
+))).join('\n') + '\n';
+atomicWrite(resolve(repositoryRoot, 'cloudflare/zxrubbertech-v5-legacy-redirects.csv'), csv);
+
+const xmlEscape = (value) => htmlEscape(value).replaceAll("'", '&apos;');
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${V5_URLS.map((url) => `  <url><loc>${xmlEscape(url)}</loc></url>`).join('\n')}
 </urlset>
 `;
-  atomicWrite(resolve(outputRoot, 'sitemap.xml'), sitemap);
-  return {
-    status: 'PASS',
-    v5Urls: V5_URLS.length,
-    fallbackPages: LEGACY_REDIRECTS.length,
-    cloudflareEntries: LEGACY_REDIRECTS.length * CLOUDFLARE_HOSTS.length,
-    sitemapUrls: V5_URLS.length,
-  };
-}
+atomicWrite(resolve(repositoryRoot, 'sitemap.xml'), sitemap);
 
-function parseRoot(argv) {
-  if (argv.length !== 1 || !argv[0].startsWith('--root=') || !argv[0].slice('--root='.length)) {
-    throw new Error('Usage: node scripts/build-v5-retirement.mjs --root=<release-root>');
-  }
-  return argv[0].slice('--root='.length);
-}
-
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  try {
-    process.stdout.write(`${JSON.stringify(buildV5Retirement({ root: parseRoot(process.argv.slice(2)) }), null, 2)}\n`);
-  } catch (error) {
-    process.stderr.write(`${error.message}\n`);
-    process.exitCode = 1;
-  }
-}
+process.stdout.write(`${JSON.stringify({
+  status: 'PASS',
+  fallbackPages: LEGACY_REDIRECTS.length,
+  cloudflareEntries: LEGACY_REDIRECTS.length * CLOUDFLARE_HOSTS.length,
+  sitemapUrls: V5_URLS.length,
+}, null, 2)}\n`);

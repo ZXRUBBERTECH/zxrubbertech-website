@@ -1,12 +1,12 @@
-import {
-  getLocalizedUrl,
-  V5_LOCALES,
-  V5_PAGE_STEMS,
-} from './v5-i18n-config.mjs';
-
-export const V5_URLS = Object.freeze(Object.keys(V5_LOCALES).flatMap((locale) => (
-  V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem))
-)));
+export const V5_URLS = Object.freeze([
+  'https://www.zxrubbertech.com/',
+  'https://www.zxrubbertech.com/products/',
+  'https://www.zxrubbertech.com/rubber-compounds/',
+  'https://www.zxrubbertech.com/industries/',
+  'https://www.zxrubbertech.com/capabilities/',
+  'https://www.zxrubbertech.com/faq/',
+  'https://www.zxrubbertech.com/quote/',
+]);
 
 export const CLOUDFLARE_HOSTS = Object.freeze([
   'zxrubbertech.com',
@@ -21,12 +21,24 @@ const automotiveSlugs = Object.freeze([
   'wire-harness-sheath',
 ]);
 
+const languageHomes = languages.map((language) => ({
+  path: `/${language}/`,
+  target: 'https://www.zxrubbertech.com/',
+}));
+
+const languageProductIndexes = languages.map((language) => ({
+  path: `/${language}/products/`,
+  target: 'https://www.zxrubbertech.com/products/',
+}));
+
 const productVariants = (slug, target) => [
   { path: `/products/${slug}/`, target },
   ...languages.map((language) => ({ path: `/${language}/products/${slug}/`, target })),
 ];
 
 export const LEGACY_REDIRECTS = Object.freeze([
+  ...languageHomes,
+  ...languageProductIndexes,
   ...automotiveSlugs.flatMap((slug) => productVariants(
     slug,
     'https://www.zxrubbertech.com/products/#c-automotive',
