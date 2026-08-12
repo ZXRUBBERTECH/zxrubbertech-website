@@ -24,6 +24,24 @@ const REQUIRED_GLOSSARY_TERMS = Object.freeze([
   'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
 ]);
 
+// Russian technical nouns inflect by number and grammatical case. Validate
+// stable lexeme stems rather than forcing an ungrammatical nominative phrase
+// into every sentence that contains the corresponding English source term.
+const RUSSIAN_GLOSSARY_ROOTS = Object.freeze({
+  'rubber compound': ['резинов', 'смес'],
+  'molded rubber parts': ['формован', 'резинов'],
+  'rubber-to-metal bonding': ['соединен', 'резин', 'металл'],
+  'compression molding': ['компрессион', 'формован'],
+  'injection molding': ['лить', 'давлен'],
+  extrusion: ['экструз'],
+  tooling: ['оснаст'],
+  traceability: ['прослеживаем'],
+  'batch release': ['при', 'парти'],
+  drawing: ['черт'],
+  sample: ['образ'],
+  'project requirements': ['требован', 'проект'],
+});
+
 // Explicit mainland Simplified Chinese guardrail. These variants are rejected
 // only in the zh-CN catalog; other locales keep their existing QA rules.
 const TRADITIONAL_CHINESE_VARIANTS = Object.freeze([
@@ -360,8 +378,32 @@ function validateSimplifiedChineseCatalog(locale, english, localized, glossary, 
   return { failures, cjkChecks, traditionalFindings, residueFindings };
 }
 
+function validateRussianCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'ru') return { failures: [], cyrillicChecks: 0, residueFindings: 0 };
+  const failures = [];
+  let cyrillicChecks = 0;
+  let residueFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    cyrillicChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Cyrillic}/u.test(localizedText)) {
+      failures.push(`ru: localized prose must contain Cyrillic characters at ${key}`);
+    }
+    const residues = [...asciiWordSet(localizedText)].sort();
+    if (residues.length) {
+      residueFindings += residues.length;
+      failures.push(`ru: unapproved ASCII residue at ${key}: ${residues.join(', ')}`);
+    }
+  }
+  return { failures, cyrillicChecks, residueFindings };
+}
+
 function validateVerifiedFacts(locale, english, localized, glossary) {
-  if (locale !== 'zh-CN') return { failures: [], checks: 0 };
+  if (!['zh-CN', 'ru'].includes(locale)) return { failures: [], checks: 0 };
   const failures = [];
   let checks = 0;
   const facts = glossary.verifiedFacts;
@@ -429,7 +471,11 @@ function validateGlossaryConformance(locale, english, localized, glossary) {
     for (const [key, englishValue] of Object.entries(english)) {
       if (!normalizeCatalogText(englishValue).toLocaleLowerCase('en').includes(englishNeedle)) continue;
       checks += 1;
-      if (!normalizeCatalogText(localized[key]).toLocaleLowerCase(locale).includes(localizedNeedle)) {
+      const localizedText = normalizeCatalogText(localized[key]).toLocaleLowerCase(locale);
+      const matchesPreferred = locale === 'ru'
+        ? RUSSIAN_GLOSSARY_ROOTS[term].every((root) => localizedText.includes(root))
+        : localizedText.includes(localizedNeedle);
+      if (!matchesPreferred) {
         failures.push(`${locale}: glossary term ${JSON.stringify(term)} is not rendered as ${JSON.stringify(preferred)} at ${key}`);
       }
     }
@@ -543,6 +589,7 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let englishResidueFindings = 0;
   let cjkChecks = 0;
   let traditionalVariantFindings = 0;
+  let cyrillicChecks = 0;
   let verifiedFactChecks = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
@@ -602,6 +649,17 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       englishResidueFindings += chineseResult.residueFindings;
       failures.push(...chineseResult.failures);
 
+      const russianResult = validateRussianCatalog(
+        locale,
+        flattenedEnglish,
+        flattened,
+        glossary,
+        operations,
+      );
+      cyrillicChecks = russianResult.cyrillicChecks;
+      englishResidueFindings += russianResult.residueFindings;
+      failures.push(...russianResult.failures);
+
       const factResult = validateVerifiedFacts(locale, flattenedEnglish, flattened, glossary);
       verifiedFactChecks = factResult.checks;
       failures.push(...factResult.failures);
@@ -627,6 +685,7 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       cjkChecks,
       traditionalChineseVariantList: TRADITIONAL_CHINESE_VARIANTS.length,
       traditionalVariantFindings,
+      cyrillicChecks,
       verifiedFactChecks,
     } : null,
   };
