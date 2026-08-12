@@ -19,7 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const packageName = 'zxrubbertech-v5-multilingual-release-candidate-2026-08-12-rc1';
+const packageName = 'zxrubbertech-v5-multilingual-release-candidate-2026-08-12-rc2';
 const rollbackRevision = '40f5aa60b8902d2a187568ec1561e0fb389ae8e4';
 const localeCatalogs = Object.freeze([
   'scripts/v5-i18n/en.json',
