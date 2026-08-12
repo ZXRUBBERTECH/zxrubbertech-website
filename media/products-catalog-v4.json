@@ -1,0 +1,896 @@
+{
+  "_说明": "v4 产品目录唯一数据源。families 是 Products 页的 MECE 六族渲染集合；homeCards 是首页六个核心供应族入口；categories 是旧 83 条目录的保留审计源，不再公开渲染。改完运行 python3 design-demos/build_catalog.py；v3 与 v4 独立。",
+  "homeCards": [
+    {
+      "id": "vibration-control",
+      "name": "Vibration Control & Rubber-Metal",
+      "tagline": "Bushings, mounts and bonded parts for load, motion and NVH control.",
+      "entry": "media/home-families/home-vibration-control.webp",
+      "href": "products-v4.html#bushings-mounts-rubber-metal"
+    },
+    {
+      "id": "seals-extrusions",
+      "name": "Seals & Extrusions",
+      "tagline": "O-rings, oil seals, gaskets and profiles for static and dynamic sealing.",
+      "entry": "media/home-families/home-seals-extrusions.webp",
+      "href": "products-v4.html#seals-gaskets"
+    },
+    {
+      "id": "boots-bellows",
+      "name": "Boots & Bellows",
+      "tagline": "Flexible protective components for joints, shafts and moving assemblies.",
+      "entry": "media/home-families/home-boots-bellows.webp",
+      "href": "products-v4.html#boots-bellows-covers"
+    },
+    {
+      "id": "cable-protection",
+      "name": "Cable & Electrical Protection",
+      "tagline": "Grommets, sleeves and molded parts for routing, insulation and environmental protection.",
+      "entry": "media/home-families/home-cable-protection.webp",
+      "href": "products-v4.html#grommets-plugs-cable-protection"
+    },
+    {
+      "id": "rollers-custom",
+      "name": "Rollers & Custom Molded",
+      "tagline": "Rubber rollers, wheels and application-specific molded parts made to drawing or sample.",
+      "entry": "media/home-families/home-rollers-custom.webp",
+      "href": "products-v4.html#rollers-wheels-custom-molded"
+    },
+    {
+      "id": "rubber-compounds",
+      "name": "Rubber Compounds",
+      "tagline": "Ten compound families mixed in-house and supplied as compound or finished parts.",
+      "entry": "media/home-families/home-rubber-compounds.webp",
+      "href": "compounds-v4.html#families"
+    }
+  ],
+  "families": [
+    {
+      "id": "seals-gaskets",
+      "code": "F1",
+      "name": "Seals & Gaskets",
+      "title": "Seals & Gaskets",
+      "tagline": "Static and dynamic sealing forms reviewed against the application.",
+      "intro": "A function-led family for molded seals and gaskets. Geometry, medium, pressure, motion, temperature and required documents are reviewed before a material or construction is proposed.",
+      "note": "No cleared product photograph is assigned to this family yet. Share a drawing or application description for a project-specific review.",
+      "links": [
+        {"href": "compounds-v4.html#families", "label": "Review compound families"},
+        {"href": "quote-v4.html#rfq", "label": "Discuss a seal or gasket"}
+      ],
+      "products": []
+    },
+    {
+      "id": "boots-bellows-covers",
+      "code": "F2",
+      "name": "Boots, Bellows & Protective Covers",
+      "title": "Boots, Bellows & Protective Covers",
+      "tagline": "Flexible protection for moving joints, shafts and assemblies.",
+      "intro": "Protective rubber forms for joints and moving assemblies. The review considers motion, interface geometry, contamination, temperature and expected service environment.",
+      "entry": "../OptimizedPicture/减震防尘罩.webp",
+      "links": [
+        {"href": "industries-v4.html#automotive-mobility", "label": "Automotive & Mobility context"},
+        {"href": "quote-v4.html#rfq", "label": "Request this family"}
+      ],
+      "products": [
+        {
+          "src": "../OptimizedPicture/减震防尘罩.webp",
+          "title": "Shock Absorber Dust Cover",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/shock-absorber-dust-cover/",
+          "name": "catalog.card-shock-cover"
+        },
+        {
+          "src": "../产品照片/球形防尘罩.webp",
+          "title": "Ball Joint Dust Cover",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/ball-joint-dust-cover/",
+          "name": "catalog.card-ball-joint"
+        },
+        {
+          "src": "../产品照片/减震器防尘罩.webp",
+          "title": "Damper Dust Boot",
+          "style": "cutout",
+          "placeholder": false,
+          "alt": "Shock absorber dust boot",
+          "name": "catalog.card-damper-boot"
+        }
+      ]
+    },
+    {
+      "id": "grommets-plugs-cable-protection",
+      "code": "F3",
+      "name": "Grommets, Plugs & Cable Protection",
+      "title": "Grommets, Plugs & Cable Protection",
+      "tagline": "Routing, entry-point and interface protection for cables and openings.",
+      "intro": "Rubber parts that route, protect or close cable and panel interfaces. Hole geometry, cable movement, sealing intent, abrasion and environment guide the review.",
+      "entry": "../产品照片/线束护套.webp",
+      "links": [
+        {"href": "industries-v4.html#home-commercial-appliances", "label": "Appliance operating context"},
+        {"href": "quote-v4.html#rfq", "label": "Request this family"}
+      ],
+      "products": [
+        {
+          "src": "../产品照片/线束护套.webp",
+          "title": "Wire Harness Sheath",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/wire-harness-sheath/",
+          "name": "catalog.card-harness"
+        }
+      ]
+    },
+    {
+      "id": "bushings-mounts-rubber-metal",
+      "code": "F4",
+      "name": "Bushings, Mounts & Rubber-Metal Bonded Parts",
+      "title": "Bushings, Mounts & Rubber-Metal Bonded Parts",
+      "tagline": "Isolation and controlled movement at structural interfaces.",
+      "intro": "Components that combine rubber behavior with mounting or structural interfaces. Load direction, displacement, stiffness target, bond geometry and surrounding hardware are reviewed together.",
+      "entry": "../OptimizedPicture/减震衬套.webp",
+      "links": [
+        {"href": "engineering-v4.html#requirements", "label": "Start a technical review"},
+        {"href": "manufacturing-v4.html#process", "label": "How parts are produced"},
+        {"href": "quote-v4.html#rfq", "label": "Request this family"}
+      ],
+      "products": [
+        {
+          "src": "../OptimizedPicture/减震衬套.webp",
+          "title": "Suspension Bushing",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/suspension-bushing/",
+          "name": "catalog.card-bushing"
+        }
+      ]
+    },
+    {
+      "id": "extruded-profiles-sponge-seals",
+      "code": "F5",
+      "name": "Extruded Profiles & Sponge Seals",
+      "title": "Extruded Profiles & Sponge Seals",
+      "tagline": "Continuous profile concepts defined by section, interface and compression.",
+      "intro": "A family for continuous rubber profiles and sponge sealing forms. Cross-section, compression, joining method, surface, environment and length requirements define the review.",
+      "note": "No cleared product photograph is assigned to this family yet. Send the profile section and application conditions so feasibility can be reviewed.",
+      "links": [
+        {"href": "compounds-v4.html#families", "label": "Review compound families"},
+        {"href": "manufacturing-v4.html#process", "label": "Review the production flow"},
+        {"href": "quote-v4.html#rfq", "label": "Discuss a profile"}
+      ],
+      "products": []
+    },
+    {
+      "id": "rollers-wheels-custom-molded",
+      "code": "F6",
+      "name": "Rollers, Wheels & Custom Molded Parts",
+      "title": "Rollers, Wheels & Custom Molded Parts",
+      "tagline": "Custom molded forms developed around drawing and operating conditions.",
+      "intro": "A project-led family for rollers, wheels and molded parts that do not belong to the five preceding functional families. Geometry, load, motion, mating parts and production volume shape the feasibility review.",
+      "entry": "../产品照片/橡胶轮.webp",
+      "links": [
+        {"href": "engineering-v4.html#requirements", "label": "Start a technical review"},
+        {"href": "quote-v4.html#rfq", "label": "Request a custom part"}
+      ],
+      "products": [
+        {
+          "src": "../产品照片/橡胶轮.webp",
+          "title": "Rubber Wheel",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/rubber-wheel/",
+          "name": "catalog.card-wheel"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "automotive",
+      "name": "Automotive",
+      "title": "Automotive Rubber Components",
+      "tagline": "Chassis, body and electrical rubber parts for vehicle platforms.",
+      "intro": "Bushings, dust covers, grommets and rubber-metal bonded assemblies for transmission, suspension, steering and body systems — developed and manufactured in-house.",
+      "entry": "media/gallery/ph-bushing-stab-d.webp",
+      "groups": [
+        {
+          "id": "chassis",
+          "name": "Chassis & Suspension",
+          "products": [
+            {
+              "src": "../OptimizedPicture/减震衬套.webp",
+              "title": "Suspension Bushing",
+              "style": "cutout",
+              "placeholder": false,
+              "href": "../products/suspension-bushing/",
+              "name": "catalog.card-bushing"
+            },
+            {
+              "src": "../OptimizedPicture/减震防尘罩.webp",
+              "title": "Shock Absorber Dust Cover",
+              "style": "cutout",
+              "placeholder": false,
+              "href": "../products/shock-absorber-dust-cover/",
+              "name": "catalog.card-shock-cover"
+            },
+            {
+              "src": "../产品照片/球形防尘罩.webp",
+              "title": "Ball Joint Dust Cover",
+              "style": "cutout",
+              "placeholder": false,
+              "href": "../products/ball-joint-dust-cover/",
+              "name": "catalog.card-ball-joint"
+            },
+            {
+              "src": "../产品照片/减震器防尘罩.webp",
+              "title": "Damper Dust Boot",
+              "style": "cutout",
+              "placeholder": false,
+              "alt": "Shock absorber dust boot",
+              "name": "catalog.card-damper-boot"
+            },
+            {
+              "src": "media/gallery/ph-bushing-stab-d.webp",
+              "title": "Stabilizer Bar Bushings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-衬套-稳定杆D型衬套.jpg"
+            },
+            {
+              "src": "media/gallery/ph-bushing-control-arm.webp",
+              "title": "Control Arm Bushings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-衬套-摆臂锥形衬套暗调.jpg"
+            },
+            {
+              "src": "media/gallery/ph-bonded-bushing-set.webp",
+              "title": "Rubber-Metal Bonded Bushings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-骨架件-金属橡胶复合衬套组.jpg"
+            },
+            {
+              "src": "media/gallery/ph-boot-cup.webp",
+              "title": "Dust Boots & Caps",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-防尘罩-杯形防尘帽.jpg"
+            },
+            {
+              "src": "media/gallery/ph-boot-stepped.webp",
+              "title": "Shock Absorber Boots",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-防尘罩-变径护套.jpg"
+            }
+          ]
+        },
+        {
+          "id": "body",
+          "name": "Body & Electrical",
+          "products": [
+            {
+              "src": "../产品照片/线束护套.webp",
+              "title": "Wire Harness Sheath",
+              "style": "cutout",
+              "placeholder": false,
+              "href": "../products/wire-harness-sheath/",
+              "name": "catalog.card-harness"
+            },
+            {
+              "src": "media/gallery/ph-grommet-conduit.webp",
+              "title": "Convoluted Wire Grommets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-防尘护套-波纹护线套组合.jpg"
+            }
+          ]
+        }
+      ],
+      "products": []
+    },
+    {
+      "id": "sealing",
+      "name": "Sealing & Extrusion",
+      "title": "Sealing & Extrusion Components",
+      "tagline": "O-rings, oil seals, profiles and grommets for static and rotary sealing.",
+      "intro": "Molded seals and extruded profiles in NBR, EPDM, FKM and silicone — from O-rings and shaft seals to steel-carrier edge trims and pipe gaskets.",
+      "entry": "media/gallery/ph-seal-profile-fan.webp",
+      "groups": [
+        {
+          "id": "orings",
+          "name": "O-Rings & Oil Seals",
+          "products": [
+            {
+              "src": "media/gallery/ph-orings-white-a.webp",
+              "title": "Encapsulated / PTFE O-Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-orings-white-a"
+            },
+            {
+              "src": "media/gallery/ph-orings-white-b.webp",
+              "title": "Silicone O-Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-orings-white-b"
+            },
+            {
+              "src": "media/gallery/ph-orings-micro.webp",
+              "title": "Micro O-Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-orings-micro"
+            },
+            {
+              "src": "media/ph-oilseal-tc.webp",
+              "title": "TC Oil Seals",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-骨架油封-TC规格四件"
+            }
+          ]
+        },
+        {
+          "id": "washers",
+          "name": "Washers & Gaskets",
+          "products": [
+            {
+              "src": "media/gallery/ph-washers-bonded.webp",
+              "title": "Bonded Sealing Washers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-bonded"
+            },
+            {
+              "src": "media/gallery/ph-washers-wave-stack.webp",
+              "title": "Wave Washers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-wave-stack"
+            },
+            {
+              "src": "media/gallery/ph-washers-wave-rings.webp",
+              "title": "Wave Washer Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-wave-rings"
+            },
+            {
+              "src": "media/gallery/ph-washers-wave-set.webp",
+              "title": "Wave Washer Sets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-wave-set"
+            },
+            {
+              "src": "media/gallery/ph-washers-flat-stack.webp",
+              "title": "Flat Rubber Washers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-flat-stack"
+            },
+            {
+              "src": "media/gallery/ph-washers-flat-loose.webp",
+              "title": "Flat Washers — Assorted",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-washers-flat-loose"
+            },
+            {
+              "src": "media/gallery/ph-flange-gaskets-blue.webp",
+              "title": "Flange Gaskets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-flange-gaskets-blue"
+            },
+            {
+              "src": "media/gallery/ph-square-rings.webp",
+              "title": "Square-Section Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-square-rings"
+            }
+          ]
+        },
+        {
+          "id": "plugs",
+          "name": "Plugs & Grommets",
+          "products": [
+            {
+              "src": "media/gallery/ph-plugs-tee.webp",
+              "title": "T-Type Plugs",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-plugs-tee"
+            },
+            {
+              "src": "media/gallery/ph-plugs-color-pile.webp",
+              "title": "Silicone Masking Plugs",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-plugs-color-pile"
+            },
+            {
+              "src": "media/gallery/ph-plugs-tapered-a.webp",
+              "title": "Tapered Silicone Plugs A",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-plugs-tapered-a"
+            },
+            {
+              "src": "media/gallery/ph-plugs-tapered-b.webp",
+              "title": "Tapered Silicone Plugs B",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-plugs-tapered-b"
+            },
+            {
+              "src": "media/gallery/ph-grommet-cone.webp",
+              "title": "Large Cone Grommets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommet-cone"
+            },
+            {
+              "src": "media/gallery/ph-grommet-shaped-a.webp",
+              "title": "Shaped Grommets A",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommet-shaped-a"
+            },
+            {
+              "src": "media/gallery/ph-grommet-shaped-b.webp",
+              "title": "Shaped Grommets B",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommet-shaped-b"
+            },
+            {
+              "src": "media/gallery/ph-grommet-shaped-c.webp",
+              "title": "Shaped Grommets C",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommet-shaped-c"
+            },
+            {
+              "src": "media/gallery/ph-grommet-bellows.webp",
+              "title": "Bellows Grommets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommet-bellows"
+            },
+            {
+              "src": "media/gallery/ph-grommets-bulk.webp",
+              "title": "Wiring Grommets — Bulk",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-grommets-bulk"
+            }
+          ]
+        },
+        {
+          "id": "lines",
+          "name": "Extrusion Production",
+          "products": [
+            {
+              "src": "media/gallery/ph-line-microwave-cure.webp",
+              "title": "Microwave Cure Line",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-挤出-微波硫化生产线车间.jpg",
+              "href": "manufacturing-v4.html"
+            },
+            {
+              "src": "media/gallery/ph-line-extrusion-oven.webp",
+              "title": "Extrusion Cure Line",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-挤出-挤出硫化烘道线.jpg",
+              "href": "manufacturing-v4.html"
+            }
+          ]
+        }
+      ],
+      "products": [
+        {
+          "src": "media/ph-orings-mixed.webp",
+          "title": "O-Ring Seals",
+          "style": "cutout",
+          "placeholder": true,
+          "alt": "Mixed FKM and NBR O-rings",
+          "name": "catalog.card-orings"
+        },
+        {
+          "src": "media/ph-oilseal-dark.webp",
+          "title": "Oil Seals",
+          "style": "cutout",
+          "placeholder": true,
+          "alt": "Spring-loaded rotary shaft oil seals",
+          "name": "catalog.card-oilseal"
+        },
+        {
+          "src": "media/gallery/ph-seal-sponge-profiles.webp",
+          "title": "Sponge Seal Profiles",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-密封条-发泡断面堆.jpg"
+        },
+        {
+          "src": "media/gallery/ph-seal-profile-fan.webp",
+          "title": "EPDM Seal Profiles",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-密封条-型材扇形展开.jpg"
+        },
+        {
+          "src": "media/gallery/ph-seal-steel-carrier.webp",
+          "title": "Steel-Carrier Edge Trims",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-密封条-钢芯复合卡条堆叠.jpg"
+        },
+        {
+          "src": "media/gallery/ph-pipe-coupling-gasket.webp",
+          "title": "Pipe Coupling Gaskets",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-管道-沟槽卡箍与密封圈.jpg"
+        },
+        {
+          "src": "media/gallery/ph-grommet-oval-plugs.webp",
+          "title": "Oval Grommets & Blanking Plugs",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-索环-椭圆盲堵组.jpg"
+        },
+        {
+          "src": "media/gallery/ph-grommet-washers.webp",
+          "title": "Rubber Grommets & Washers",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-索环-平垫圈组.jpg"
+        },
+        {
+          "src": "media/gallery/ph-foam-seal-section.webp",
+          "title": "Sponge Profile Cross-Sections",
+          "style": "photo",
+          "placeholder": true,
+          "source": "ph-foam-seal-section"
+        },
+        {
+          "src": "media/gallery/ph-foam-seal-coil.webp",
+          "title": "Foam Seal Coils",
+          "style": "photo",
+          "placeholder": true,
+          "source": "ph-foam-seal-coil"
+        },
+        {
+          "src": "media/gallery/ph-foam-strips-grey.webp",
+          "title": "Grey Foam Seal Strips",
+          "style": "photo",
+          "placeholder": true,
+          "source": "ph-foam-strips-grey"
+        },
+        {
+          "src": "media/gallery/ph-foam-strips-adhesive.webp",
+          "title": "Self-Adhesive Foam Strips",
+          "style": "photo",
+          "placeholder": true,
+          "source": "ph-foam-strips-adhesive"
+        }
+      ]
+    },
+    {
+      "id": "appliance",
+      "name": "Home Appliance",
+      "title": "Home Appliance Rubber Components",
+      "tagline": "Door seals, gaskets and silicone parts for household appliances.",
+      "intro": "Sealing and silicone components for washing machines, HVAC, dishwashers and kitchen appliances — compound supply or finished parts, OEM / ODM.",
+      "entry": "media/gallery/ph-appliance-door-profile.webp",
+      "groups": [],
+      "products": [
+        {
+          "src": "media/ph-wm-gasket.webp",
+          "title": "Appliance Door Seals",
+          "style": "cutout",
+          "placeholder": true,
+          "alt": "Washing machine door gasket",
+          "name": "catalog.card-appliance"
+        },
+        {
+          "src": "media/gallery/ph-appliance-door-profile.webp",
+          "title": "Silicone Door Profiles",
+          "style": "photo",
+          "placeholder": true,
+          "source": "占位-家电胶件-硅胶门封型材.jpg"
+        },
+        {
+          "src": "media/gallery/ph-wm-line.webp",
+          "title": "Door Seal Production Line",
+          "style": "photo",
+          "placeholder": true,
+          "source": "ph-wm-line",
+          "href": "manufacturing-v4.html"
+        }
+      ]
+    },
+    {
+      "id": "industrial",
+      "name": "Industrial & Custom",
+      "title": "Industrial & Custom Molded Components",
+      "tagline": "Precision molded parts, rollers and custom OEM / ODM development.",
+      "intro": "Custom molded industrial components to drawing or sample — rubber wheels, bonded parts, diaphragms and specialty items. Parameters for specific parts available on request.",
+      "entry": "media/gallery/ph-diaphragm-dark.webp",
+      "groups": [
+        {
+          "id": "molded",
+          "name": "Precision Molded & Diaphragms",
+          "products": [
+            {
+              "src": "media/gallery/ph-molded-tray.webp",
+              "title": "Large Molded Parts",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-模压-大型模压托盘件.jpg"
+            },
+            {
+              "src": "media/gallery/ph-mold-multicavity.webp",
+              "title": "Multi-Cavity Molding",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-模压-多腔模具与制品.jpg"
+            },
+            {
+              "src": "media/gallery/ph-roller-section.webp",
+              "title": "Rubber-Covered Rollers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "占位-辊筒-包胶辊剖切特写.jpg"
+            },
+            {
+              "src": "media/gallery/ph-mold-plate.webp",
+              "title": "Aluminum Mold Plates",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-mold-plate"
+            },
+            {
+              "src": "media/gallery/ph-molded-plug-cover.webp",
+              "title": "Molded Plugs & Covers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-molded-plug-cover"
+            },
+            {
+              "src": "media/gallery/ph-molded-elbow-boot.webp",
+              "title": "Molded Elbows & Boots",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-molded-elbow-boot"
+            },
+            {
+              "src": "media/gallery/ph-molded-assorted.webp",
+              "title": "Assorted Molded Parts",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-molded-assorted"
+            },
+            {
+              "src": "media/gallery/ph-molded-rings.webp",
+              "title": "Molded Rings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-molded-rings"
+            },
+            {
+              "src": "media/gallery/ph-molded-boot-group.webp",
+              "title": "Boots & Bellows Group",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-molded-boot-group"
+            }
+          ]
+        },
+        {
+          "id": "diaphragms",
+          "name": "Diaphragms",
+          "products": [
+            {
+              "src": "media/gallery/ph-diaphragm-dark.webp",
+              "title": "Rubber Diaphragms",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-dark"
+            },
+            {
+              "src": "media/gallery/ph-diaphragm-flange.webp",
+              "title": "Flanged Diaphragms",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-flange"
+            },
+            {
+              "src": "media/gallery/ph-diaphragm-bracket.webp",
+              "title": "Diaphragms with Brackets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-bracket"
+            },
+            {
+              "src": "media/gallery/ph-diaphragm-white.webp",
+              "title": "PTFE-Faced Diaphragms",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-white"
+            },
+            {
+              "src": "media/gallery/ph-diaphragm-flat.webp",
+              "title": "Flat Diaphragms",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-flat"
+            },
+            {
+              "src": "media/gallery/ph-diaphragm-held.webp",
+              "title": "Molded Diaphragms",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-diaphragm-held"
+            }
+          ]
+        },
+        {
+          "id": "stoppers",
+          "name": "Precision Stoppers",
+          "products": [
+            {
+              "src": "media/gallery/ph-stoppers-butyl-a.webp",
+              "title": "Butyl Stoppers A",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-stoppers-butyl-a"
+            },
+            {
+              "src": "media/gallery/ph-stoppers-butyl-b.webp",
+              "title": "Butyl Stoppers B",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-stoppers-butyl-b"
+            },
+            {
+              "src": "media/gallery/ph-stoppers-array.webp",
+              "title": "Small Stopper Arrays",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-stoppers-array"
+            },
+            {
+              "src": "media/gallery/ph-stopper-vial-scene.webp",
+              "title": "Vial Stoppers — Concept Render",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-stopper-vial-scene"
+            }
+          ]
+        },
+        {
+          "id": "silicone",
+          "name": "Silicone & LSR",
+          "products": [
+            {
+              "src": "media/gallery/ph-lsr-assorted.webp",
+              "title": "LSR Molded Parts",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-lsr-assorted"
+            },
+            {
+              "src": "media/gallery/ph-lsr-color-parts.webp",
+              "title": "Colored Silicone Parts",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-lsr-color-parts"
+            },
+            {
+              "src": "media/gallery/ph-silicone-keypads.webp",
+              "title": "Silicone Keypads",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-keypads"
+            },
+            {
+              "src": "media/gallery/ph-lsr-bw-parts.webp",
+              "title": "Silicone Molded Parts",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-lsr-bw-parts"
+            },
+            {
+              "src": "media/gallery/ph-silicone-flange-gasket.webp",
+              "title": "Silicone Flange Gaskets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-flange-gasket"
+            },
+            {
+              "src": "media/gallery/ph-silicone-caps-a.webp",
+              "title": "Silicone Protection Caps A",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-caps-a"
+            },
+            {
+              "src": "media/gallery/ph-silicone-caps-b.webp",
+              "title": "Silicone Protection Caps B",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-caps-b"
+            },
+            {
+              "src": "media/gallery/ph-silicone-washers.webp",
+              "title": "Silicone Washers",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-washers"
+            },
+            {
+              "src": "media/gallery/ph-silicone-grommets.webp",
+              "title": "Silicone Wire Grommets",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-silicone-grommets"
+            }
+          ]
+        },
+        {
+          "id": "plastics",
+          "name": "Engineering Plastics",
+          "products": [
+            {
+              "src": "media/gallery/ph-plastic-housings.webp",
+              "title": "Engineering Plastic Housings",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-plastic-housings"
+            },
+            {
+              "src": "media/gallery/ph-nylon-gears.webp",
+              "title": "Nylon Gears",
+              "style": "photo",
+              "placeholder": true,
+              "source": "ph-nylon-gears"
+            }
+          ]
+        }
+      ],
+      "products": [
+        {
+          "src": "../产品照片/橡胶轮.webp",
+          "title": "Rubber Wheel",
+          "style": "cutout",
+          "placeholder": false,
+          "href": "../products/rubber-wheel/",
+          "name": "catalog.card-wheel"
+        },
+        {
+          "src": "../产品照片/其他配套-金属冲压件.webp",
+          "title": "Metal Inserts — Rubber-Metal Bonding",
+          "style": "cutout",
+          "placeholder": false,
+          "alt": "Metal stamping inserts for rubber-metal bonding",
+          "name": "catalog.card-inserts"
+        },
+        {
+          "src": "../产品照片/其他配套-塑料件.webp",
+          "title": "Supporting Components",
+          "style": "cutout",
+          "placeholder": false,
+          "alt": "Supporting plastic components",
+          "name": "catalog.card-supporting"
+        }
+      ]
+    }
+  ]
+}

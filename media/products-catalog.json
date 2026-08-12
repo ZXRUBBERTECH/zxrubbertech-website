@@ -1,0 +1,106 @@
+{
+  "_说明": "产品目录唯一数据源(r8)。categories → products-a.html 的 CATALOG:AUTO 区 + demo-a-v3.html 的 HOMECAT:AUTO 入口卡。改完跑 python3 design-demos/build_catalog.py。结构:每个 category(应用行业大区)可含 groups(细分区)与直属 products,两者可并存;加新行业 = 加一个 category 对象再跑脚本,页面/CSS 零改动。字段:placeholder=true 时 span/alt 自动带 application example 标注(占位素材,上线前替换或授权);style=photo 满幅裁切 / cutout 透明底抠图;href=产品详情页(现为 live 亮色版);entry=首页入口卡配图;source=素材库来源(provenance 见 素材库/08-占位素材-未授权/README.md 与 台账.md)。",
+  "categories": [
+    {
+      "id": "automotive",
+      "name": "Automotive",
+      "title": "Automotive Rubber Components",
+      "tagline": "Chassis, body and electrical rubber parts for vehicle platforms.",
+      "intro": "Bushings, dust covers, grommets and rubber-metal bonded assemblies for transmission, suspension, steering and body systems — developed and manufactured in-house.",
+      "entry": "media/gallery/ph-bushing-stab-d.webp",
+      "groups": [
+        {
+          "id": "chassis",
+          "name": "Chassis & Suspension",
+          "products": [
+            {"src": "../OptimizedPicture/减震衬套.webp", "title": "Suspension Bushing", "style": "cutout", "placeholder": false, "href": "../products/suspension-bushing/", "name": "catalog.card-bushing"},
+            {"src": "../OptimizedPicture/减震防尘罩.webp", "title": "Shock Absorber Dust Cover", "style": "cutout", "placeholder": false, "href": "../products/shock-absorber-dust-cover/", "name": "catalog.card-shock-cover"},
+            {"src": "../产品照片/球形防尘罩.webp", "title": "Ball Joint Dust Cover", "style": "cutout", "placeholder": false, "href": "../products/ball-joint-dust-cover/", "name": "catalog.card-ball-joint"},
+            {"src": "../产品照片/减震器防尘罩.webp", "title": "Damper Dust Boot", "style": "cutout", "placeholder": false, "alt": "Shock absorber dust boot", "name": "catalog.card-damper-boot"},
+            {"src": "media/gallery/ph-bushing-stab-d.webp", "title": "Stabilizer Bar Bushings", "style": "photo", "placeholder": true, "source": "占位-衬套-稳定杆D型衬套.jpg"},
+            {"src": "media/gallery/ph-bushing-control-arm.webp", "title": "Control Arm Bushings", "style": "photo", "placeholder": true, "source": "占位-衬套-摆臂锥形衬套暗调.jpg"},
+            {"src": "media/gallery/ph-bonded-bushing-set.webp", "title": "Rubber-Metal Bonded Bushings", "style": "photo", "placeholder": true, "source": "占位-骨架件-金属橡胶复合衬套组.jpg"},
+            {"src": "media/gallery/ph-boot-cup.webp", "title": "Dust Boots & Caps", "style": "photo", "placeholder": true, "source": "占位-防尘罩-杯形防尘帽.jpg"},
+            {"src": "media/gallery/ph-boot-stepped.webp", "title": "Shock Absorber Boots", "style": "photo", "placeholder": true, "source": "占位-防尘罩-变径护套.jpg"}
+          ]
+        },
+        {
+          "id": "body",
+          "name": "Body & Electrical",
+          "products": [
+            {"src": "../产品照片/线束护套.webp", "title": "Wire Harness Sheath", "style": "cutout", "placeholder": false, "href": "../products/wire-harness-sheath/", "name": "catalog.card-harness"},
+            {"src": "media/gallery/ph-grommet-conduit.webp", "title": "Convoluted Wire Grommets", "style": "photo", "placeholder": true, "source": "占位-防尘护套-波纹护线套组合.jpg"}
+          ]
+        }
+      ],
+      "products": []
+    },
+    {
+      "id": "sealing",
+      "name": "Sealing & Extrusion",
+      "title": "Sealing & Extrusion Components",
+      "tagline": "O-rings, oil seals, profiles and grommets for static and rotary sealing.",
+      "intro": "Molded seals and extruded profiles in NBR, EPDM, FKM and silicone — from O-rings and shaft seals to steel-carrier edge trims and pipe gaskets.",
+      "entry": "media/gallery/ph-seal-profile-fan.webp",
+      "groups": [
+        {
+          "id": "lines",
+          "name": "Extrusion Production",
+          "products": [
+            {"src": "media/gallery/ph-line-microwave-cure.webp", "title": "Microwave Cure Line", "style": "photo", "placeholder": true, "source": "占位-挤出-微波硫化生产线车间.jpg"},
+            {"src": "media/gallery/ph-line-extrusion-oven.webp", "title": "Extrusion Cure Line", "style": "photo", "placeholder": true, "source": "占位-挤出-挤出硫化烘道线.jpg"}
+          ]
+        }
+      ],
+      "products": [
+        {"src": "media/ph-orings-mixed.webp", "title": "O-Ring Seals", "style": "cutout", "placeholder": true, "alt": "Mixed FKM and NBR O-rings", "name": "catalog.card-orings"},
+        {"src": "media/ph-oilseal-dark.webp", "title": "Oil Seals", "style": "cutout", "placeholder": true, "alt": "Spring-loaded rotary shaft oil seals", "name": "catalog.card-oilseal"},
+        {"src": "media/gallery/ph-seal-sponge-profiles.webp", "title": "Sponge Seal Profiles", "style": "photo", "placeholder": true, "source": "占位-密封条-发泡断面堆.jpg"},
+        {"src": "media/gallery/ph-seal-profile-fan.webp", "title": "EPDM Seal Profiles", "style": "photo", "placeholder": true, "source": "占位-密封条-型材扇形展开.jpg"},
+        {"src": "media/gallery/ph-seal-steel-carrier.webp", "title": "Steel-Carrier Edge Trims", "style": "photo", "placeholder": true, "source": "占位-密封条-钢芯复合卡条堆叠.jpg"},
+        {"src": "media/gallery/ph-pipe-coupling-gasket.webp", "title": "Pipe Coupling Gaskets", "style": "photo", "placeholder": true, "source": "占位-管道-沟槽卡箍与密封圈.jpg"},
+        {"src": "media/gallery/ph-grommet-oval-plugs.webp", "title": "Oval Grommets & Blanking Plugs", "style": "photo", "placeholder": true, "source": "占位-索环-椭圆盲堵组.jpg"},
+        {"src": "media/gallery/ph-grommet-washers.webp", "title": "Rubber Grommets & Washers", "style": "photo", "placeholder": true, "source": "占位-索环-平垫圈组.jpg"}
+      ]
+    },
+    {
+      "id": "appliance",
+      "name": "Home Appliance",
+      "title": "Home Appliance Rubber Components",
+      "tagline": "Door seals, gaskets and silicone parts for household appliances.",
+      "intro": "Sealing and silicone components for washing machines, HVAC, dishwashers and kitchen appliances — compound supply or finished parts, OEM / ODM.",
+      "entry": "media/gallery/ph-appliance-door-profile.webp",
+      "groups": [],
+      "products": [
+        {"src": "media/ph-wm-gasket.webp", "title": "Appliance Door Seals", "style": "cutout", "placeholder": true, "alt": "Washing machine door gasket", "name": "catalog.card-appliance"},
+        {"src": "media/gallery/ph-appliance-door-profile.webp", "title": "Silicone Door Profiles", "style": "photo", "placeholder": true, "source": "占位-家电胶件-硅胶门封型材.jpg"}
+      ]
+    },
+    {
+      "id": "industrial",
+      "name": "Industrial & Custom",
+      "title": "Industrial & Custom Molded Components",
+      "tagline": "Precision molded parts, rollers and custom OEM / ODM development.",
+      "intro": "Custom molded industrial components to drawing or sample — rubber wheels, bonded parts, diaphragms and specialty items. Parameters for specific parts available on request.",
+      "entry": "media/gallery/ph-diaphragm-dark.webp",
+      "groups": [
+        {
+          "id": "molded",
+          "name": "Precision Molded & Diaphragms",
+          "products": [
+            {"src": "media/gallery/ph-diaphragm-dark.webp", "title": "Rubber Diaphragms", "style": "photo", "placeholder": true, "source": "占位-膜片-暗调特写.jpg"},
+            {"src": "media/gallery/ph-diaphragm-flange.webp", "title": "Flanged Diaphragms", "style": "photo", "placeholder": true, "source": "占位-膜片-法兰螺栓孔膜片.jpg"},
+            {"src": "media/gallery/ph-molded-tray.webp", "title": "Large Molded Parts", "style": "photo", "placeholder": true, "source": "占位-模压-大型模压托盘件.jpg"},
+            {"src": "media/gallery/ph-mold-multicavity.webp", "title": "Multi-Cavity Molding", "style": "photo", "placeholder": true, "source": "占位-模压-多腔模具与制品.jpg"},
+            {"src": "media/gallery/ph-roller-section.webp", "title": "Rubber-Covered Rollers", "style": "photo", "placeholder": true, "source": "占位-辊筒-包胶辊剖切特写.jpg"}
+          ]
+        }
+      ],
+      "products": [
+        {"src": "../产品照片/橡胶轮.webp", "title": "Rubber Wheel", "style": "cutout", "placeholder": false, "href": "../products/rubber-wheel/", "name": "catalog.card-wheel"},
+        {"src": "../产品照片/其他配套-金属冲压件.webp", "title": "Metal Inserts — Rubber-Metal Bonding", "style": "cutout", "placeholder": false, "alt": "Metal stamping inserts for rubber-metal bonding", "name": "catalog.card-inserts"},
+        {"src": "../产品照片/其他配套-塑料件.webp", "title": "Supporting Components", "style": "cutout", "placeholder": false, "alt": "Supporting plastic components", "name": "catalog.card-supporting"}
+      ]
+    }
+  ]
+}
