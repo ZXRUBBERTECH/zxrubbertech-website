@@ -493,6 +493,178 @@ function validateRegistry(config) {
   return { failures, metrics };
 }
 
+function decodeControlText(value) {
+  return value
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>');
+}
+
+function markerCount(html, marker) {
+  return html.split(marker).length - 1;
+}
+
+function extractControlGroup(html, name, label, failures) {
+  const start = `<!-- V5:LANGUAGE ${name} START -->`;
+  const end = `<!-- V5:LANGUAGE ${name} END -->`;
+  const starts = markerCount(html, start);
+  const ends = markerCount(html, end);
+  if (starts !== 1 || ends !== 1) {
+    failures.push(`${label}: expected one ${name.toLowerCase()} language-control group; found ${starts}/${ends} markers`);
+    return null;
+  }
+  const startIndex = html.indexOf(start) + start.length;
+  const endIndex = html.indexOf(end, startIndex);
+  if (endIndex < startIndex) {
+    failures.push(`${label}: malformed ${name.toLowerCase()} language-control markers`);
+    return null;
+  }
+  return html.slice(startIndex, endIndex);
+}
+
+function parseControlAnchors(group) {
+  return [...group.matchAll(/<a\s+([^>]*\bdata-language-link\b[^>]*)>([\s\S]*?)<\/a>/gi)].map((match) => {
+    const attributes = {};
+    for (const attribute of match[1].matchAll(/([:\w-]+)(?:="([^"]*)")?/g)) {
+      attributes[attribute[1]] = attribute[2] ?? true;
+    }
+    return { attributes, text: decodeControlText(match[2].replace(/<[^>]+>/g, '').trim()) };
+  });
+}
+
+function validateControlGroup(group, groupName, locale, stem, config, label, failures) {
+  if (!group) return 0;
+  const rootSignatures = {
+    DESKTOP: '<div class="v5-language-switcher"',
+    MOBILE: '<nav class="v5-language-mobile"',
+    FOOTER: '<nav class="v5-language-footer"',
+  };
+  if (!group.includes(rootSignatures[groupName])) {
+    failures.push(`${label}: ${groupName.toLowerCase()} language-control root is missing`);
+  }
+  const anchors = parseControlAnchors(group);
+  if (anchors.length !== 5) {
+    failures.push(`${label}: ${groupName.toLowerCase()} language control must contain 5 real anchors; found ${anchors.length}`);
+    return anchors.length;
+  }
+  const expectedLocales = Object.keys(config.V5_LOCALES);
+  if (JSON.stringify(anchors.map(({ attributes }) => attributes['data-locale'])) !== JSON.stringify(expectedLocales)) {
+    failures.push(`${label}: ${groupName.toLowerCase()} language anchors are not in registry order`);
+  }
+  for (let index = 0; index < expectedLocales.length; index += 1) {
+    const expectedLocale = expectedLocales[index];
+    const definition = config.V5_LOCALES[expectedLocale];
+    const { attributes, text } = anchors[index];
+    const expectedRoute = config.getLocalizedRoute(expectedLocale, stem);
+    if (attributes.href !== expectedRoute) {
+      failures.push(`${label}: ${groupName.toLowerCase()} ${expectedLocale} href must equal ${expectedRoute}; got ${String(attributes.href)}`);
+    }
+    if (attributes.hreflang !== definition.hreflang || attributes.lang !== definition.htmlLang) {
+      failures.push(`${label}: ${groupName.toLowerCase()} ${expectedLocale} language attributes do not match the registry`);
+    }
+    if (text !== definition.label) {
+      failures.push(`${label}: ${groupName.toLowerCase()} ${expectedLocale} label must equal ${definition.label}; got ${text}`);
+    }
+    const isCurrent = attributes['aria-current'] === 'page';
+    if (isCurrent !== (expectedLocale === locale)) {
+      failures.push(`${label}: ${groupName.toLowerCase()} ${expectedLocale} aria-current state is incorrect`);
+    }
+    if (groupName === 'DESKTOP' && attributes.role !== 'menuitem') {
+      failures.push(`${label}: desktop ${expectedLocale} anchor must use role=menuitem`);
+    }
+  }
+  if (anchors.filter(({ attributes }) => attributes['aria-current'] === 'page').length !== 1) {
+    failures.push(`${label}: ${groupName.toLowerCase()} control must expose exactly one aria-current=page`);
+  }
+  return anchors.length;
+}
+
+function releaseFileFor(root, route) {
+  return routeToReleaseFile(root, route);
+}
+
+function validateControlsGate(normalized, config, inventory) {
+  const failures = [];
+  if (!normalized.locale) {
+    return { failures: ['Controls gate requires --locale=<approved-locale>'], metrics: null };
+  }
+  const locale = normalized.locale;
+  if (inventory.length !== config.V5_PAGE_STEMS.length) {
+    failures.push(`Controls inventory must contain exactly ${config.V5_PAGE_STEMS.length} pages for ${locale}; found ${inventory.length}`);
+  }
+
+  let totalAnchors = 0;
+  let passedPages = 0;
+  for (const stem of config.V5_PAGE_STEMS) {
+    const expectedFile = normalized.profile === 'preview'
+      ? join(normalized.root, `${stem}-v5.html`)
+      : releaseFileFor(normalized.root, config.getLocalizedRoute(locale, stem));
+    const label = `${locale}/${stem}`;
+    if (!inventory.includes(expectedFile)) {
+      failures.push(`${label}: expected page is missing from controls inventory: ${relative(normalized.root, expectedFile)}`);
+      continue;
+    }
+    const pageFailuresBefore = failures.length;
+    const html = readFileSync(expectedFile, 'utf8');
+    const desktop = extractControlGroup(html, 'DESKTOP', label, failures);
+    const mobile = extractControlGroup(html, 'MOBILE', label, failures);
+    const footer = extractControlGroup(html, 'FOOTER', label, failures);
+    totalAnchors += validateControlGroup(desktop, 'DESKTOP', locale, stem, config, label, failures);
+    totalAnchors += validateControlGroup(mobile, 'MOBILE', locale, stem, config, label, failures);
+    totalAnchors += validateControlGroup(footer, 'FOOTER', locale, stem, config, label, failures);
+
+    if (desktop && (!desktop.includes('aria-expanded="false"')
+      || !desktop.includes('aria-controls="v5-language-menu"')
+      || !desktop.includes('aria-haspopup="menu"')
+      || !desktop.includes('role="menu"'))) {
+      failures.push(`${label}: desktop language menu is missing its accessible button/menu contract`);
+    }
+    if (mobile && !mobile.includes('aria-label="Language"')) failures.push(`${label}: mobile language control needs an accessible label`);
+    if (footer && (!footer.includes('aria-label="Language"') || !footer.includes('<span>Language:</span>'))) {
+      failures.push(`${label}: Footer language row is missing its accessible label`);
+    }
+    if (markerCount(html, '/* V5:LANGUAGE CONTROLS START */') !== 1
+      || markerCount(html, '/* V5:LANGUAGE CONTROLS END */') !== 1) {
+      failures.push(`${label}: scoped language-control CSS is missing or duplicated`);
+    }
+    if (markerCount(html, '<!-- V5:LANGUAGE SCRIPT START -->') !== 1
+      || markerCount(html, '<!-- V5:LANGUAGE SCRIPT END -->') !== 1) {
+      failures.push(`${label}: progressive-enhancement language script is missing or duplicated`);
+    }
+    if (/class="(?:lang|mlang)"|Preview — English only/.test(html)) {
+      failures.push(`${label}: accepted nonfunctional language placeholder remains`);
+    }
+    const stateScript = html.match(/<!-- V5:LANGUAGE SCRIPT START -->([\s\S]*?)<!-- V5:LANGUAGE SCRIPT END -->/)?.[1] ?? '';
+    for (const fragment of ['c-automotive', 'c-sealing', 'c-appliance', 'c-industrial', 'c-industrial-diaphragms', 'compound-primary', 'contact']) {
+      if (!stateScript.includes(`"${fragment}"`)) failures.push(`${label}: state script is missing approved fragment ${fragment}`);
+    }
+    if (!stateScript.includes("searchParams.get('industry')")) failures.push(`${label}: state script is missing approved industry query preservation`);
+    if (/document\.cookie|localStorage|sessionStorage|location\.(?:assign|replace)\s*\(|(?:window\.)?location(?:\.href)?\s*=|window\.open\s*\(/.test(stateScript)) {
+      failures.push(`${label}: language controls must not persist state or navigate automatically`);
+    }
+    if (failures.length === pageFailuresBefore) passedPages += 1;
+  }
+
+  const expectedTotalAnchors = config.V5_PAGE_STEMS.length * 15;
+  if (totalAnchors !== expectedTotalAnchors) {
+    failures.push(`Controls bundle must contain ${expectedTotalAnchors} language anchors; found ${totalAnchors}`);
+  }
+  return {
+    failures,
+    metrics: {
+      locale,
+      pages: config.V5_PAGE_STEMS.length,
+      passedPages,
+      controlGroupsPerPage: 3,
+      anchorsPerGroup: 5,
+      anchorsPerPage: 15,
+      totalAnchors,
+    },
+  };
+}
+
 export async function runV5I18nChecks(options) {
   const normalized = normalizeOptions(options);
   const files = listFiles(normalized.root);
@@ -500,7 +672,7 @@ export async function runV5I18nChecks(options) {
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
-  if (normalized.gate !== 'registry' && normalized.gate !== 'catalog') {
+  if (!['registry', 'catalog', 'controls'].includes(normalized.gate)) {
     return {
       checker: 'v5-i18n',
       status: 'FAIL',
@@ -510,22 +682,29 @@ export async function runV5I18nChecks(options) {
       locale: normalized.locale,
       inventoryPages: inventory.length,
       registry: null,
-      failures: [`Gate ${normalized.gate} is not implemented in Gate M1`],
+      failures: [`Gate ${normalized.gate} is not implemented through Gate M3`],
     };
   }
 
   let failures;
   let metrics;
   let catalog = null;
+  let controls = null;
   if (normalized.gate === 'registry') {
     ({ failures, metrics } = validateRegistry(config));
-  } else {
+  } else if (normalized.gate === 'catalog') {
     const contract = await loadCatalogContract();
     const result = validateCatalogGate(normalized, config, inventory, contract.operations, contract.transform);
     const registryResult = validateRegistry(config);
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     catalog = result.metrics;
+  } else {
+    const registryResult = validateRegistry(config);
+    const result = validateControlsGate(normalized, config, inventory);
+    failures = [...registryResult.failures, ...result.failures];
+    metrics = registryResult.metrics;
+    controls = result.metrics;
   }
   return {
     checker: 'v5-i18n',
@@ -537,6 +716,7 @@ export async function runV5I18nChecks(options) {
     inventoryPages: inventory.length,
     registry: metrics,
     catalog,
+    controls,
     failures,
   };
 }

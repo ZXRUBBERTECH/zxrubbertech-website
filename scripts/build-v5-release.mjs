@@ -15,6 +15,8 @@ import {
   V5_ROUTE_MAP,
   seoPages,
 } from './v5-seo-config.mjs';
+import { getLocalizedRoute, V5_LOCALES } from './v5-i18n-config.mjs';
+import { applyV5LocalizationAndControls, loadV5Catalog } from './v5-i18n-transform.mjs';
 import { applyV5SeoHead } from './v5-seo-transform.mjs';
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -142,17 +144,28 @@ function buildSitemapCandidate() {
   };
 }
 
-export function buildV5Release({ outputDir } = {}) {
+export function buildV5Release({ outputDir, locale = null } = {}) {
+  const activeLocale = locale ?? 'en';
+  if (!Object.hasOwn(V5_LOCALES, activeLocale)) {
+    throw new Error(`Unsupported V5 release locale: ${String(activeLocale)}`);
+  }
+  const catalog = loadV5Catalog(activeLocale);
   const output = prepareOutputDirectory(outputDir);
   const pages = [];
   for (const stem of publicStems) {
     const sourceFile = join(previewRoot, `${stem}-v5.html`);
     assertRegularFile(sourceFile, `${stem} preview V5 page`);
-    const html = rewriteReleaseHtml(readFileSync(sourceFile, 'utf8'), stem);
-    const outputFile = routePathToReleaseFile(output, V5_ROUTE_MAP[stem]);
+    const localized = applyV5LocalizationAndControls(readFileSync(sourceFile, 'utf8'), {
+      stem,
+      locale: activeLocale,
+      catalog,
+    });
+    const html = rewriteReleaseHtml(localized, stem);
+    const route = getLocalizedRoute(activeLocale, stem);
+    const outputFile = routePathToReleaseFile(output, route);
     mkdirSync(dirname(outputFile), { recursive: true });
     writeFileSync(outputFile, html);
-    pages.push({ stem, route: V5_ROUTE_MAP[stem], file: relative(output, outputFile) });
+    pages.push({ stem, locale: activeLocale, route, file: relative(output, outputFile) });
   }
 
   const mediaSource = join(previewRoot, 'media');
@@ -175,6 +188,8 @@ export function buildV5Release({ outputDir } = {}) {
   const report = {
     status: 'PASS',
     outputDir: output,
+    locales: 1,
+    locale: activeLocale,
     publicPages: pages.length,
     pages,
     productionSitemapUrls: sitemap.existingUrls.length,
@@ -188,6 +203,7 @@ export function buildV5Release({ outputDir } = {}) {
 
 function parseCliArgs(argv) {
   let outputDir;
+  let locale;
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     const equals = argument.match(/^--output=(.*)$/);
@@ -205,10 +221,26 @@ function parseCliArgs(argv) {
       index += 1;
       continue;
     }
+    const localeEquals = argument.match(/^--locale=(.*)$/);
+    if (localeEquals) {
+      if (locale !== undefined) throw new Error('Duplicate option: --locale');
+      locale = localeEquals[1];
+      continue;
+    }
+    if (argument === '--locale') {
+      if (locale !== undefined) throw new Error('Duplicate option: --locale');
+      if (index + 1 >= argv.length || argv[index + 1].startsWith('--')) {
+        throw new Error('Missing value for --locale');
+      }
+      locale = argv[index + 1];
+      index += 1;
+      continue;
+    }
     throw new Error(`Unexpected argument: ${argument}`);
   }
   if (outputDir === undefined || !outputDir.trim()) throw new Error('Missing required option: --output');
-  return { outputDir };
+  if (locale !== undefined && !locale.trim()) throw new Error('Missing value for --locale');
+  return { outputDir, locale: locale ?? null };
 }
 
 function main() {

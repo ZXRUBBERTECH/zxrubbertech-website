@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
 import { V5_I18N_OPERATION_KINDS, V5_I18N_OPERATIONS } from './v5-i18n-operations.mjs';
+import { injectV5LanguageControls } from './v5-language-controls.mjs';
 
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 const catalogRoot = join(scriptsRoot, 'v5-i18n');
@@ -175,6 +176,11 @@ export function applyV5LocalizationOperations(html, { stem, locale, catalog = nu
     );
   }
   return localized;
+}
+
+export function applyV5LocalizationAndControls(html, { stem, locale, catalog = null } = {}) {
+  const localized = applyV5LocalizationOperations(html, { stem, locale, catalog });
+  return injectV5LanguageControls(localized, { stem, locale });
 }
 
 export function buildV5I18nBaseline(englishCatalog, operations) {
