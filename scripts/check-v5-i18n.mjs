@@ -114,9 +114,12 @@ function routeToReleaseFile(root, route) {
 
 function discoverPageInventory({ profile, root }, config) {
   const pages = [];
+  const pageRoot = profile === 'preview' && existsSync(join(root, 'design-demos'))
+    ? join(root, 'design-demos')
+    : root;
   if (profile === 'preview') {
     for (const stem of config.V5_PAGE_STEMS) {
-      const file = join(root, `${stem}-v5.html`);
+      const file = join(pageRoot, `${stem}-v5.html`);
       if (existsSync(file) && lstatSync(file).isFile()) pages.push(file);
     }
   } else {
@@ -139,6 +142,233 @@ async function loadRegistry() {
   } catch (error) {
     throw new Error(`V5 locale registry is missing or invalid: ${error.message}`);
   }
+}
+
+async function loadCatalogContract() {
+  try {
+    const [operations, transform] = await Promise.all([
+      import('./v5-i18n-operations.mjs'),
+      import('./v5-i18n-transform.mjs'),
+    ]);
+    return { operations, transform };
+  } catch (error) {
+    throw new Error(`V5 catalog contract is missing or invalid: ${error.message}`);
+  }
+}
+
+function readJsonFile(file, label) {
+  let parsed;
+  try {
+    if (!existsSync(file)) throw new Error('file does not exist');
+    const info = lstatSync(file);
+    if (info.isSymbolicLink() || !info.isFile()) throw new Error('expected a regular file');
+    parsed = JSON.parse(readFileSync(file, 'utf8'));
+  } catch (error) {
+    throw new Error(`${label} is missing or malformed at ${file}: ${error.message}`);
+  }
+  return parsed;
+}
+
+function catalogPaths(root, locale) {
+  const fixtureCatalogRoot = join(root, 'scripts', 'v5-i18n');
+  const fixtureBaseline = join(root, 'scripts', 'v5-i18n-baseline.json');
+  const scriptsRoot = dirname(fileURLToPath(import.meta.url));
+  const catalogRoot = existsSync(fixtureCatalogRoot) ? fixtureCatalogRoot : join(scriptsRoot, 'v5-i18n');
+  return {
+    catalogRoot,
+    catalogFile: existsSync(fixtureCatalogRoot)
+      ? join(fixtureCatalogRoot, `${locale}.json`)
+      : join(scriptsRoot, 'v5-i18n', `${locale}.json`),
+    glossaryFile: existsSync(join(fixtureCatalogRoot, 'glossary.json'))
+      ? join(fixtureCatalogRoot, 'glossary.json')
+      : join(scriptsRoot, 'v5-i18n', 'glossary.json'),
+    baselineFile: existsSync(fixtureBaseline)
+      ? fixtureBaseline
+      : join(scriptsRoot, 'v5-i18n-baseline.json'),
+  };
+}
+
+function validateGlossary(glossary) {
+  const failures = [];
+  if (!glossary || typeof glossary !== 'object' || Array.isArray(glossary)) return ['V5 i18n glossary must be an object'];
+  if (glossary.schemaVersion !== 1 || glossary.sourceLocale !== 'en') failures.push('V5 i18n glossary must use schemaVersion 1 and sourceLocale en');
+  const requiredLiterals = [
+    'ZHIXIN RUBBER MATERIAL',
+    'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD',
+    'martin@zxrubbertech.com',
+    '+86 152 5622 5135',
+    'https://wa.me/8615256225135',
+    'mrpzqado',
+    '0x4AAAAAAENHOMMn_zK0WuNN',
+    'NR', 'SBR', 'CR', 'NBR', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM', 'OEM', 'ODM', 'MOQ',
+  ];
+  if (!Array.isArray(glossary.preservedLiterals)
+      || glossary.preservedLiterals.some((value) => typeof value !== 'string' || !value)
+      || new Set(glossary.preservedLiterals).size !== glossary.preservedLiterals.length) {
+    failures.push('V5 i18n glossary preservedLiterals must be unique nonempty strings');
+  } else {
+    for (const literal of requiredLiterals) {
+      if (!glossary.preservedLiterals.includes(literal)) failures.push(`V5 i18n glossary is missing preserved literal: ${literal}`);
+    }
+  }
+  const requiredTerms = [
+    'rubber compound', 'molded rubber parts', 'rubber-to-metal bonding',
+    'compression molding', 'injection molding', 'extrusion', 'tooling',
+    'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
+  ];
+  if (!glossary.terms || typeof glossary.terms !== 'object' || Array.isArray(glossary.terms)) {
+    failures.push('V5 i18n glossary terms must be an object');
+  } else {
+    for (const term of requiredTerms) {
+      const definition = glossary.terms[term];
+      if (!definition || typeof definition !== 'object' || Array.isArray(definition)
+          || typeof definition.en !== 'string' || !definition.en.trim()) {
+        failures.push(`V5 i18n glossary is missing English term: ${term}`);
+      }
+    }
+  }
+  return failures;
+}
+
+function normalizeEnglishSerialization(value) {
+  return value
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&apos;', "'");
+}
+
+function validateCatalogGate(normalized, config, inventory, operationsModule, transformModule) {
+  const failures = [];
+  const locale = normalized.locale;
+  if (!locale) {
+    return {
+      failures: ['Catalog gate requires --locale=<approved-locale>'],
+      metrics: null,
+    };
+  }
+  const { catalogRoot, catalogFile, glossaryFile, baselineFile } = catalogPaths(normalized.root, locale);
+  let catalog;
+  let flattened;
+  try {
+    catalog = readJsonFile(catalogFile, `${locale} V5 catalog`);
+    flattened = transformModule.validateV5Catalog(locale, catalog);
+  } catch (error) {
+    return { failures: [error.message], metrics: null };
+  }
+  try {
+    failures.push(...validateGlossary(readJsonFile(glossaryFile, 'V5 i18n glossary')));
+  } catch (error) {
+    failures.push(error.message);
+  }
+  for (const [key, value] of Object.entries(flattened)) {
+    if (/\b(?:TODO|TBD|TRANSLATE_ME)\b/i.test(value)) failures.push(`Unfinished V5 catalog value: ${key}`);
+  }
+
+  const operations = operationsModule.V5_I18N_OPERATIONS;
+  const operationKeys = operations.map(({ key }) => key);
+  const uniqueOperationKeys = new Set(operationKeys);
+  if (uniqueOperationKeys.size !== operationKeys.length) failures.push('V5 i18n operation keys must be unique');
+  for (const kind of operationsModule.V5_I18N_OPERATION_KINDS) {
+    if (!['html-text', 'html-fragment', 'attribute', 'js-string'].includes(kind)) {
+      failures.push(`Unsupported V5 i18n operation kind: ${kind}`);
+    }
+  }
+  for (const operation of operations) {
+    if (!Object.hasOwn(flattened, operation.key)) failures.push(`Operation references unknown catalog key: ${operation.key}`);
+    if (locale === 'en' && flattened[operation.key] !== operation.english) {
+      failures.push(`English catalog/source mismatch: ${operation.key}`);
+    }
+    if (!['html-text', 'html-fragment', 'attribute', 'js-string'].includes(operation.kind)) {
+      failures.push(`${operation.key}: invalid operation kind ${operation.kind}`);
+    }
+    if (!Array.isArray(operation.stems) || !operation.stems.length) failures.push(`${operation.key}: empty stem coverage`);
+    for (const stem of operation.stems ?? []) {
+      if (!config.V5_PAGE_STEMS.includes(stem)) failures.push(`${operation.key}: unknown stem ${stem}`);
+      if (!Number.isInteger(operation.expectedByStem?.[stem]) || operation.expectedByStem[stem] < 1) {
+        failures.push(`${operation.key}: invalid expected count for ${stem}`);
+      }
+    }
+  }
+
+  const consumedBodyKeys = new Set(operationKeys);
+  for (const key of Object.keys(flattened)) {
+    if (key.startsWith('seo.')) continue;
+    if (!consumedBodyKeys.has(key)) failures.push(`Unconsumed V5 catalog key: ${key}`);
+  }
+  for (const key of consumedBodyKeys) {
+    if (!Object.hasOwn(flattened, key)) failures.push(`Missing V5 catalog key: ${key}`);
+  }
+
+  for (const stem of config.V5_PAGE_STEMS) {
+    const seoKeys = Object.keys(catalog.seo[stem] ?? {});
+    if (JSON.stringify(seoKeys) !== JSON.stringify(['title', 'description', 'breadcrumb'])) {
+      failures.push(`seo.${stem} must contain exactly title, description, breadcrumb`);
+    }
+  }
+
+  let currentBaseline;
+  try {
+    const acceptedBaseline = readJsonFile(baselineFile, 'V5 i18n baseline');
+    const englishCatalog = locale === 'en'
+      ? catalog
+      : readJsonFile(join(catalogRoot, 'en.json'), 'English V5 catalog');
+    transformModule.validateV5Catalog('en', englishCatalog);
+    currentBaseline = transformModule.buildV5I18nBaseline(englishCatalog, operations);
+    if (JSON.stringify(currentBaseline) !== JSON.stringify(acceptedBaseline)) {
+      const acceptedKeys = new Set(acceptedBaseline.keys ?? []);
+      const currentKeys = new Set(currentBaseline.keys ?? []);
+      const missing = [...acceptedKeys].filter((key) => !currentKeys.has(key));
+      const added = [...currentKeys].filter((key) => !acceptedKeys.has(key));
+      if (missing.length) failures.push(`Baseline catalog key missing: ${missing[0]}`);
+      if (added.length) failures.push(`Unexpected baseline catalog key: ${added[0]}`);
+      if (!missing.length && !added.length) failures.push('V5 i18n baseline hashes or operation inventory changed');
+    }
+  } catch (error) {
+    failures.push(error.message);
+  }
+
+  let englishRoundTrip = null;
+  if (locale === 'en') {
+    englishRoundTrip = true;
+    for (const stem of config.V5_PAGE_STEMS) {
+      const file = inventory.find((candidate) => candidate.endsWith(`/${stem}-v5.html`));
+      if (!file) {
+        failures.push(`Missing accepted English preview for semantic round-trip: ${stem}`);
+        englishRoundTrip = false;
+        continue;
+      }
+      try {
+        const source = readFileSync(file, 'utf8');
+        const localized = transformModule.applyV5LocalizationOperations(source, { stem, locale, catalog });
+        if (normalizeEnglishSerialization(localized) !== normalizeEnglishSerialization(source)) {
+          failures.push(`${stem}: English localization changed approved text semantics`);
+          englishRoundTrip = false;
+        }
+      } catch (error) {
+        failures.push(error.message);
+        englishRoundTrip = false;
+      }
+    }
+  } else {
+    const english = transformModule.loadV5Catalog('en');
+    const englishKeys = Object.keys(transformModule.flattenV5Catalog(english)).sort();
+    const localeKeys = Object.keys(flattened).sort();
+    if (JSON.stringify(localeKeys) !== JSON.stringify(englishKeys)) failures.push(`${locale}: catalog key set differs from English`);
+  }
+
+  return {
+    failures,
+    metrics: currentBaseline ? {
+      locale,
+      catalogKeys: currentBaseline.keyCount,
+      operations: currentBaseline.operationCount,
+      operationsByKind: currentBaseline.operationCountsByKind,
+      operationsByStem: currentBaseline.operationCountsByStem,
+      englishRoundTrip,
+      catalogRoot,
+    } : null,
+  };
 }
 
 function validateRegistry(config) {
@@ -270,7 +500,7 @@ export async function runV5I18nChecks(options) {
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
-  if (normalized.gate !== 'registry') {
+  if (normalized.gate !== 'registry' && normalized.gate !== 'catalog') {
     return {
       checker: 'v5-i18n',
       status: 'FAIL',
@@ -284,7 +514,19 @@ export async function runV5I18nChecks(options) {
     };
   }
 
-  const { failures, metrics } = validateRegistry(config);
+  let failures;
+  let metrics;
+  let catalog = null;
+  if (normalized.gate === 'registry') {
+    ({ failures, metrics } = validateRegistry(config));
+  } else {
+    const contract = await loadCatalogContract();
+    const result = validateCatalogGate(normalized, config, inventory, contract.operations, contract.transform);
+    const registryResult = validateRegistry(config);
+    failures = [...registryResult.failures, ...result.failures];
+    metrics = registryResult.metrics;
+    catalog = result.metrics;
+  }
   return {
     checker: 'v5-i18n',
     status: failures.length === 0 ? 'PASS' : 'FAIL',
@@ -294,6 +536,7 @@ export async function runV5I18nChecks(options) {
     locale: normalized.locale,
     inventoryPages: inventory.length,
     registry: metrics,
+    catalog,
     failures,
   };
 }

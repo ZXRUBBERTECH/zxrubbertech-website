@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "sourceLocale": "en",
+  "preservedLiterals": [
+    "ZHIXIN RUBBER MATERIAL",
+    "ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD",
+    "martin@zxrubbertech.com",
+    "+86 152 5622 5135",
+    "https://wa.me/8615256225135",
+    "mrpzqado",
+    "0x4AAAAAAENHOMMn_zK0WuNN",
+    "NR",
+    "SBR",
+    "CR",
+    "NBR",
+    "HNBR",
+    "EPDM",
+    "FKM",
+    "ACM",
+    "AEM",
+    "OEM",
+    "ODM",
+    "MOQ"
+  ],
+  "verifiedFacts": {
+    "annualCompoundCapacity": "approximately 3,000 metric tons",
+    "annualMoldedComponents": "more than 15 million molded rubber components per year",
+    "inquiryAcknowledgement": "within 24 hours",
+    "regularCompoundMoq": "2 metric tons",
+    "quotationWindow": "2–7 business days"
+  },
+  "terms": {
+    "rubber compound": {
+      "en": "rubber compound"
+    },
+    "molded rubber parts": {
+      "en": "molded rubber parts"
+    },
+    "rubber-to-metal bonding": {
+      "en": "rubber-to-metal bonding"
+    },
+    "compression molding": {
+      "en": "compression molding"
+    },
+    "injection molding": {
+      "en": "injection molding"
+    },
+    "extrusion": {
+      "en": "extrusion"
+    },
+    "tooling": {
+      "en": "tooling"
+    },
+    "traceability": {
+      "en": "traceability"
+    },
+    "batch release": {
+      "en": "batch release"
+    },
+    "drawing": {
+      "en": "drawing"
+    },
+    "sample": {
+      "en": "sample"
+    },
+    "project requirements": {
+      "en": "project requirements"
+    }
+  }
+}
