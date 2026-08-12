@@ -30,10 +30,22 @@ if (cliFailures.length) {
 }
 
 const failures = [];
-const expectedCounts = Object.freeze({ v5Urls: 7, legacyPaths: 33, hosts: 2, csvRows: 66 });
+const expectedCounts = Object.freeze({ v5Urls: 35, legacyPaths: 25, hosts: 2, csvRows: 50 });
 const allowedTargets = new Set(V5_URLS);
 const allowedFragments = new Set(['', '#c-automotive', '#c-industrial']);
 const legacyPaths = new Set();
+const v5Paths = new Set(V5_URLS.map((url) => new URL(url).pathname));
+const expectedLegacyRedirects = [
+  ...['suspension-bushing', 'shock-absorber-dust-cover', 'ball-joint-dust-cover', 'wire-harness-sheath']
+    .flatMap((slug) => ['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
+      path: `/${language ? `${language}/` : ''}products/${slug}/`,
+      target: 'https://www.zxrubbertech.com/products/#c-automotive',
+    }))),
+  ...['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
+    path: `/${language ? `${language}/` : ''}products/rubber-wheel/`,
+    target: 'https://www.zxrubbertech.com/products/#c-industrial',
+  })),
+];
 
 const fail = (message) => failures.push(message);
 const filePath = (relativePath) => resolve(repositoryRoot, relativePath);
@@ -62,8 +74,11 @@ const decodeXml = (value) => value
   .replaceAll('&gt;', '>')
   .replaceAll('&apos;', "'");
 
-if (V5_URLS.length !== expectedCounts.v5Urls) fail(`expected 7 V5 URLs, found ${V5_URLS.length}`);
-if (LEGACY_REDIRECTS.length !== expectedCounts.legacyPaths) fail(`expected 33 legacy paths, found ${LEGACY_REDIRECTS.length}`);
+if (V5_URLS.length !== expectedCounts.v5Urls) fail(`expected 35 V5 URLs, found ${V5_URLS.length}`);
+if (LEGACY_REDIRECTS.length !== expectedCounts.legacyPaths) fail(`expected 25 legacy paths, found ${LEGACY_REDIRECTS.length}`);
+if (JSON.stringify(LEGACY_REDIRECTS) !== JSON.stringify(expectedLegacyRedirects)) {
+  fail('legacy redirects must exactly equal the approved 25 product-detail mappings');
+}
 if (CLOUDFLARE_HOSTS.length !== expectedCounts.hosts) fail(`expected 2 Cloudflare hosts, found ${CLOUDFLARE_HOSTS.length}`);
 if (new Set(CLOUDFLARE_HOSTS).size !== expectedCounts.hosts
   || !CLOUDFLARE_HOSTS.includes('zxrubbertech.com')
@@ -74,6 +89,7 @@ if (new Set(CLOUDFLARE_HOSTS).size !== expectedCounts.hosts
 for (const { path, target } of LEGACY_REDIRECTS) {
   if (legacyPaths.has(path)) fail(`duplicate legacy path: ${path}`);
   legacyPaths.add(path);
+  if (v5Paths.has(path)) fail(`legacy path overlaps a V5 route: ${path}`);
   if (!/^\/[a-z0-9/-]+\/$/.test(path)) fail(`malformed legacy path: ${path}`);
 
   let targetUrl;
@@ -130,7 +146,7 @@ let cloudflareEntries = 0;
 if (csvContents !== null) {
   const rows = csvContents.split(/\r?\n/).filter(Boolean);
   cloudflareEntries = rows.length;
-  if (rows.length !== expectedCounts.csvRows) fail(`expected 66 CSV rows, found ${rows.length}`);
+  if (rows.length !== expectedCounts.csvRows) fail(`expected 50 CSV rows, found ${rows.length}`);
   if (/source.?url/i.test(rows[0] ?? '')) fail('Cloudflare CSV must not contain a header row');
 
   const expectedRows = new Set(LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
@@ -172,7 +188,7 @@ if (sitemapContents !== null) {
   const locations = [...sitemapContents.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeXml(match[1]));
   sitemapUrls = locations.length;
   if (JSON.stringify(locations) !== JSON.stringify(V5_URLS)) {
-    fail(`sitemap URLs must exactly equal the seven V5 URLs: ${JSON.stringify(locations)}`);
+    fail(`sitemap URLs must exactly equal the 35 V5 URLs: ${JSON.stringify(locations)}`);
   }
   if (/hreflang=/i.test(sitemapContents)) fail('sitemap must not contain legacy hreflang annotations');
   if (locations.some((location) => location.includes('#'))) fail('sitemap URLs must not contain fragments');
@@ -193,15 +209,10 @@ if (robotsContents !== null) {
   }
 }
 
-const publicPages = Object.freeze([
-  ['index.html', 'https://www.zxrubbertech.com/'],
-  ['products/index.html', 'https://www.zxrubbertech.com/products/'],
-  ['rubber-compounds/index.html', 'https://www.zxrubbertech.com/rubber-compounds/'],
-  ['industries/index.html', 'https://www.zxrubbertech.com/industries/'],
-  ['capabilities/index.html', 'https://www.zxrubbertech.com/capabilities/'],
-  ['faq/index.html', 'https://www.zxrubbertech.com/faq/'],
-  ['quote/index.html', 'https://www.zxrubbertech.com/quote/'],
-]);
+const publicPages = Object.freeze(V5_URLS.map((canonical) => {
+  const path = new URL(canonical).pathname;
+  return [path === '/' ? 'index.html' : `${path.slice(1)}index.html`, canonical];
+}));
 
 for (const [relativePath, canonical] of publicPages) {
   const contents = read(relativePath);

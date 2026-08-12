@@ -1339,6 +1339,84 @@ function validateFormGate(normalized, config) {
   };
 }
 
+async function validateRetirementGate(normalized, config) {
+  const failures = [];
+  if (normalized.profile !== 'release') failures.push('Retirement gate requires profile=release');
+  if (normalized.locale) failures.push('Retirement gate must not use --locale');
+  const { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } = await import('./v5-retirement-map.mjs');
+  const expectedV5Urls = Object.keys(config.V5_LOCALES).flatMap((locale) => (
+    config.V5_PAGE_STEMS.map((stem) => config.getLocalizedUrl(locale, stem))
+  ));
+  const v5Paths = new Set(expectedV5Urls.map((url) => new URL(url).pathname));
+  const legacyPaths = new Set();
+  const expectedLegacyRedirects = [
+    ...['suspension-bushing', 'shock-absorber-dust-cover', 'ball-joint-dust-cover', 'wire-harness-sheath']
+      .flatMap((slug) => ['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
+        path: `/${language ? `${language}/` : ''}products/${slug}/`,
+        target: 'https://www.zxrubbertech.com/products/#c-automotive',
+      }))),
+    ...['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
+      path: `/${language ? `${language}/` : ''}products/rubber-wheel/`,
+      target: 'https://www.zxrubbertech.com/products/#c-industrial',
+    })),
+  ];
+  if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)) {
+    failures.push('Retirement V5_URLS must exactly equal the 35 localized canonical URLs');
+  }
+  if (V5_URLS.length !== 35) failures.push(`Retirement inventory must contain 35 V5 URLs; found ${V5_URLS.length}`);
+  if (LEGACY_REDIRECTS.length !== 25) failures.push(`Retirement inventory must contain 25 legacy paths; found ${LEGACY_REDIRECTS.length}`);
+  if (JSON.stringify(LEGACY_REDIRECTS) !== JSON.stringify(expectedLegacyRedirects)) {
+    failures.push('Retirement redirects must exactly equal the approved 25 product-detail mappings');
+  }
+  if (JSON.stringify(CLOUDFLARE_HOSTS) !== JSON.stringify(['zxrubbertech.com', 'www.zxrubbertech.com'])) {
+    failures.push('Retirement Cloudflare hosts must be apex then www');
+  }
+  for (const { path } of LEGACY_REDIRECTS) {
+    if (legacyPaths.has(path)) failures.push(`Duplicate retirement path: ${path}`);
+    legacyPaths.add(path);
+    if (v5Paths.has(path)) failures.push(`Retirement path overlaps a real V5 route: ${path}`);
+  }
+  let fallbackPages = 0;
+  for (const { path } of LEGACY_REDIRECTS) {
+    const fallback = join(normalized.root, path.slice(1), 'index.html');
+    if (!existsSync(fallback) || !lstatSync(fallback).isFile()) failures.push(`Missing retirement fallback: ${path}`);
+    else fallbackPages += 1;
+  }
+  const expectedRows = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
+    `${host}${path},${target},301,true,false,false,false`
+  )));
+  const csvFile = join(normalized.root, 'cloudflare', 'zxrubbertech-v5-legacy-redirects.csv');
+  let actualRows = [];
+  if (!existsSync(csvFile) || !lstatSync(csvFile).isFile()) {
+    failures.push('Missing retirement Cloudflare CSV');
+  } else {
+    actualRows = readFileSync(csvFile, 'utf8').split(/\r?\n/).filter(Boolean);
+    if (JSON.stringify(actualRows) !== JSON.stringify(expectedRows)) {
+      failures.push('Cloudflare CSV must exactly equal the ordered 50-row retirement inventory');
+    }
+  }
+  const sitemapFile = join(normalized.root, 'sitemap.xml');
+  let sitemapUrls = [];
+  if (!existsSync(sitemapFile) || !lstatSync(sitemapFile).isFile()) {
+    failures.push('Missing retirement sitemap');
+  } else {
+    sitemapUrls = [...readFileSync(sitemapFile, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+    if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedV5Urls)) {
+      failures.push('Retirement sitemap must exactly equal the ordered 35 canonical URLs');
+    }
+  }
+  return {
+    failures,
+    metrics: {
+      v5Urls: V5_URLS.length,
+      legacyPaths: LEGACY_REDIRECTS.length,
+      fallbackPages,
+      cloudflareEntries: actualRows.length,
+      sitemapUrls: sitemapUrls.length,
+    },
+  };
+}
+
 export async function runV5I18nChecks(options) {
   const normalized = normalizeOptions(options);
   const files = listFiles(normalized.root);
@@ -1346,7 +1424,7 @@ export async function runV5I18nChecks(options) {
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
-  if (!['registry', 'catalog', 'controls', 'release', 'form'].includes(normalized.gate)) {
+  if (!['registry', 'catalog', 'controls', 'release', 'form', 'retirement', 'all'].includes(normalized.gate)) {
     return {
       checker: 'v5-i18n',
       status: 'FAIL',
@@ -1356,7 +1434,7 @@ export async function runV5I18nChecks(options) {
       locale: normalized.locale,
       inventoryPages: inventory.length,
       registry: null,
-      failures: [`Gate ${normalized.gate} is not implemented through Gate M8`],
+      failures: [`Gate ${normalized.gate} is not implemented`],
     };
   }
 
@@ -1366,6 +1444,7 @@ export async function runV5I18nChecks(options) {
   let controls = null;
   let release = null;
   let form = null;
+  let retirement = null;
   if (normalized.gate === 'registry') {
     ({ failures, metrics } = validateRegistry(config));
   } else if (normalized.gate === 'catalog') {
@@ -1387,12 +1466,63 @@ export async function runV5I18nChecks(options) {
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     release = result.metrics;
-  } else {
+  } else if (normalized.gate === 'form') {
     const registryResult = validateRegistry(config);
     const result = validateFormGate(normalized, config);
     failures = [...registryResult.failures, ...result.failures];
     metrics = registryResult.metrics;
     form = result.metrics;
+  } else if (normalized.gate === 'retirement') {
+    const registryResult = validateRegistry(config);
+    const result = await validateRetirementGate(normalized, config);
+    failures = [...registryResult.failures, ...result.failures];
+    metrics = registryResult.metrics;
+    retirement = result.metrics;
+  } else {
+    if (normalized.locale) throw new V5I18nCliError('All gate must not use --locale');
+    const registryResult = validateRegistry(config);
+    failures = [...registryResult.failures];
+    metrics = registryResult.metrics;
+    if (normalized.profile === 'preview') {
+      const contract = await loadCatalogContract();
+      const catalogMetrics = {};
+      for (const locale of Object.keys(config.V5_LOCALES)) {
+        const result = validateCatalogGate(
+          { ...normalized, locale },
+          config,
+          inventory,
+          contract.operations,
+          contract.transform,
+        );
+        failures.push(...result.failures);
+        catalogMetrics[locale] = result.metrics;
+      }
+      catalog = catalogMetrics;
+    } else {
+      const controlsFailures = [];
+      const controlsMetrics = {};
+      for (const locale of Object.keys(config.V5_LOCALES)) {
+        const localeInventory = config.V5_PAGE_STEMS.map((stem) => (
+          releaseFileFor(normalized.root, config.getLocalizedRoute(locale, stem))
+        )).filter((file) => existsSync(file) && lstatSync(file).isFile());
+        const result = validateControlsGate({ ...normalized, locale }, config, localeInventory);
+        controlsFailures.push(...result.failures);
+        controlsMetrics[locale] = result.metrics;
+      }
+      const releaseResult = validateReleaseGate(normalized, config, inventory);
+      const formResult = validateFormGate(normalized, config);
+      const retirementResult = await validateRetirementGate(normalized, config);
+      failures.push(
+        ...controlsFailures,
+        ...releaseResult.failures,
+        ...formResult.failures,
+        ...retirementResult.failures,
+      );
+      controls = controlsMetrics;
+      release = releaseResult.metrics;
+      form = formResult.metrics;
+      retirement = retirementResult.metrics;
+    }
   }
   return {
     checker: 'v5-i18n',
@@ -1407,6 +1537,7 @@ export async function runV5I18nChecks(options) {
     controls,
     release,
     form,
+    retirement,
     failures,
   };
 }
