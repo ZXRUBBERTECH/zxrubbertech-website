@@ -43,6 +43,13 @@
       "inquiryAcknowledgement": "в течение 24 часов",
       "regularCompoundMoq": "2 метрические тонны",
       "quotationWindow": "2–7 рабочих дней"
+    },
+    "tr": {
+      "annualCompoundCapacity": "yaklaşık 3.000 metrik ton",
+      "annualMoldedComponents": "yılda 15 milyondan fazla kalıplanmış kauçuk bileşen",
+      "inquiryAcknowledgement": "24 saat içinde",
+      "regularCompoundMoq": "2 metrik ton",
+      "quotationWindow": "2–7 iş günü"
     }
   },
   "terms": {
@@ -50,73 +57,85 @@
       "en": "rubber compound",
       "de": "Gummimischung",
       "zh-CN": "橡胶胶料",
-      "ru": "резиновая смесь"
+      "ru": "резиновая смесь",
+      "tr": "kauçuk karışımı"
     },
     "molded rubber parts": {
       "en": "molded rubber parts",
       "de": "Gummiformteile",
       "zh-CN": "模压橡胶件",
-      "ru": "формованные резиновые детали"
+      "ru": "формованные резиновые детали",
+      "tr": "kalıplanmış kauçuk parçalar"
     },
     "rubber-to-metal bonding": {
       "en": "rubber-to-metal bonding",
       "de": "Gummi-Metall-Verbindung",
       "zh-CN": "橡胶-金属粘接",
-      "ru": "соединение резины с металлом"
+      "ru": "соединение резины с металлом",
+      "tr": "kauçuk-metal yapıştırma"
     },
     "compression molding": {
       "en": "compression molding",
       "de": "Formpressen",
       "zh-CN": "压缩模压",
-      "ru": "компрессионное формование"
+      "ru": "компрессионное формование",
+      "tr": "sıkıştırma kalıplama"
     },
     "injection molding": {
       "en": "injection molding",
       "de": "Spritzgießen",
       "zh-CN": "注射成型",
-      "ru": "литьё под давлением"
+      "ru": "литьё под давлением",
+      "tr": "enjeksiyon kalıplama"
     },
     "extrusion": {
       "en": "extrusion",
       "de": "Extrusion",
       "zh-CN": "挤出成型",
-      "ru": "экструзия"
+      "ru": "экструзия",
+      "tr": "ekstrüzyon"
     },
     "tooling": {
       "en": "tooling",
       "de": "Werkzeug",
       "zh-CN": "模具",
-      "ru": "оснастка"
+      "ru": "оснастка",
+      "tr": "kalıp"
     },
     "traceability": {
       "en": "traceability",
       "de": "Rückverfolgbarkeit",
       "zh-CN": "可追溯性",
-      "ru": "прослеживаемость"
+      "ru": "прослеживаемость",
+      "tr": "izlenebilirlik"
     },
     "batch release": {
       "en": "batch release",
       "de": "Chargenfreigabe",
       "zh-CN": "批次放行",
-      "ru": "приёмка партии"
+      "ru": "приёмка партии",
+      "tr": "parti serbest bırakma"
     },
     "drawing": {
       "en": "drawing",
       "de": "Zeichnung",
       "zh-CN": "图纸",
-      "ru": "чертёж"
+      "ru": "чертёж",
+      "tr": "teknik resim"
     },
     "sample": {
       "en": "sample",
       "de": "Muster",
       "zh-CN": "样品",
-      "ru": "образец"
+      "ru": "образец",
+      "tr": "numune"
     },
     "project requirements": {
       "en": "project requirements",
       "de": "Projektanforderungen",
       "zh-CN": "项目要求",
-      "ru": "требования проекта"
+      "ru": "требования проекта",
+      "tr": "proje gereksinimleri"
     }
   }
 }

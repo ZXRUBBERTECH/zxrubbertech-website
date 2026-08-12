@@ -42,6 +42,24 @@ const RUSSIAN_GLOSSARY_ROOTS = Object.freeze({
   'project requirements': ['требован', 'проект'],
 });
 
+// Turkish is agglutinative, so glossary terms may receive case and possessive
+// suffixes in natural sentences. Validate stable technical roots instead of
+// requiring the exact dictionary form everywhere.
+const TURKISH_GLOSSARY_ROOTS = Object.freeze({
+  'rubber compound': ['kauçuk', 'karışım'],
+  'molded rubber parts': ['kalıplanmış', 'kauçuk'],
+  'rubber-to-metal bonding': ['kauçuk', 'metal', 'yapış'],
+  'compression molding': ['sıkıştırma', 'kalıplama'],
+  'injection molding': ['enjeksiyon', 'kalıplama'],
+  extrusion: ['ekstrüzyon'],
+  tooling: ['kalıp'],
+  traceability: ['izlenebilir'],
+  'batch release': ['parti', 'serbest'],
+  drawing: ['teknik', 'resim'],
+  sample: ['numune'],
+  'project requirements': ['proje', 'gereksinim'],
+});
+
 // Explicit mainland Simplified Chinese guardrail. These variants are rejected
 // only in the zh-CN catalog; other locales keep their existing QA rules.
 const TRADITIONAL_CHINESE_VARIANTS = Object.freeze([
@@ -220,7 +238,8 @@ function readJsonFile(file, label) {
     if (!existsSync(file)) throw new Error('file does not exist');
     const info = lstatSync(file);
     if (info.isSymbolicLink() || !info.isFile()) throw new Error('expected a regular file');
-    parsed = JSON.parse(readFileSync(file, 'utf8'));
+    const source = new TextDecoder('utf-8', { fatal: true }).decode(readFileSync(file));
+    parsed = JSON.parse(source);
   } catch (error) {
     throw new Error(`${label} is missing or malformed at ${file}: ${error.message}`);
   }
@@ -402,8 +421,39 @@ function validateRussianCatalog(locale, english, localized, glossary, operations
   return { failures, cyrillicChecks, residueFindings };
 }
 
+function validateTurkishCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'tr') return {
+    failures: [], latinChecks: 0, turkishCharacterOccurrences: 0, foreignScriptFindings: 0,
+  };
+  const failures = [];
+  let latinChecks = 0;
+  let turkishCharacterOccurrences = 0;
+  let foreignScriptFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    latinChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Latin}/u.test(localizedText)) {
+      failures.push(`tr: localized prose must contain Latin-script Turkish text at ${key}`);
+    }
+    const foreignScripts = localizedText.match(/[\p{Script=Han}\p{Script=Cyrillic}]/gu) ?? [];
+    if (foreignScripts.length) {
+      foreignScriptFindings += foreignScripts.length;
+      failures.push(`tr: foreign-script residue at ${key}: ${foreignScripts.join('')}`);
+    }
+    turkishCharacterOccurrences += (localizedText.match(/[\u00e7\u011f\u0131\u0130\u00f6\u015f\u00fc]/giu) ?? []).length;
+  }
+  if (latinChecks > 0 && turkishCharacterOccurrences === 0) {
+    failures.push('tr: catalog contains no Turkish-specific UTF-8 characters');
+  }
+  return { failures, latinChecks, turkishCharacterOccurrences, foreignScriptFindings };
+}
+
 function validateVerifiedFacts(locale, english, localized, glossary) {
-  if (!['zh-CN', 'ru'].includes(locale)) return { failures: [], checks: 0 };
+  if (!['zh-CN', 'ru', 'tr'].includes(locale)) return { failures: [], checks: 0 };
   const failures = [];
   let checks = 0;
   const facts = glossary.verifiedFacts;
@@ -474,7 +524,9 @@ function validateGlossaryConformance(locale, english, localized, glossary) {
       const localizedText = normalizeCatalogText(localized[key]).toLocaleLowerCase(locale);
       const matchesPreferred = locale === 'ru'
         ? RUSSIAN_GLOSSARY_ROOTS[term].every((root) => localizedText.includes(root))
-        : localizedText.includes(localizedNeedle);
+        : locale === 'tr'
+          ? TURKISH_GLOSSARY_ROOTS[term].every((root) => localizedText.includes(root))
+          : localizedText.includes(localizedNeedle);
       if (!matchesPreferred) {
         failures.push(`${locale}: glossary term ${JSON.stringify(term)} is not rendered as ${JSON.stringify(preferred)} at ${key}`);
       }
@@ -590,6 +642,9 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let cjkChecks = 0;
   let traditionalVariantFindings = 0;
   let cyrillicChecks = 0;
+  let turkishLatinChecks = 0;
+  let turkishCharacterOccurrences = 0;
+  let foreignScriptFindings = 0;
   let verifiedFactChecks = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
@@ -660,6 +715,18 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       englishResidueFindings += russianResult.residueFindings;
       failures.push(...russianResult.failures);
 
+      const turkishResult = validateTurkishCatalog(
+        locale,
+        flattenedEnglish,
+        flattened,
+        glossary,
+        operations,
+      );
+      turkishLatinChecks = turkishResult.latinChecks;
+      turkishCharacterOccurrences = turkishResult.turkishCharacterOccurrences;
+      foreignScriptFindings = turkishResult.foreignScriptFindings;
+      failures.push(...turkishResult.failures);
+
       const factResult = validateVerifiedFacts(locale, flattenedEnglish, flattened, glossary);
       verifiedFactChecks = factResult.checks;
       failures.push(...factResult.failures);
@@ -686,6 +753,9 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       traditionalChineseVariantList: TRADITIONAL_CHINESE_VARIANTS.length,
       traditionalVariantFindings,
       cyrillicChecks,
+      turkishLatinChecks,
+      turkishCharacterOccurrences,
+      foreignScriptFindings,
       verifiedFactChecks,
     } : null,
   };
