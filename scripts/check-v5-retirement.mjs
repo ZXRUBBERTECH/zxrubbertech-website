@@ -35,17 +35,33 @@ const allowedTargets = new Set(V5_URLS);
 const allowedFragments = new Set(['', '#c-automotive', '#c-industrial']);
 const legacyPaths = new Set();
 const v5Paths = new Set(V5_URLS.map((url) => new URL(url).pathname));
+const expectedLegacyLocales = Object.freeze([
+  Object.freeze({ locale: 'en', htmlLang: 'en', sourcePrefix: '', targetPrefix: '' }),
+  Object.freeze({ locale: 'de', htmlLang: 'de', sourcePrefix: 'de', targetPrefix: 'de' }),
+  Object.freeze({ locale: 'zh-CN', htmlLang: 'zh-CN', sourcePrefix: 'zh', targetPrefix: 'zh' }),
+  Object.freeze({ locale: 'ru', htmlLang: 'ru', sourcePrefix: 'ru', targetPrefix: 'ru' }),
+  Object.freeze({ locale: 'tr', htmlLang: 'tr', sourcePrefix: 'tr', targetPrefix: 'tr' }),
+]);
+
+const expectedProductVariants = (slug, fragment) => expectedLegacyLocales.map(({ locale, htmlLang, sourcePrefix, targetPrefix }) => ({
+  locale,
+  htmlLang,
+  path: `/${sourcePrefix ? `${sourcePrefix}/` : ''}products/${slug}/`,
+  target: `https://www.zxrubbertech.com/${targetPrefix ? `${targetPrefix}/` : ''}products/${fragment}`,
+}));
+
 const expectedLegacyRedirects = [
   ...['suspension-bushing', 'shock-absorber-dust-cover', 'ball-joint-dust-cover', 'wire-harness-sheath']
-    .flatMap((slug) => ['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
-      path: `/${language ? `${language}/` : ''}products/${slug}/`,
-      target: 'https://www.zxrubbertech.com/products/#c-automotive',
-    }))),
-  ...['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
-    path: `/${language ? `${language}/` : ''}products/rubber-wheel/`,
-    target: 'https://www.zxrubbertech.com/products/#c-industrial',
-  })),
+    .flatMap((slug) => expectedProductVariants(slug, '#c-automotive')),
+  ...expectedProductVariants('rubber-wheel', '#c-industrial'),
 ];
+const expectedFallbackCopy = Object.freeze({
+  en: Object.freeze({ title: 'Page moved | ZHIXIN', lead: 'This page has moved to ', link: 'the ZHIXIN V5 website', tail: '.' }),
+  de: Object.freeze({ title: 'Seite verschoben | ZHIXIN', lead: 'Diese Seite wurde verschoben. ', link: 'Zur ZHIXIN V5-Website', tail: '.' }),
+  'zh-CN': Object.freeze({ title: '页面已迁移 | ZHIXIN', lead: '此页面已迁移。', link: '前往 ZHIXIN V5 网站', tail: '。' }),
+  ru: Object.freeze({ title: 'Страница перемещена | ZHIXIN', lead: 'Эта страница была перемещена. ', link: 'Перейти на сайт ZHIXIN V5', tail: '.' }),
+  tr: Object.freeze({ title: 'Sayfa taşındı | ZHIXIN', lead: 'Bu sayfa taşındı. ', link: 'ZHIXIN V5 sitesine git', tail: '.' }),
+});
 
 const fail = (message) => failures.push(message);
 const filePath = (relativePath) => resolve(repositoryRoot, relativePath);
@@ -76,8 +92,27 @@ const decodeXml = (value) => value
 
 if (V5_URLS.length !== expectedCounts.v5Urls) fail(`expected 35 V5 URLs, found ${V5_URLS.length}`);
 if (LEGACY_REDIRECTS.length !== expectedCounts.legacyPaths) fail(`expected 25 legacy paths, found ${LEGACY_REDIRECTS.length}`);
-if (JSON.stringify(LEGACY_REDIRECTS) !== JSON.stringify(expectedLegacyRedirects)) {
-  fail('legacy redirects must exactly equal the approved 25 product-detail mappings');
+const actualByPath = new Map(LEGACY_REDIRECTS.map((entry) => [entry.path, entry]));
+for (const expected of expectedLegacyRedirects) {
+  const actual = actualByPath.get(expected.path);
+  if (!actual) {
+    fail(`missing approved legacy mapping: ${expected.path}`);
+  } else {
+    if (actual.target !== expected.target) {
+      fail(`language-conservation mismatch: ${expected.path}; expected ${expected.target}; actual ${actual.target}`);
+    }
+    if (actual.locale !== expected.locale) {
+      fail(`legacy locale mismatch: ${expected.path}; expected ${expected.locale}; actual ${String(actual.locale)}`);
+    }
+    if (actual.htmlLang !== expected.htmlLang) {
+      fail(`legacy htmlLang mismatch: ${expected.path}; expected ${expected.htmlLang}; actual ${String(actual.htmlLang)}`);
+    }
+  }
+}
+for (const actual of LEGACY_REDIRECTS) {
+  if (!expectedLegacyRedirects.some((expected) => expected.path === actual.path)) {
+    fail(`unexpected legacy mapping: ${actual.path}`);
+  }
 }
 if (CLOUDFLARE_HOSTS.length !== expectedCounts.hosts) fail(`expected 2 Cloudflare hosts, found ${CLOUDFLARE_HOSTS.length}`);
 if (new Set(CLOUDFLARE_HOSTS).size !== expectedCounts.hosts
@@ -124,13 +159,21 @@ for (const { path, target } of LEGACY_REDIRECTS) {
   if (contents === null) continue;
   fallbackPages += 1;
   if (Buffer.byteLength(contents, 'utf8') >= 2000) fail(`fallback page is too large: ${relativePath}`);
+  const expected = expectedLegacyRedirects.find((entry) => entry.path === path);
+  const copy = expected && expectedFallbackCopy[expected.locale];
+  if (!expected || !copy) {
+    fail(`fallback has no approved locale fixture: ${relativePath}`);
+    continue;
+  }
   const escapedTarget = htmlEscape(target);
   const requiredTokens = [
+    `<html lang="${htmlEscape(expected.htmlLang)}">`,
     '<meta name="robots" content="noindex,follow">',
     `<link rel="canonical" href="${escapedTarget}">`,
     `<meta http-equiv="refresh" content="0;url=${escapedTarget}">`,
+    `<title>${htmlEscape(copy.title)}</title>`,
     `location.replace(${JSON.stringify(target)})`,
-    `<a href="${escapedTarget}">`,
+    `<main><p>${htmlEscape(copy.lead)}<a href="${escapedTarget}">${htmlEscape(copy.link)}</a>${htmlEscape(copy.tail)}</p></main>`,
   ];
   for (const token of requiredTokens) {
     if (count(contents, token) !== 1) fail(`fallback token count must be 1 in ${relativePath}: ${token}`);

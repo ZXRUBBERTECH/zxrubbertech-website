@@ -1349,24 +1349,50 @@ async function validateRetirementGate(normalized, config) {
   ));
   const v5Paths = new Set(expectedV5Urls.map((url) => new URL(url).pathname));
   const legacyPaths = new Set();
+  const expectedLegacyLocales = Object.freeze([
+    Object.freeze({ locale: 'en', htmlLang: 'en', sourcePrefix: '', targetPrefix: '' }),
+    Object.freeze({ locale: 'de', htmlLang: 'de', sourcePrefix: 'de', targetPrefix: 'de' }),
+    Object.freeze({ locale: 'zh-CN', htmlLang: 'zh-CN', sourcePrefix: 'zh', targetPrefix: 'zh' }),
+    Object.freeze({ locale: 'ru', htmlLang: 'ru', sourcePrefix: 'ru', targetPrefix: 'ru' }),
+    Object.freeze({ locale: 'tr', htmlLang: 'tr', sourcePrefix: 'tr', targetPrefix: 'tr' }),
+  ]);
+  const expectedProductVariants = (slug, fragment) => expectedLegacyLocales.map(({
+    locale,
+    htmlLang,
+    sourcePrefix,
+    targetPrefix,
+  }) => ({
+    locale,
+    htmlLang,
+    path: `/${sourcePrefix ? `${sourcePrefix}/` : ''}products/${slug}/`,
+    target: `https://www.zxrubbertech.com/${targetPrefix ? `${targetPrefix}/` : ''}products/${fragment}`,
+  }));
   const expectedLegacyRedirects = [
     ...['suspension-bushing', 'shock-absorber-dust-cover', 'ball-joint-dust-cover', 'wire-harness-sheath']
-      .flatMap((slug) => ['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
-        path: `/${language ? `${language}/` : ''}products/${slug}/`,
-        target: 'https://www.zxrubbertech.com/products/#c-automotive',
-      }))),
-    ...['', 'de', 'zh', 'ru', 'tr'].map((language) => ({
-      path: `/${language ? `${language}/` : ''}products/rubber-wheel/`,
-      target: 'https://www.zxrubbertech.com/products/#c-industrial',
-    })),
+      .flatMap((slug) => expectedProductVariants(slug, '#c-automotive')),
+    ...expectedProductVariants('rubber-wheel', '#c-industrial'),
   ];
   if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)) {
     failures.push('Retirement V5_URLS must exactly equal the 35 localized canonical URLs');
   }
   if (V5_URLS.length !== 35) failures.push(`Retirement inventory must contain 35 V5 URLs; found ${V5_URLS.length}`);
   if (LEGACY_REDIRECTS.length !== 25) failures.push(`Retirement inventory must contain 25 legacy paths; found ${LEGACY_REDIRECTS.length}`);
-  if (JSON.stringify(LEGACY_REDIRECTS) !== JSON.stringify(expectedLegacyRedirects)) {
-    failures.push('Retirement redirects must exactly equal the approved 25 product-detail mappings');
+  const redirectFields = ['locale', 'htmlLang', 'path', 'target'];
+  for (let index = 0; index < expectedLegacyRedirects.length; index += 1) {
+    const expected = expectedLegacyRedirects[index];
+    const actual = LEGACY_REDIRECTS[index];
+    if (!actual) {
+      failures.push(`Missing retirement mapping at index ${index}: ${expected.path}`);
+      continue;
+    }
+    for (const field of redirectFields) {
+      if (actual[field] !== expected[field]) {
+        failures.push(`Retirement mapping mismatch at index ${index} for ${expected.path} field ${field}: expected ${expected[field]}; actual ${actual[field]}`);
+      }
+    }
+  }
+  for (let index = expectedLegacyRedirects.length; index < LEGACY_REDIRECTS.length; index += 1) {
+    failures.push(`Unexpected retirement mapping at index ${index}: ${LEGACY_REDIRECTS[index].path}`);
   }
   if (JSON.stringify(CLOUDFLARE_HOSTS) !== JSON.stringify(['zxrubbertech.com', 'www.zxrubbertech.com'])) {
     failures.push('Retirement Cloudflare hosts must be apex then www');

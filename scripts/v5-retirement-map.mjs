@@ -13,7 +13,13 @@ export const CLOUDFLARE_HOSTS = Object.freeze([
   'www.zxrubbertech.com',
 ]);
 
-const languages = Object.freeze(['de', 'zh', 'ru', 'tr']);
+const legacyLocales = Object.freeze([
+  Object.freeze({ locale: 'en', htmlLang: 'en', sourcePrefix: '' }),
+  Object.freeze({ locale: 'de', htmlLang: 'de', sourcePrefix: 'de' }),
+  Object.freeze({ locale: 'zh-CN', htmlLang: 'zh-CN', sourcePrefix: 'zh' }),
+  Object.freeze({ locale: 'ru', htmlLang: 'ru', sourcePrefix: 'ru' }),
+  Object.freeze({ locale: 'tr', htmlLang: 'tr', sourcePrefix: 'tr' }),
+]);
 const automotiveSlugs = Object.freeze([
   'suspension-bushing',
   'shock-absorber-dust-cover',
@@ -21,15 +27,14 @@ const automotiveSlugs = Object.freeze([
   'wire-harness-sheath',
 ]);
 
-const productVariants = (slug, target) => [
-  { path: `/products/${slug}/`, target },
-  ...languages.map((language) => ({ path: `/${language}/products/${slug}/`, target })),
-];
+const productVariants = (slug, fragment) => legacyLocales.map(({ locale, htmlLang, sourcePrefix }) => Object.freeze({
+  locale,
+  htmlLang,
+  path: `/${sourcePrefix ? `${sourcePrefix}/` : ''}products/${slug}/`,
+  target: `${getLocalizedUrl(locale, 'products')}${fragment}`,
+}));
 
 export const LEGACY_REDIRECTS = Object.freeze([
-  ...automotiveSlugs.flatMap((slug) => productVariants(
-    slug,
-    'https://www.zxrubbertech.com/products/#c-automotive',
-  )),
-  ...productVariants('rubber-wheel', 'https://www.zxrubbertech.com/products/#c-industrial'),
-].map(Object.freeze));
+  ...automotiveSlugs.flatMap((slug) => productVariants(slug, '#c-automotive')),
+  ...productVariants('rubber-wheel', '#c-industrial'),
+]);

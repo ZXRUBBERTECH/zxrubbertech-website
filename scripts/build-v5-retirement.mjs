@@ -30,22 +30,34 @@ const htmlEscape = (value) => value
   .replaceAll('<', '&lt;')
   .replaceAll('>', '&gt;');
 
-const fallbackHtml = (target) => `<!doctype html>
-<html lang="en">
+const fallbackCopy = Object.freeze({
+  en: Object.freeze({ title: 'Page moved | ZHIXIN', lead: 'This page has moved to ', link: 'the ZHIXIN V5 website', tail: '.' }),
+  de: Object.freeze({ title: 'Seite verschoben | ZHIXIN', lead: 'Diese Seite wurde verschoben. ', link: 'Zur ZHIXIN V5-Website', tail: '.' }),
+  'zh-CN': Object.freeze({ title: '页面已迁移 | ZHIXIN', lead: '此页面已迁移。', link: '前往 ZHIXIN V5 网站', tail: '。' }),
+  ru: Object.freeze({ title: 'Страница перемещена | ZHIXIN', lead: 'Эта страница была перемещена. ', link: 'Перейти на сайт ZHIXIN V5', tail: '.' }),
+  tr: Object.freeze({ title: 'Sayfa taşındı | ZHIXIN', lead: 'Bu sayfa taşındı. ', link: 'ZHIXIN V5 sitesine git', tail: '.' }),
+});
+
+const fallbackHtml = ({ locale, htmlLang, target }) => {
+  const copy = fallbackCopy[locale];
+  if (!copy) throw new Error(`Missing fallback copy for locale: ${String(locale)}`);
+  return `<!doctype html>
+<html lang="${htmlEscape(htmlLang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow">
   <link rel="canonical" href="${htmlEscape(target)}">
   <meta http-equiv="refresh" content="0;url=${htmlEscape(target)}">
-  <title>Page moved | ZHIXIN</title>
+  <title>${htmlEscape(copy.title)}</title>
   <script>location.replace(${JSON.stringify(target)});</script>
 </head>
 <body>
-  <main><p>This page has moved to <a href="${htmlEscape(target)}">the ZHIXIN V5 website</a>.</p></main>
+  <main><p>${htmlEscape(copy.lead)}<a href="${htmlEscape(target)}">${htmlEscape(copy.link)}</a>${htmlEscape(copy.tail)}</p></main>
 </body>
 </html>
 `;
+};
 
 const atomicWrite = (file, contents) => {
   mkdirSync(dirname(file), { recursive: true });
@@ -77,7 +89,7 @@ export function buildV5Retirement({ root } = {}) {
     if (!allowedTargets.has(item.target.split('#')[0])) throw new Error(`Target is outside V5: ${item.target}`);
   }
   for (const item of LEGACY_REDIRECTS) {
-    atomicWrite(resolve(outputRoot, `.${item.path}index.html`), fallbackHtml(item.target));
+    atomicWrite(resolve(outputRoot, `.${item.path}index.html`), fallbackHtml(item));
   }
   const csv = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
     `${host}${path},${target},301,true,false,false,false`
