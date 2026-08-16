@@ -1647,19 +1647,19 @@
     },
     {
       "path": "zxrubbertech-website/de/capabilities/index.html",
-      "sha256": "dc14bbc3ccee1ba2c44a7caeb18666ff779bbbaa15adcb67b969ff09d64c8fb7"
+      "sha256": "cb003b7722e23ccfc89ec6af150d4840bf3c70ed91ef0cd9c63ebb49c6b6073f"
     },
     {
       "path": "zxrubbertech-website/de/faq/index.html",
-      "sha256": "6d60991f48ab9790b21bc702fbb518bb0f69f18585cfc554809470d005d4c6d8"
+      "sha256": "9458ba807613de733b2e9909c6bcf0cfdc2cd1008d539774383e9b8c7e5e67c1"
     },
     {
       "path": "zxrubbertech-website/de/index.html",
-      "sha256": "88d15626c0a570ce53ebb68aa28439068baa722ba7aa7ba0d9fba8913600fc6b"
+      "sha256": "44a1b0844bdd6d4d9e5aec167a199f82fd3bc5824aff47f077d74deff86f1d0c"
     },
     {
       "path": "zxrubbertech-website/de/industries/index.html",
-      "sha256": "07fd5b61f44087ab0b468bbdd430f775b966fb5f592fd315d25b91842c4587a6"
+      "sha256": "0b5a24cf7cfc34dc7016e3a38018247906cc60cd1a71ebff8a6d467bb376fda3"
     },
     {
       "path": "zxrubbertech-website/de/products/ball-joint-dust-cover/index.html",
@@ -1667,7 +1667,7 @@
     },
     {
       "path": "zxrubbertech-website/de/products/index.html",
-      "sha256": "7b81b697b4b9d53e5da316082e63e7e044e37b441bd10d76e96a0f4270d8fecb"
+      "sha256": "8fb5aa1aa023ad7d829a725287b02bf6fa327f2c5097520a057674fa2f232fa2"
     },
     {
       "path": "zxrubbertech-website/de/products/rubber-wheel/index.html",
@@ -1687,11 +1687,11 @@
     },
     {
       "path": "zxrubbertech-website/de/quote/index.html",
-      "sha256": "fad1dbaf63dc723514cb12c6ab6acd5b1753ef4b21810dd91f2f3ca441b34394"
+      "sha256": "a905de1c4c8e983855f41e27dca0ccc13441513f94d3316048691d59795596f2"
     },
     {
       "path": "zxrubbertech-website/de/rubber-compounds/index.html",
-      "sha256": "da42c10138e34010115c67fcf14598903f507eecba06f9844828fa509405ccde"
+      "sha256": "8dc06da86991cd90da5205b7a39edf37a7800612d06a63b6b7e10dd7e4b17cf1"
     },
     {
       "path": "zxrubbertech-website/design-demos/about-a-share.html",
@@ -3186,8 +3186,92 @@
       "sha256": "d13c749274324732b2c33b5518e3b70e38ed70079d9ebc2d2a2eb5812a197717"
     },
     {
+      "path": "zxrubbertech-website/fa/capabilities/index.html",
+      "sha256": "aeca90d88076d74108e848a49f302bba05877cf1c9a5bcf1e8d10c1771dddfe8"
+    },
+    {
+      "path": "zxrubbertech-website/fa/faq/index.html",
+      "sha256": "34cdb86a93083664e4339592619a96ee542d247899f7dbaeb0b5f78a4b04f928"
+    },
+    {
+      "path": "zxrubbertech-website/fa/index.html",
+      "sha256": "ade84fb7e1e70ce94d6a34386e3cec18dffd13f088d2e707ad60c0d7f96f6d17"
+    },
+    {
+      "path": "zxrubbertech-website/fa/industries/index.html",
+      "sha256": "5e6ed8abc04db7e8b8abb57f499a2966b032410f424f045c79aec4351773c540"
+    },
+    {
+      "path": "zxrubbertech-website/fa/products/index.html",
+      "sha256": "100dce2eeb684acf9d6b529bc5d6686c93ee8a8b9626c7f8afdccaacfeb4ac4b"
+    },
+    {
+      "path": "zxrubbertech-website/fa/quote/index.html",
+      "sha256": "dd38d1c8ec6d5f7ad3d9b6fee51f3a6556af6e18859b9720d4f738ad7e678fef"
+    },
+    {
+      "path": "zxrubbertech-website/fa/rubber-compounds/index.html",
+      "sha256": "f8ad89ab946657297f476c05701a5694ba1842f5b47a191deb2521f8e148ce80"
+    },
+    {
       "path": "zxrubbertech-website/index.html",
-      "sha256": "88b53ea88a32637e197a5a13a39048ba429ebb869f21b1465daa8850938b3856"
+      "sha256": "f34e49756a63557c53da6341ef1a3ba35dd8104469876b55322a566699b1dfd9"
+    },
+    {
+      "path": "zxrubbertech-website/ja/capabilities/index.html",
+      "sha256": "4072b3382b8564061c926229477e6ac436b42f6d4a2b1d8630292a7f7b6c8d1b"
+    },
+    {
+      "path": "zxrubbertech-website/ja/faq/index.html",
+      "sha256": "612a2e99a3525d48f27288c4e39ec1608f702182aceb9394fe771b942aa73e7f"
+    },
+    {
+      "path": "zxrubbertech-website/ja/index.html",
+      "sha256": "01005080742229f37212261f040324530b7ca0c7104b3926292a41ba560b0c60"
+    },
+    {
+      "path": "zxrubbertech-website/ja/industries/index.html",
+      "sha256": "7f9e277f97434fcdb5d1e6cfc6902f20975b1c92a02b40aa3f071c0c88a304a4"
+    },
+    {
+      "path": "zxrubbertech-website/ja/products/index.html",
+      "sha256": "bc5c72dc87382a8860d93e7f3e86c5e31083a97c294793973ec9fe5e7c020bf2"
+    },
+    {
+      "path": "zxrubbertech-website/ja/quote/index.html",
+      "sha256": "9cdcfcb9ca67a4bc29b694054bb9462ae2b49054a1057ca5848e33929ecca0e7"
+    },
+    {
+      "path": "zxrubbertech-website/ja/rubber-compounds/index.html",
+      "sha256": "b38e2076bab25540105286d40df502924c1f74ab95574ac95795932d23c18619"
+    },
+    {
+      "path": "zxrubbertech-website/ko/capabilities/index.html",
+      "sha256": "6dffcd0c2afd8894c2d9e5353403e40fd0d0d232472bb95b52ee35ee879d98f3"
+    },
+    {
+      "path": "zxrubbertech-website/ko/faq/index.html",
+      "sha256": "03905c2eaceb93d6c6c24f006e1e8d90bad7597dba9d2a8de5e81b588bad0adc"
+    },
+    {
+      "path": "zxrubbertech-website/ko/index.html",
+      "sha256": "bea22f343a7b22e6b664fe0a1539044c757bb83b07cab3c8c9ac90b64ae2a684"
+    },
+    {
+      "path": "zxrubbertech-website/ko/industries/index.html",
+      "sha256": "4def28704f02f3bcd68fb8ec551d887f685ce5f76460a2f1fe0e8214314e2151"
+    },
+    {
+      "path": "zxrubbertech-website/ko/products/index.html",
+      "sha256": "ac5c9d025337ea60157ae8940b7b14a821703bf2e583f3bbab3678539e5bdba2"
+    },
+    {
+      "path": "zxrubbertech-website/ko/quote/index.html",
+      "sha256": "c552143adef21f75c6e7458693ef09c7ce96390897b3a5e8a850a39bec3fd404"
+    },
+    {
+      "path": "zxrubbertech-website/ko/rubber-compounds/index.html",
+      "sha256": "d10a9b0e5bc8fba29cf08e316ac657a14ac87eec0b428a5e863d9fc415dccc20"
     },
     {
       "path": "zxrubbertech-website/LOGO/LileiLOGO_44.png",
@@ -3275,7 +3359,7 @@
     },
     {
       "path": "zxrubbertech-website/products/index.html",
-      "sha256": "1e0ca8e8f6822b88b2518daf428ab13aac4e8c8e9016d3ecf039d79faec75e34"
+      "sha256": "9983e33b1a2f759e7511c73b33a28167b351b86e50cdad66d03607e7c456be31"
     },
     {
       "path": "zxrubbertech-website/products/rubber-wheel/index.html",
@@ -3299,19 +3383,19 @@
     },
     {
       "path": "zxrubbertech-website/ru/capabilities/index.html",
-      "sha256": "0cadddf11bede85026e013b21cc4ba4b615a72e428749d907f875d01c846a992"
+      "sha256": "7fb35fd0967724bac6b02df36be240f32045239a95173cfade8f06e9b7a2c750"
     },
     {
       "path": "zxrubbertech-website/ru/faq/index.html",
-      "sha256": "da4d2187078f03f10cf4a949f9ac85ecc6b065d15a82b00b47e3443eb5e6fd80"
+      "sha256": "ae4927d38b1932c7b26353649025c9be86eb9f7fa672dbc1c8ab363974571896"
     },
     {
       "path": "zxrubbertech-website/ru/index.html",
-      "sha256": "3ff05643ba8ac0f2b7325962d4f13755f07e7427b4ca990dad28f8474d664491"
+      "sha256": "4ffda069cf26bb43bc1d48ddfe7b9c7b093b511683cce88354b1fdcb5a2edcf3"
     },
     {
       "path": "zxrubbertech-website/ru/industries/index.html",
-      "sha256": "144107a5623e901102bb8607ef9ee5e848b0453c20ffadc7b0e65518bc4ba142"
+      "sha256": "9a9feafffbcdc439f9e060129c01a9b3d25e3edfd2b41665b44ae3ca9eaffe98"
     },
     {
       "path": "zxrubbertech-website/ru/products/ball-joint-dust-cover/index.html",
@@ -3319,7 +3403,7 @@
     },
     {
       "path": "zxrubbertech-website/ru/products/index.html",
-      "sha256": "3be042580175437f06b94da73819a61d581dba36d2ae5a2c604338514cc557f7"
+      "sha256": "ba5ebe441157e1d91e4070c599a3e5fdd24524d37d0849fcf94d451eef75c6bd"
     },
     {
       "path": "zxrubbertech-website/ru/products/rubber-wheel/index.html",
@@ -3339,11 +3423,11 @@
     },
     {
       "path": "zxrubbertech-website/ru/quote/index.html",
-      "sha256": "9f303ab37a2733a2695e716d42543bfc3197cb659d5a3dd0c9195c0e53f2eb05"
+      "sha256": "0b3f5d134062877a87d8cdacebdaa3d3513bb04df2fdf348746728fa09667bb7"
     },
     {
       "path": "zxrubbertech-website/ru/rubber-compounds/index.html",
-      "sha256": "f3cceedddffc83ea7dcbf6b8d118a990c6581d73440124c5c2a27017e3595548"
+      "sha256": "c049222a0b131fbef0aa432c479d369fb7386067887045e75f8f3ef2af5e071b"
     },
     {
       "path": "zxrubbertech-website/scripts/build_i18n_pages.py",
@@ -3363,23 +3447,23 @@
     },
     {
       "path": "zxrubbertech-website/sitemap.xml",
-      "sha256": "9d9edf62edc283358d5b92688638f0455a7298c456c8b9644f77e8864ceff084"
+      "sha256": "b7394bccd93042c4792ec7e301b5f31d9b079adf3359640d4fcac5af81e8f538"
     },
     {
       "path": "zxrubbertech-website/tr/capabilities/index.html",
-      "sha256": "daaf9a9e51e48b6f23272c46d4bd03409a42da1540c2926c1707cf3d00c5b107"
+      "sha256": "a5b2bc87042be6d91e3401f474067acb65af4f850e34d44ede3d039bfdf7d8a5"
     },
     {
       "path": "zxrubbertech-website/tr/faq/index.html",
-      "sha256": "42e85a947fd411ca3564137d5fa6cf0e7d725627117c41ae0fb9e6fe19983b9b"
+      "sha256": "dcc49c390183fad7052f25a543db4db4985300cbe5526deb9d75a309a439b24e"
     },
     {
       "path": "zxrubbertech-website/tr/index.html",
-      "sha256": "0168640b11bc6d00c8af45282678dcaebb48aa75e512fb89dd93c7beeebed97b"
+      "sha256": "21c874e12320494bb43eb82f0858fc19d126c7f80e5e65157c2b20ad92734f7e"
     },
     {
       "path": "zxrubbertech-website/tr/industries/index.html",
-      "sha256": "7b9333098d2b26334c705b51de8bf8c0e27ea49cb7806fd9217accad3bffe595"
+      "sha256": "418224cc5dab082feb6196d35fd266650ce506c540810342470c71b2b00f5807"
     },
     {
       "path": "zxrubbertech-website/tr/products/ball-joint-dust-cover/index.html",
@@ -3387,7 +3471,7 @@
     },
     {
       "path": "zxrubbertech-website/tr/products/index.html",
-      "sha256": "79f659f71ece59e182d8f38f3e543ac25765b62244382e51efad9d44ae47098e"
+      "sha256": "e6205f61e6b973903a013796cb78c68de469e557c47fce030032aa815f752ecb"
     },
     {
       "path": "zxrubbertech-website/tr/products/rubber-wheel/index.html",
@@ -3407,27 +3491,27 @@
     },
     {
       "path": "zxrubbertech-website/tr/quote/index.html",
-      "sha256": "1537ba3c2744ace94d600fd45f485bfaad0f076deca2b943c749c607df52e664"
+      "sha256": "d8cd7b0497442ff825cc87eed2f26924d3dd483d63d68be9c4802feac6dd5f87"
     },
     {
       "path": "zxrubbertech-website/tr/rubber-compounds/index.html",
-      "sha256": "8e8882c883389ca6c3f253edfb3d6341a2174e1ce70e7c24f52da746f6ebdc58"
+      "sha256": "6c573d9239a0bc637611b39f82a9d9228547cad3b8848365edd784402e1d6edc"
     },
     {
       "path": "zxrubbertech-website/zh/capabilities/index.html",
-      "sha256": "79f310716919d1828d9c848aa70852fb1808ef917f777de95e14a4e53c1a9f62"
+      "sha256": "3402a074288b1e084ff385d2de8e3afafee5a725d186a5822019935449db3823"
     },
     {
       "path": "zxrubbertech-website/zh/faq/index.html",
-      "sha256": "fd2dbd79fae63fc783892945e9e7e0fe186ad6920987be322989a4f238fa9c5e"
+      "sha256": "d98e7ffd99b96852ac6810e2213cbc3f206fae9018cade10843e487839536088"
     },
     {
       "path": "zxrubbertech-website/zh/index.html",
-      "sha256": "648e7dfcc1cc671c3a163c5eef15f1ab48afd887d44deb9157f8059b0dea0903"
+      "sha256": "ea33ae6b07b7626029bef22ab3735641fc0fc2dcfe1d2f254af710b32bb25428"
     },
     {
       "path": "zxrubbertech-website/zh/industries/index.html",
-      "sha256": "4d34ef3e750b887aa1044d14a8af5621b2ebaaba080b2d79a0ce573b53567aff"
+      "sha256": "08596b1353f000dd4cfea89d75d31fd6da8108845d1e7b13d8ad90384b27d8d7"
     },
     {
       "path": "zxrubbertech-website/zh/products/ball-joint-dust-cover/index.html",
@@ -3435,7 +3519,7 @@
     },
     {
       "path": "zxrubbertech-website/zh/products/index.html",
-      "sha256": "ed2f1461f26b58c1eb0d2887f9d63f23d9702867f07f72aa85e7a142b2b8a508"
+      "sha256": "672d01d812d8e45a1a12217563cb3b069f3f742d2bf528a912b62b8d6b917369"
     },
     {
       "path": "zxrubbertech-website/zh/products/rubber-wheel/index.html",
@@ -3455,11 +3539,11 @@
     },
     {
       "path": "zxrubbertech-website/zh/quote/index.html",
-      "sha256": "aad1243bb7a0e7fd867d9acb44d4e43ac817ec3dbe72b108d0d32be98eba3142"
+      "sha256": "2d365a017b9df7aacc380d135aae7c4dcf98dab51340b1b74ee52130f514d715"
     },
     {
       "path": "zxrubbertech-website/zh/rubber-compounds/index.html",
-      "sha256": "1c2bc45879ef9c53806b1a82543721126ab6887bdf14c36a98c2c169c160cfcf"
+      "sha256": "599db88945a594d6d82c638d589fc569fb2ee05507195ffe5d8d7530ca8cb1f4"
     },
     {
       "path": "zxrubbertech-website/产品照片/传动轴支撑.png",
