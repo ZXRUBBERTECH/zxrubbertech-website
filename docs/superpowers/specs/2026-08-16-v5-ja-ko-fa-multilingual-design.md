@@ -250,14 +250,19 @@ Execution enters HOLD and contacts the user only when:
 5. **N4 — Catalog review and mutation tests.** Run script, residue, terminology, fact, protected-literal, encoding, normalization, and bidi-negative fixtures per locale.
 6. **N5 — Shared integration and RTL.** Merge catalogs; generate language controls, SEO, forms, internal routes, `lang/dir`, and Persian-only RTL behavior in a repository-external bundle.
 7. **N6 — Deterministic release and retirement.** Produce 56 pages, 504 `hreflang` links, 56 sitemap URLs, 25 fallbacks, and 50 unchanged Cloudflare rows in two byte-identical builds.
-8. **N7 — Browser and HTTP acceptance.** Run 81 HTTP checks and 112 desktop/mobile Chromium checks plus targeted cross-engine RTL/Quote/menu checks. Do not submit a real form.
+8. **N7 — Browser and HTTP acceptance.** Run 81 HTTP checks and 112 desktop/mobile Chromium checks plus targeted Persian RTL, Quote, menu, and keyboard checks in Chromium. Do not submit a real form.
 9. **N8 — Candidate, archive, and independent review.** Materialize generated production pages, rebuild the scope baseline, commit an atomic candidate, create the external archive and sidecar, and obtain Reviewer and Gatekeeper PASS.
 10. **N9 — Deployment and production verification.** Confirm remote baseline has not moved, perform one non-force push, wait for the exact GitHub Pages commit, and verify 56 canonical pages plus all 50 historical redirects.
 11. **N10 — SEO handoff.** Confirm the existing sitemap URL exposes 56 pages and record GSC monitoring guidance without submitting repeated indexing requests.
 
 ## File Boundaries
 
-Expected shared implementation scope is limited to the current V5 locale registry, glossary, localization and SEO transforms, language controls, release/retirement builders and checkers, archive tooling, scope checker/baseline, generated canonical HTML, and `sitemap.xml`.
+Expected shared implementation scope is limited to the current V5 locale registry, glossary, localization and SEO transforms, language controls, release/retirement builders and checkers, a deterministic mutation harness, a Chromium/HTTP acceptance harness, archive tooling, scope checker/baseline, generated canonical HTML, and `sitemap.xml`.
+
+The approved planning files are also part of the final Git diff and become read-only after their planning commits:
+
+- `docs/superpowers/specs/2026-08-16-v5-ja-ko-fa-multilingual-design.md`
+- `docs/superpowers/plans/2026-08-16-v5-ja-ko-fa-multilingual.md`
 
 The following must remain byte-identical unless a gate proves a required generated-only change already described above:
 
