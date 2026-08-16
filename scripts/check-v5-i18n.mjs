@@ -24,6 +24,14 @@ const REQUIRED_GLOSSARY_TERMS = Object.freeze([
   'compression molding', 'injection molding', 'extrusion', 'tooling',
   'traceability', 'batch release', 'drawing', 'sample', 'project requirements',
 ]);
+const REQUIRED_VERIFIED_FACTS = Object.freeze([
+  'annualCompoundCapacity',
+  'annualMoldedComponents',
+  'inquiryAcknowledgement',
+  'regularCompoundMoq',
+  'quotationWindow',
+]);
+const VERIFIED_FACT_LOCALES = Object.freeze(['zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa']);
 
 // Russian technical nouns inflect by number and grammatical case. Validate
 // stable lexeme stems rather than forcing an ungrammatical nominative phrase
@@ -247,6 +255,29 @@ function readJsonFile(file, label) {
   return parsed;
 }
 
+function readCatalogJsonFile(file, locale) {
+  if (!existsSync(file)) throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: file does not exist`);
+  const info = lstatSync(file);
+  if (info.isSymbolicLink() || !info.isFile()) {
+    throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: expected a regular file`);
+  }
+  const bytes = readFileSync(file);
+  if (locale === 'fa' && bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    throw new Error('fa: catalog must not contain a UTF-8 BOM');
+  }
+  let source;
+  try {
+    source = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch (error) {
+    throw new Error(`${locale}: catalog must be valid UTF-8: ${error.message}`);
+  }
+  try {
+    return JSON.parse(source);
+  } catch (error) {
+    throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: ${error.message}`);
+  }
+}
+
 function catalogPaths(root, locale) {
   const fixtureCatalogRoot = join(root, 'scripts', 'v5-i18n');
   const fixtureBaseline = join(root, 'scripts', 'v5-i18n-baseline.json');
@@ -300,6 +331,20 @@ function validateGlossary(glossary, locale) {
       } else if (locale !== 'en'
           && (typeof definition[locale] !== 'string' || !definition[locale].trim())) {
         failures.push(`V5 i18n glossary is missing ${locale} term: ${term}`);
+      }
+    }
+  }
+  if (VERIFIED_FACT_LOCALES.includes(locale)) {
+    const renderings = glossary.verifiedFactRenderings?.[locale];
+    if (!renderings || typeof renderings !== 'object' || Array.isArray(renderings)) {
+      failures.push(`V5 i18n glossary is missing ${locale} verified fact renderings`);
+    } else if (JSON.stringify(Object.keys(renderings)) !== JSON.stringify(REQUIRED_VERIFIED_FACTS)) {
+      failures.push(`V5 i18n glossary ${locale} verified fact renderings must contain exactly ${REQUIRED_VERIFIED_FACTS.join(', ')}`);
+    } else {
+      for (const fact of REQUIRED_VERIFIED_FACTS) {
+        if (typeof renderings[fact] !== 'string' || !renderings[fact].trim()) {
+          failures.push(`V5 i18n glossary is missing ${locale} verified fact rendering: ${fact}`);
+        }
       }
     }
   }
@@ -453,8 +498,149 @@ function validateTurkishCatalog(locale, english, localized, glossary, operations
   return { failures, latinChecks, turkishCharacterOccurrences, foreignScriptFindings };
 }
 
+function validateLocaleNormalization(locale, localized) {
+  if (!['ja', 'ko', 'fa'].includes(locale)) return { failures: [], checks: 0 };
+  const failures = [];
+  let checks = 0;
+  for (const [key, value] of Object.entries(localized)) {
+    checks += 1;
+    if (value.normalize('NFC') !== value) failures.push(`${locale}: catalog value must use NFC normalization at ${key}`);
+  }
+  return { failures, checks };
+}
+
+function validateJapaneseCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'ja') return {
+    failures: [], proseChecks: 0, kanaOccurrences: 0, halfWidthKatakanaFindings: 0, foreignScriptFindings: 0,
+  };
+  const failures = [];
+  let proseChecks = 0;
+  let kanaOccurrences = 0;
+  let halfWidthKatakanaFindings = 0;
+  let foreignScriptFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    const normalized = normalizeCatalogText(localizedValue);
+    const halfWidth = normalized.match(/[\uFF66-\uFF9D]/gu) ?? [];
+    if (halfWidth.length) {
+      halfWidthKatakanaFindings += halfWidth.length;
+      failures.push(`ja: half-width Katakana is not allowed at ${key}`);
+    }
+    kanaOccurrences += (normalized.match(/[\u3041-\u3096\u30A1-\u30FA]/gu) ?? []).length;
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    proseChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(localizedText)) {
+      failures.push(`ja: localized prose must contain Japanese script at ${key}`);
+    }
+    const foreignScripts = localizedText.match(/[\p{Script=Hangul}\p{Script=Cyrillic}\p{Script=Arabic}]/gu) ?? [];
+    if (foreignScripts.length) {
+      foreignScriptFindings += foreignScripts.length;
+      failures.push(`ja: unapproved foreign-script residue at ${key}: ${foreignScripts.join('')}`);
+    }
+  }
+  if (proseChecks > 0 && kanaOccurrences === 0) failures.push('ja: catalog must contain Japanese kana');
+  return { failures, proseChecks, kanaOccurrences, halfWidthKatakanaFindings, foreignScriptFindings };
+}
+
+function validateKoreanCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'ko') return {
+    failures: [], proseChecks: 0, hangulOccurrences: 0, decomposedJamoFindings: 0, foreignScriptFindings: 0,
+  };
+  const failures = [];
+  let proseChecks = 0;
+  let hangulOccurrences = 0;
+  let decomposedJamoFindings = 0;
+  let foreignScriptFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    const normalized = normalizeCatalogText(localizedValue);
+    const jamo = normalized.match(/[\u1100-\u11FF\uA960-\uA97F\uD7B0-\uD7FF]/gu) ?? [];
+    if (jamo.length) {
+      decomposedJamoFindings += jamo.length;
+      failures.push(`ko: decomposed Hangul Jamo is not allowed at ${key}`);
+    }
+    hangulOccurrences += (normalized.match(/[\uAC00-\uD7A3]/gu) ?? []).length;
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    proseChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Hangul}/u.test(localizedText)) {
+      failures.push(`ko: localized prose must contain Hangul at ${key}`);
+    }
+    const foreignScripts = localizedText.match(/[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Cyrillic}\p{Script=Arabic}]/gu) ?? [];
+    if (foreignScripts.length) {
+      foreignScriptFindings += foreignScripts.length;
+      failures.push(`ko: unapproved foreign-script residue at ${key}: ${foreignScripts.join('')}`);
+    }
+  }
+  if (proseChecks > 0 && hangulOccurrences === 0) failures.push('ko: catalog must contain Hangul');
+  return { failures, proseChecks, hangulOccurrences, decomposedJamoFindings, foreignScriptFindings };
+}
+
+function validatePersianCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'fa') return {
+    failures: [], proseChecks: 0, persianCharacterOccurrences: 0, arabicVariantFindings: 0,
+    presentationFormFindings: 0, hiddenBidiFindings: 0, isolatedZwjFindings: 0, foreignScriptFindings: 0,
+  };
+  const failures = [];
+  let proseChecks = 0;
+  let persianCharacterOccurrences = 0;
+  let arabicVariantFindings = 0;
+  let presentationFormFindings = 0;
+  let hiddenBidiFindings = 0;
+  let isolatedZwjFindings = 0;
+  let foreignScriptFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    const normalized = normalizeCatalogText(localizedValue);
+    const presentationForms = normalized.match(/[\uFB50-\uFDFF\uFE70-\uFEFF]/gu) ?? [];
+    if (presentationForms.length) {
+      presentationFormFindings += presentationForms.length;
+      failures.push(`fa: Arabic presentation forms are not allowed at ${key}`);
+    }
+    const bidiControls = normalized.match(/[\u202A-\u202E\u2066-\u2069]/gu) ?? [];
+    if (bidiControls.length) {
+      hiddenBidiFindings += bidiControls.length;
+      failures.push(`fa: hidden bidi controls are not allowed at ${key}`);
+    }
+    const zwj = normalized.match(/\u200D/gu) ?? [];
+    if (zwj.length) {
+      isolatedZwjFindings += zwj.length;
+      failures.push(`fa: isolated ZWJ is not allowed at ${key}`);
+    }
+    persianCharacterOccurrences += (normalized.match(/[\u067E\u0686\u0698\u06A9\u06AF\u06CC]/gu) ?? []).length;
+    if (preservedOperationKeys.has(key)) continue;
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    proseChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Arabic}/u.test(localizedText)) {
+      failures.push(`fa: localized prose must contain Arabic-script Persian text at ${key}`);
+    }
+    const arabicVariants = localizedText.match(/[\u064A\u0643]/gu) ?? [];
+    if (arabicVariants.length) {
+      arabicVariantFindings += arabicVariants.length;
+      failures.push(`fa: Arabic ي/ك variants are not allowed in Persian prose at ${key}`);
+    }
+    const foreignScripts = localizedText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}]/gu) ?? [];
+    if (foreignScripts.length) {
+      foreignScriptFindings += foreignScripts.length;
+      failures.push(`fa: unapproved foreign-script residue at ${key}: ${foreignScripts.join('')}`);
+    }
+  }
+  if (proseChecks > 0 && persianCharacterOccurrences === 0) failures.push('fa: catalog must contain Persian-specific characters');
+  return {
+    failures, proseChecks, persianCharacterOccurrences, arabicVariantFindings,
+    presentationFormFindings, hiddenBidiFindings, isolatedZwjFindings, foreignScriptFindings,
+  };
+}
+
 function validateVerifiedFacts(locale, english, localized, glossary) {
-  if (!['zh-CN', 'ru', 'tr'].includes(locale)) return { failures: [], checks: 0 };
+  if (!VERIFIED_FACT_LOCALES.includes(locale)) return { failures: [], checks: 0 };
   const failures = [];
   let checks = 0;
   const facts = glossary.verifiedFacts;
@@ -577,7 +763,7 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let flattened;
   let glossary = null;
   try {
-    catalog = readJsonFile(catalogFile, `${locale} V5 catalog`);
+    catalog = readCatalogJsonFile(catalogFile, locale);
     flattened = transformModule.validateV5Catalog(locale, catalog);
   } catch (error) {
     return { failures: [error.message], metrics: null };
@@ -667,6 +853,19 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let turkishCharacterOccurrences = 0;
   let foreignScriptFindings = 0;
   let verifiedFactChecks = 0;
+  let normalizationChecks = 0;
+  let japaneseProseChecks = 0;
+  let japaneseKanaOccurrences = 0;
+  let halfWidthKatakanaFindings = 0;
+  let koreanProseChecks = 0;
+  let koreanHangulOccurrences = 0;
+  let decomposedJamoFindings = 0;
+  let persianProseChecks = 0;
+  let persianCharacterOccurrences = 0;
+  let arabicVariantFindings = 0;
+  let presentationFormFindings = 0;
+  let hiddenBidiFindings = 0;
+  let isolatedZwjFindings = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
     for (const stem of config.V5_PAGE_STEMS) {
@@ -751,6 +950,34 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       foreignScriptFindings = turkishResult.foreignScriptFindings;
       failures.push(...turkishResult.failures);
 
+      const normalizationResult = validateLocaleNormalization(locale, flattened);
+      normalizationChecks = normalizationResult.checks;
+      failures.push(...normalizationResult.failures);
+
+      const japaneseResult = validateJapaneseCatalog(locale, flattenedEnglish, flattened, glossary, operations);
+      japaneseProseChecks = japaneseResult.proseChecks;
+      japaneseKanaOccurrences = japaneseResult.kanaOccurrences;
+      halfWidthKatakanaFindings = japaneseResult.halfWidthKatakanaFindings;
+      foreignScriptFindings += japaneseResult.foreignScriptFindings;
+      failures.push(...japaneseResult.failures);
+
+      const koreanResult = validateKoreanCatalog(locale, flattenedEnglish, flattened, glossary, operations);
+      koreanProseChecks = koreanResult.proseChecks;
+      koreanHangulOccurrences = koreanResult.hangulOccurrences;
+      decomposedJamoFindings = koreanResult.decomposedJamoFindings;
+      foreignScriptFindings += koreanResult.foreignScriptFindings;
+      failures.push(...koreanResult.failures);
+
+      const persianResult = validatePersianCatalog(locale, flattenedEnglish, flattened, glossary, operations);
+      persianProseChecks = persianResult.proseChecks;
+      persianCharacterOccurrences = persianResult.persianCharacterOccurrences;
+      arabicVariantFindings = persianResult.arabicVariantFindings;
+      presentationFormFindings = persianResult.presentationFormFindings;
+      hiddenBidiFindings = persianResult.hiddenBidiFindings;
+      isolatedZwjFindings = persianResult.isolatedZwjFindings;
+      foreignScriptFindings += persianResult.foreignScriptFindings;
+      failures.push(...persianResult.failures);
+
       const factResult = validateVerifiedFacts(locale, flattenedEnglish, flattened, glossary);
       verifiedFactChecks = factResult.checks;
       failures.push(...factResult.failures);
@@ -781,6 +1008,19 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       turkishCharacterOccurrences,
       foreignScriptFindings,
       verifiedFactChecks,
+      normalizationChecks,
+      japaneseProseChecks,
+      japaneseKanaOccurrences,
+      halfWidthKatakanaFindings,
+      koreanProseChecks,
+      koreanHangulOccurrences,
+      decomposedJamoFindings,
+      persianProseChecks,
+      persianCharacterOccurrences,
+      arabicVariantFindings,
+      presentationFormFindings,
+      hiddenBidiFindings,
+      isolatedZwjFindings,
     } : null,
   };
 }
@@ -1141,6 +1381,9 @@ function validateReleaseGate(normalized, config, inventory) {
       const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] ?? '';
       if (htmlAttribute(htmlTag, 'lang') !== definition.htmlLang) {
         failures.push(`${label}: html lang must equal ${definition.htmlLang}`);
+      }
+      if (htmlAttribute(htmlTag, 'dir') !== definition.direction) {
+        failures.push(`${label}: html dir must equal ${definition.direction}`);
       }
       const expectedCanonical = config.getLocalizedUrl(locale, stem);
       const canonicalTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) =>

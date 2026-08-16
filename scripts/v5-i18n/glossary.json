@@ -50,6 +50,27 @@
       "inquiryAcknowledgement": "24 saat içinde",
       "regularCompoundMoq": "2 metrik ton",
       "quotationWindow": "2–7 iş günü"
+    },
+    "ja": {
+      "annualCompoundCapacity": "約3,000メートルトン",
+      "annualMoldedComponents": "年間1,500万個を超えるゴム成形品",
+      "inquiryAcknowledgement": "24時間以内",
+      "regularCompoundMoq": "2メートルトン",
+      "quotationWindow": "2～7営業日"
+    },
+    "ko": {
+      "annualCompoundCapacity": "약 3,000 메트릭톤",
+      "annualMoldedComponents": "연간 1,500만 개가 넘는 성형 고무 부품",
+      "inquiryAcknowledgement": "24시간 이내",
+      "regularCompoundMoq": "2 메트릭톤",
+      "quotationWindow": "영업일 기준 2–7일"
+    },
+    "fa": {
+      "annualCompoundCapacity": "حدود ۳٬۰۰۰ تن متریک",
+      "annualMoldedComponents": "بیش از ۱۵ میلیون قطعه لاستیکی قالب‌گیری‌شده در سال",
+      "inquiryAcknowledgement": "ظرف ۲۴ ساعت",
+      "regularCompoundMoq": "۲ تن متریک",
+      "quotationWindow": "۲ تا ۷ روز کاری"
     }
   },
   "terms": {
@@ -58,84 +79,120 @@
       "de": "Gummimischung",
       "zh-CN": "橡胶胶料",
       "ru": "резиновая смесь",
-      "tr": "kauçuk karışımı"
+      "tr": "kauçuk karışımı",
+      "ja": "ゴムコンパウンド",
+      "ko": "고무 컴파운드",
+      "fa": "آمیزه لاستیکی"
     },
     "molded rubber parts": {
       "en": "molded rubber parts",
       "de": "Gummiformteile",
       "zh-CN": "模压橡胶件",
       "ru": "формованные резиновые детали",
-      "tr": "kalıplanmış kauçuk parçalar"
+      "tr": "kalıplanmış kauçuk parçalar",
+      "ja": "ゴム成形品",
+      "ko": "성형 고무 부품",
+      "fa": "قطعات لاستیکی قالب‌گیری‌شده"
     },
     "rubber-to-metal bonding": {
       "en": "rubber-to-metal bonding",
       "de": "Gummi-Metall-Verbindung",
       "zh-CN": "橡胶-金属粘接",
       "ru": "соединение резины с металлом",
-      "tr": "kauçuk-metal yapıştırma"
+      "tr": "kauçuk-metal yapıştırma",
+      "ja": "ゴムと金属の接着",
+      "ko": "고무-금속 접착",
+      "fa": "اتصال لاستیک به فلز"
     },
     "compression molding": {
       "en": "compression molding",
       "de": "Formpressen",
       "zh-CN": "压缩模压",
       "ru": "компрессионное формование",
-      "tr": "sıkıştırma kalıplama"
+      "tr": "sıkıştırma kalıplama",
+      "ja": "圧縮成形",
+      "ko": "압축 성형",
+      "fa": "قالب‌گیری فشاری"
     },
     "injection molding": {
       "en": "injection molding",
       "de": "Spritzgießen",
       "zh-CN": "注射成型",
       "ru": "литьё под давлением",
-      "tr": "enjeksiyon kalıplama"
+      "tr": "enjeksiyon kalıplama",
+      "ja": "射出成形",
+      "ko": "사출 성형",
+      "fa": "قالب‌گیری تزریقی"
     },
     "extrusion": {
       "en": "extrusion",
       "de": "Extrusion",
       "zh-CN": "挤出成型",
       "ru": "экструзия",
-      "tr": "ekstrüzyon"
+      "tr": "ekstrüzyon",
+      "ja": "押出成形",
+      "ko": "압출 성형",
+      "fa": "اکستروژن"
     },
     "tooling": {
       "en": "tooling",
       "de": "Werkzeug",
       "zh-CN": "模具",
       "ru": "оснастка",
-      "tr": "kalıp"
+      "tr": "kalıp",
+      "ja": "金型",
+      "ko": "금형",
+      "fa": "قالب و ابزار تولید"
     },
     "traceability": {
       "en": "traceability",
       "de": "Rückverfolgbarkeit",
       "zh-CN": "可追溯性",
       "ru": "прослеживаемость",
-      "tr": "izlenebilirlik"
+      "tr": "izlenebilirlik",
+      "ja": "トレーサビリティ",
+      "ko": "추적성",
+      "fa": "قابلیت ردیابی"
     },
     "batch release": {
       "en": "batch release",
       "de": "Chargenfreigabe",
       "zh-CN": "批次放行",
       "ru": "приёмка партии",
-      "tr": "parti serbest bırakma"
+      "tr": "parti serbest bırakma",
+      "ja": "バッチリリース",
+      "ko": "배치 승인",
+      "fa": "آزادسازی بچ تولید"
     },
     "drawing": {
       "en": "drawing",
       "de": "Zeichnung",
       "zh-CN": "图纸",
       "ru": "чертёж",
-      "tr": "teknik resim"
+      "tr": "teknik resim",
+      "ja": "図面",
+      "ko": "도면",
+      "fa": "نقشه فنی"
     },
     "sample": {
       "en": "sample",
       "de": "Muster",
       "zh-CN": "样品",
       "ru": "образец",
-      "tr": "numune"
+      "tr": "numune",
+      "ja": "サンプル",
+      "ko": "샘플",
+      "fa": "نمونه"
     },
     "project requirements": {
       "en": "project requirements",
       "de": "Projektanforderungen",
       "zh-CN": "项目要求",
       "ru": "требования проекта",
-      "tr": "proje gereksinimleri"
+      "tr": "proje gereksinimleri",
+      "ja": "プロジェクト要件",
+      "ko": "프로젝트 요구사항",
+      "fa": "الزامات پروژه"
     }
   }
 }

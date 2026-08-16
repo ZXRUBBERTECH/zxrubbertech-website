@@ -37,6 +37,15 @@ function attribute(tag, name) {
   return match ? (match[1] ?? match[2] ?? match[3] ?? '') : null;
 }
 
+function setExactHtmlAttribute(tag, name, value, stem) {
+  const pattern = new RegExp(`\\b${name}\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s>]+)`, 'gi');
+  const matches = tag.match(pattern) ?? [];
+  if (matches.length > 1) throw new Error(`${stem}: html element contains duplicate ${name} attributes`);
+  return matches.length === 1
+    ? tag.replace(pattern, `${name}="${escapeAttribute(value)}"`)
+    : tag.replace(/>$/, ` ${name}="${escapeAttribute(value)}">`);
+}
+
 function removeMatchingTags(source, pattern, predicate) {
   return source.replace(pattern, (tag) => (predicate(tag) ? '' : tag));
 }
@@ -157,9 +166,9 @@ export function applyV5SeoHead(html, stem, { profile, locale = 'en', catalog = n
   if (profile === 'release') {
     const current = transformed.slice(0, contentStart).match(/<html\b[^>]*>/i)?.[0];
     if (!current) throw new Error(`${stem}: expected one html element before head`);
-    const next = /\blang\s*=/.test(current)
-      ? current.replace(/\blang\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i, `lang="${escapeAttribute(V5_LOCALES[locale].htmlLang)}"`)
-      : current.replace(/>$/, ` lang="${escapeAttribute(V5_LOCALES[locale].htmlLang)}">`);
+    const definition = V5_LOCALES[locale];
+    const withLang = setExactHtmlAttribute(current, 'lang', definition.htmlLang, stem);
+    const next = setExactHtmlAttribute(withLang, 'dir', definition.direction, stem);
     transformed = transformed.replace(current, next);
   }
   return transformed;

@@ -34,6 +34,15 @@ const registryDependencies = [
   'v5-seo-config.mjs',
   'v5-route-map.json',
 ];
+const catalogDependencies = [
+  ...registryDependencies,
+  'v5-i18n-operations.mjs',
+  'v5-i18n-transform.mjs',
+  'v5-language-controls.mjs',
+  'v5-i18n-baseline.json',
+];
+const catalogLocales = ['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa'];
+const mutationValuePath = ['pages', 'demo-a', 'html_text', 'engineered-rubber-compounds-and-components'];
 
 class CliError extends Error {}
 
@@ -122,6 +131,45 @@ function parseCheckerReport(result) {
   } catch {
     return null;
   }
+}
+
+function readJson(file) {
+  return JSON.parse(readFileSync(file, 'utf8'));
+}
+
+function writeJson(file, value) {
+  writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function valueAtPath(object, path) {
+  return path.reduce((value, key) => value?.[key], object);
+}
+
+function setValueAtPath(object, path, value) {
+  const parent = path.slice(0, -1).reduce((current, key) => current[key], object);
+  const key = path.at(-1);
+  if (typeof parent?.[key] !== 'string') throw new Error(`Missing catalog mutation key: ${path.join('.')}`);
+  parent[key] = value;
+}
+
+function mapCatalogStrings(value, mapper, path = []) {
+  if (typeof value === 'string') return mapper(value, path);
+  if (Array.isArray(value) || !value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).map(([key, child]) => [
+    key,
+    mapCatalogStrings(child, mapper, [...path, key]),
+  ]));
+}
+
+function replaceFirstCatalogLiteral(value, from, to) {
+  let replaced = false;
+  const next = mapCatalogStrings(value, (text) => {
+    if (replaced || !text.includes(from)) return text;
+    replaced = true;
+    return text.replace(from, to);
+  });
+  if (!replaced) throw new Error(`Catalog mutation literal is unused: ${from}`);
+  return next;
 }
 
 function runRegistryChecker(fixture, extraArgs = []) {
@@ -245,8 +293,203 @@ function registryCases() {
   ];
 }
 
+function prepareCatalogFixture() {
+  const parent = mkdtempSync(join(tmpdir(), 'zxrubbertech-v5-catalog-mutation.'));
+  const fixtureRepo = join(parent, 'zxrubbertech-website');
+  const fixtureScripts = join(fixtureRepo, 'scripts');
+  const fixtureCatalogs = join(fixtureScripts, 'v5-i18n');
+  const fixturePreview = join(fixtureRepo, 'design-demos');
+  mkdirSync(fixtureCatalogs, { recursive: true });
+  mkdirSync(fixturePreview, { recursive: true });
+  for (const file of catalogDependencies) copyFileSync(join(scriptsRoot, file), join(fixtureScripts, file));
+  for (const locale of catalogLocales) {
+    copyFileSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`), join(fixtureCatalogs, `${locale}.json`));
+  }
+  copyFileSync(join(scriptsRoot, 'v5-i18n', 'glossary.json'), join(fixtureCatalogs, 'glossary.json'));
+  for (const file of previewFiles) copyFileSync(join(repo, 'design-demos', file), join(fixturePreview, file));
+  return { parent, fixtureRepo, fixtureScripts, fixtureCatalogs, fixturePreview };
+}
+
+function runCatalogChecker(fixture, locale) {
+  return spawnSync(process.execPath, [
+    realpathSync(join(fixture.fixtureScripts, 'check-v5-i18n.mjs')),
+    '--gate=catalog',
+    '--profile=preview',
+    `--root=${fixture.fixtureRepo}`,
+    `--locale=${locale}`,
+  ], {
+    cwd: fixture.fixtureRepo,
+    encoding: 'utf8',
+    maxBuffer: 30 * 1024 * 1024,
+  });
+}
+
+function mutateCatalogJson(fixture, locale, mutation) {
+  const file = join(fixture.fixtureCatalogs, `${locale}.json`);
+  const catalog = readJson(file);
+  mutation(catalog, fixture);
+  writeJson(file, catalog);
+}
+
+function catalogCaseDefinitions() {
+  return [
+    {
+      name: 'japanese-without-kana', locale: 'ja', expectedSignal: 'ja: catalog must contain Japanese kana',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value, path) => {
+        if (path[0] === 'meta') return value;
+        const stripped = value.replace(/[\u3041-\u3096\u30A1-\u30FA]/gu, '').trim();
+        return stripped || '123';
+      })),
+    },
+    {
+      name: 'japanese-half-width-katakana', locale: 'ja', expectedSignal: 'ja: half-width Katakana is not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} ｶﾀｶﾅ`),
+    },
+    {
+      name: 'japanese-non-nfc', locale: 'ja', expectedSignal: 'ja: catalog value must use NFC normalization',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} カ\u3099`),
+    },
+    {
+      name: 'japanese-invalid-utf8', locale: 'ja', expectedSignal: 'ja: catalog must be valid UTF-8', allowsEarlyFailure: true,
+      mutateRaw: (file) => writeFileSync(file, Buffer.from([0xff, 0xfe, 0xfd])),
+    },
+    {
+      name: 'korean-without-hangul', locale: 'ko', expectedSignal: 'ko: catalog must contain Hangul',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value, path) => {
+        if (path[0] === 'meta') return value;
+        const stripped = value.replace(/[\u1100-\u11FF\uA960-\uA97F\uAC00-\uD7A3\uD7B0-\uD7FF]/gu, '').trim();
+        return stripped || '123';
+      })),
+    },
+    {
+      name: 'korean-decomposed-jamo', locale: 'ko', expectedSignal: 'ko: decomposed Hangul Jamo is not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} 가`),
+    },
+    {
+      name: 'persian-without-arabic-script', locale: 'fa', expectedSignal: 'fa: localized prose must contain Arabic-script Persian text',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value, path) => {
+        if (path[0] === 'meta') return value;
+        const stripped = value.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/gu, '').trim();
+        return stripped || '123';
+      })),
+    },
+    {
+      name: 'persian-arabic-yeh-kaf', locale: 'fa', expectedSignal: 'fa: Arabic ي/ك variants are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} يك`),
+    },
+    {
+      name: 'persian-hidden-bidi-control', locale: 'fa', expectedSignal: 'fa: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u202E`),
+    },
+    {
+      name: 'persian-presentation-form', locale: 'fa', expectedSignal: 'fa: Arabic presentation forms are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\uFB8E`),
+    },
+    {
+      name: 'persian-isolated-zwj', locale: 'fa', expectedSignal: 'fa: isolated ZWJ is not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u200D`),
+    },
+    {
+      name: 'persian-utf8-bom', locale: 'fa', expectedSignal: 'fa: catalog must not contain a UTF-8 BOM', allowsEarlyFailure: true,
+      mutateRaw: (file) => writeFileSync(file, Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), readFileSync(file)])),
+    },
+    {
+      name: 'modified-protected-literal', locale: 'fa', expectedSignal: 'fa: preserved literal "martin@zxrubbertech.com"',
+      mutate: (catalog) => Object.assign(catalog, replaceFirstCatalogLiteral(
+        catalog,
+        'martin@zxrubbertech.com',
+        'martin@example.com',
+      )),
+    },
+    {
+      name: 'modified-verified-fact', locale: 'ja', expectedSignal: 'ja: verified fact annualCompoundCapacity',
+      mutate: (catalog, fixture) => {
+        const glossary = readJson(join(fixture.fixtureCatalogs, 'glossary.json'));
+        const rendering = glossary.verifiedFactRenderings.ja.annualCompoundCapacity;
+        const changed = rendering.replace('3', '4');
+        if (changed === rendering) throw new Error('Japanese fact mutation requires the approved 3,000 rendering');
+        Object.assign(catalog, replaceFirstCatalogLiteral(catalog, rendering, changed));
+      },
+    },
+    {
+      name: 'missing-glossary-term', locale: 'ja', expectedSignal: 'V5 i18n glossary is missing ja term: tooling',
+      mutateFixture: (fixture) => {
+        const file = join(fixture.fixtureCatalogs, 'glossary.json');
+        const glossary = readJson(file);
+        delete glossary.terms.tooling.ja;
+        writeJson(file, glossary);
+      },
+    },
+  ];
+}
+
+function runCatalogCase(testCase) {
+  const fixture = prepareCatalogFixture();
+  try {
+    const greenResult = runCatalogChecker(fixture, testCase.locale);
+    const greenReport = parseCheckerReport(greenResult);
+    const greenMetrics = {
+      registry: greenReport?.registry ?? null,
+      catalogKeys: greenReport?.catalog?.catalogKeys ?? null,
+      operations: greenReport?.catalog?.operations ?? null,
+    };
+    const greenPassed = greenResult.status === 0
+      && greenReport?.status === 'PASS'
+      && JSON.stringify(greenMetrics.registry) === JSON.stringify({ locales: 8, pageRoles: 7, routes: 56, hreflangsPerPage: 9 })
+      && greenMetrics.catalogKeys === 531
+      && greenMetrics.operations === 508;
+
+    const catalogFile = join(fixture.fixtureCatalogs, `${testCase.locale}.json`);
+    if (testCase.mutate) mutateCatalogJson(fixture, testCase.locale, testCase.mutate);
+    if (testCase.mutateRaw) testCase.mutateRaw(catalogFile);
+    if (testCase.mutateFixture) testCase.mutateFixture(fixture);
+    const result = runCatalogChecker(fixture, testCase.locale);
+    const checkerReport = parseCheckerReport(result);
+    const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+    const mutationMetrics = {
+      registry: checkerReport?.registry ?? null,
+      catalogKeys: checkerReport?.catalog?.catalogKeys ?? null,
+      operations: checkerReport?.catalog?.operations ?? null,
+    };
+    const unaffectedMetricsMatch = checkerReport === null
+      ? testCase.allowsEarlyFailure === true
+      : JSON.stringify(mutationMetrics.registry) === JSON.stringify(greenMetrics.registry)
+        && (mutationMetrics.catalogKeys === null || mutationMetrics.catalogKeys === 531)
+        && (mutationMetrics.operations === null || mutationMetrics.operations === 508);
+    const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
+    const signalFound = output.includes(testCase.expectedSignal);
+    return {
+      case: testCase.name,
+      locale: testCase.locale,
+      fixtureSha256: fixtureSha256(fixture.fixtureRepo),
+      greenExitCode: greenResult.status,
+      greenMetrics,
+      exitCode: result.status,
+      expectedExitCode: 1,
+      expectedSignal: testCase.expectedSignal,
+      actualSignalFound: signalFound,
+      mutationMetrics,
+      unaffectedMetricsMatch,
+      missingFileNoise,
+      status: greenPassed && result.status === 1 && signalFound && unaffectedMetricsMatch && missingFileNoise === 0 ? 'PASS' : 'FAIL',
+      greenStdoutSha256: sha256(greenResult.stdout ?? ''),
+      greenStderrSha256: sha256(greenResult.stderr ?? ''),
+      stdoutSha256: sha256(result.stdout ?? ''),
+      stderrSha256: sha256(result.stderr ?? ''),
+      output: output.trim(),
+    };
+  } finally {
+    rmSync(fixture.parent, { recursive: true, force: true });
+  }
+}
+
 function runSuite({ suite, root }) {
   if (suite === 'registry') return registryCases().map(runRegistryCase);
+  if (suite === 'catalog') {
+    const missing = ['ja', 'ko', 'fa'].filter((locale) => !existsSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`)));
+    if (missing.length) throw new CliError(`Catalog mutation suite requires complete catalogs; missing: ${missing.join(', ')}`);
+    return catalogCaseDefinitions().map(runCatalogCase);
+  }
   throw new CliError(`Mutation suite is registered but not implemented yet: ${suite}${root ? ` (${root})` : ''}`);
 }
 

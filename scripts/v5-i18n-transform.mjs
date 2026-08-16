@@ -14,6 +14,19 @@ import { injectV5LanguageControls } from './v5-language-controls.mjs';
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 const catalogRoot = join(scriptsRoot, 'v5-i18n');
 const CATALOG_GROUPS = Object.freeze(['shared', 'pages', 'seo', 'runtime']);
+const PERSIAN_LTR_LITERALS = Object.freeze([
+  'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD',
+  'ZHIXIN RUBBER MATERIAL',
+  'martin@zxrubbertech.com',
+  'https://wa.me/8615256225135',
+  '+86 152 5622 5135',
+  'ISO 9001:2015',
+  'WhatsApp',
+  'ZHIXIN',
+  'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM', 'OEM', 'ODM', 'MOQ',
+  'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC', 'PPAP',
+  'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
+]);
 
 function assertPlainObject(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -122,6 +135,79 @@ function escapeJsString(value, quote) {
     .replaceAll('\u2028', '\\u2028')
     .replaceAll('\u2029', '\\u2029')
     .replaceAll('<', '\\x3C');
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const PERSIAN_LTR_PATTERN = new RegExp(
+  `(?<![A-Za-z0-9])(?:${[...PERSIAN_LTR_LITERALS]
+    .sort((left, right) => right.length - left.length)
+    .map(escapeRegExp)
+    .join('|')})(?![A-Za-z0-9])`,
+  'g',
+);
+
+function isolatePersianVisibleLtrTokens(html, stem) {
+  const bodyOpen = [...html.matchAll(/<body\b[^>]*>/gi)];
+  const bodyClose = [...html.matchAll(/<\/body\s*>/gi)];
+  if (bodyOpen.length !== 1 || bodyClose.length !== 1 || bodyClose[0].index <= bodyOpen[0].index) {
+    throw new Error(`${stem}/fa: expected one valid body element for bidi isolation`);
+  }
+  const start = bodyOpen[0].index + bodyOpen[0][0].length;
+  const end = bodyClose[0].index;
+  const source = html.slice(start, end);
+  const excluded = [];
+  let transformed = '';
+  for (const match of source.matchAll(/<!--[\s\S]*?-->|<[^>]+>|[^<]+/g)) {
+    const token = match[0];
+    if (token.startsWith('<')) {
+      const tag = token.match(/^<\s*(\/?)\s*([a-z0-9-]+)/i);
+      if (tag) {
+        const closing = tag[1] === '/';
+        const name = tag[2].toLowerCase();
+        if (closing && excluded.at(-1) === name) excluded.pop();
+        else if (!closing && ['script', 'style', 'noscript'].includes(name) && !/\/\s*>$/.test(token)) excluded.push(name);
+      }
+      transformed += token;
+      continue;
+    }
+    transformed += excluded.length
+      ? token
+      : token.replace(PERSIAN_LTR_PATTERN, (literal) => `<bdi dir="ltr">${literal}</bdi>`);
+  }
+  return `${html.slice(0, start)}${transformed}${html.slice(end)}`;
+}
+
+function addDirectionToNamedControl(html, { name, direction, stem }) {
+  const pattern = new RegExp(`<(?:input|textarea)\\b(?=[^>]*\\bname=["']${escapeRegExp(name)}["'])[^>]*>`, 'gi');
+  const matches = html.match(pattern) ?? [];
+  if (matches.length !== 1) throw new Error(`${stem}/fa: expected one ${name} form control, found ${matches.length}`);
+  const control = matches[0];
+  if (/\bdirname\s*=/i.test(control)) throw new Error(`${stem}/fa: dirname is not allowed on ${name}`);
+  if (/\bdir\s*=/i.test(control)) throw new Error(`${stem}/fa: ${name} form control already has dir`);
+  return html.replace(control, control.replace(/>$/, ` dir="${direction}">`));
+}
+
+export function applyV5LocaleDirectionality(html, { stem, locale } = {}) {
+  if (typeof html !== 'string' || !html.trim()) throw new Error(`${stem ?? '(missing)'}/${locale ?? '(missing)'}: directionality HTML must be nonempty`);
+  if (!V5_PAGE_STEMS.includes(stem)) throw new Error(`Unknown V5 page stem: ${String(stem)}`);
+  if (!Object.hasOwn(V5_LOCALES, locale)) throw new Error(`Unsupported V5 directionality locale: ${String(locale)}`);
+  if (locale !== 'fa') return html;
+  let transformed = isolatePersianVisibleLtrTokens(html, stem);
+  if (stem === 'quote') {
+    for (const [name, direction] of [
+      ['name', 'auto'],
+      ['company', 'auto'],
+      ['message', 'auto'],
+      ['email', 'ltr'],
+      ['phone', 'ltr'],
+    ]) {
+      transformed = addDirectionToNamedControl(transformed, { name, direction, stem });
+    }
+  }
+  return transformed;
 }
 
 export function validateV5HtmlFragment(value, key = 'V5 localized HTML fragment') {
@@ -239,9 +325,10 @@ export function applyV5LocalizationOperations(html, { stem, locale, catalog = nu
       `${stem}/${locale}/${operation.key}`,
     );
   }
-  return stem === 'quote'
+  const withRuntime = stem === 'quote'
     ? applyV5QuoteRuntimeContract(localized, { locale, flattenedCatalog: flattened })
     : localized;
+  return applyV5LocaleDirectionality(withRuntime, { stem, locale });
 }
 
 export function applyV5LocalizationAndControls(html, { stem, locale, catalog = null } = {}) {
