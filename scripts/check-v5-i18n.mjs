@@ -16,7 +16,7 @@ const SUPPORTED_GATES = new Set([
   'all',
 ]);
 const SUPPORTED_PROFILES = new Set(['preview', 'release']);
-const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr']);
+const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa']);
 const SUPPORTED_FLAGS = new Set(['gate', 'profile', 'root', 'locale']);
 
 const REQUIRED_GLOSSARY_TERMS = Object.freeze([
@@ -86,7 +86,7 @@ const ENGLISH_RESIDUE_ALLOWLIST = Object.freeze([
   'Google', 'Amap', 'OpenStreetMap', 'ODbL',
   'Anhui', 'China', 'Ningguo', 'Xuancheng', 'Helixi', 'Waihuan',
   'East Road', 'Street',
-  'English', 'Deutsch', '简体中文', 'Русский', 'Türkçe',
+  'English', 'Deutsch', '简体中文', 'Русский', 'Türkçe', '日本語', '한국어', 'فارسی',
   'NR', 'SBR', 'CR', 'NBR', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
   'MQ', 'NV', 'OEM', 'ODM', 'MOQ', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE',
   'HVAC', 'PPAP', 'NDA', 'EXW', 'FOB', 'ISO 9001:2015', 'TC', 'PVC',
@@ -787,14 +787,17 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
 
 function validateRegistry(config) {
   const failures = [];
-  const expectedLocales = ['en', 'de', 'zh-CN', 'ru', 'tr'];
+  const expectedLocales = ['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa'];
   const expectedStems = ['demo-a', 'products', 'compounds', 'industries', 'capabilities', 'faq', 'quote'];
   const expectedLocaleDefinitions = {
-    en: { prefix: '', htmlLang: 'en', hreflang: 'en', ogLocale: 'en_US', label: 'English', shortLabel: 'EN', turnstileLanguage: 'en' },
-    de: { prefix: 'de', htmlLang: 'de', hreflang: 'de', ogLocale: 'de_DE', label: 'Deutsch', shortLabel: 'DE', turnstileLanguage: 'de' },
-    'zh-CN': { prefix: 'zh', htmlLang: 'zh-CN', hreflang: 'zh-CN', ogLocale: 'zh_CN', label: '简体中文', shortLabel: '中文', turnstileLanguage: 'zh-cn' },
-    ru: { prefix: 'ru', htmlLang: 'ru', hreflang: 'ru', ogLocale: 'ru_RU', label: 'Русский', shortLabel: 'RU', turnstileLanguage: 'ru' },
-    tr: { prefix: 'tr', htmlLang: 'tr', hreflang: 'tr', ogLocale: 'tr_TR', label: 'Türkçe', shortLabel: 'TR', turnstileLanguage: 'tr' },
+    en: { prefix: '', htmlLang: 'en', hreflang: 'en', ogLocale: 'en_US', direction: 'ltr', label: 'English', shortLabel: 'EN', turnstileLanguage: 'en' },
+    de: { prefix: 'de', htmlLang: 'de', hreflang: 'de', ogLocale: 'de_DE', direction: 'ltr', label: 'Deutsch', shortLabel: 'DE', turnstileLanguage: 'de' },
+    'zh-CN': { prefix: 'zh', htmlLang: 'zh-CN', hreflang: 'zh-CN', ogLocale: 'zh_CN', direction: 'ltr', label: '简体中文', shortLabel: '中文', turnstileLanguage: 'zh-cn' },
+    ru: { prefix: 'ru', htmlLang: 'ru', hreflang: 'ru', ogLocale: 'ru_RU', direction: 'ltr', label: 'Русский', shortLabel: 'RU', turnstileLanguage: 'ru' },
+    tr: { prefix: 'tr', htmlLang: 'tr', hreflang: 'tr', ogLocale: 'tr_TR', direction: 'ltr', label: 'Türkçe', shortLabel: 'TR', turnstileLanguage: 'tr' },
+    ja: { prefix: 'ja', htmlLang: 'ja', hreflang: 'ja', ogLocale: 'ja_JP', direction: 'ltr', label: '日本語', shortLabel: 'JA', turnstileLanguage: 'ja' },
+    ko: { prefix: 'ko', htmlLang: 'ko', hreflang: 'ko', ogLocale: 'ko_KR', direction: 'ltr', label: '한국어', shortLabel: 'KO', turnstileLanguage: 'ko' },
+    fa: { prefix: 'fa', htmlLang: 'fa', hreflang: 'fa', ogLocale: 'fa_IR', direction: 'rtl', label: 'فارسی', shortLabel: 'FA', turnstileLanguage: 'fa' },
   };
   const expectedEnglishRoutes = {
     'demo-a': '/',
@@ -877,12 +880,13 @@ function validateRegistry(config) {
       failures.push(error.message);
       continue;
     }
-    if (!Array.isArray(cluster) || cluster.length !== 6) {
-      failures.push(`Hreflang cluster for ${stem} must contain exactly 6 entries`);
+    const expectedHreflangCount = expectedLocales.length + 1;
+    if (!Array.isArray(cluster) || cluster.length !== expectedHreflangCount) {
+      failures.push(`Hreflang cluster for ${stem} must contain exactly ${expectedHreflangCount} entries`);
       continue;
     }
     const hreflangs = cluster.map((entry) => entry.hreflang);
-    const expectedHreflangs = ['en', 'de', 'zh-CN', 'ru', 'tr', 'x-default'];
+    const expectedHreflangs = [...expectedLocales.map((locale) => expectedLocaleDefinitions[locale].hreflang), 'x-default'];
     if (JSON.stringify(hreflangs) !== JSON.stringify(expectedHreflangs)) {
       failures.push(`Hreflang cluster for ${stem} must equal ${expectedHreflangs.join(', ')}`);
     }
@@ -899,7 +903,12 @@ function validateRegistry(config) {
     routes: routeSet.size,
     hreflangsPerPage: stems.length > 0 ? config.getHreflangCluster(stems[0]).length : 0,
   };
-  const exactMetrics = { locales: 5, pageRoles: 7, routes: 35, hreflangsPerPage: 6 };
+  const exactMetrics = {
+    locales: expectedLocales.length,
+    pageRoles: expectedStems.length,
+    routes: expectedLocales.length * expectedStems.length,
+    hreflangsPerPage: expectedLocales.length + 1,
+  };
   for (const [key, expected] of Object.entries(exactMetrics)) {
     if (metrics[key] !== expected) failures.push(`${key} must equal ${expected}; got ${metrics[key]}`);
   }
@@ -959,11 +968,11 @@ function validateControlGroup(group, groupName, locale, stem, config, label, fai
     failures.push(`${label}: ${groupName.toLowerCase()} language-control root is missing`);
   }
   const anchors = parseControlAnchors(group);
-  if (anchors.length !== 5) {
-    failures.push(`${label}: ${groupName.toLowerCase()} language control must contain 5 real anchors; found ${anchors.length}`);
+  const expectedLocales = Object.keys(config.V5_LOCALES);
+  if (anchors.length !== expectedLocales.length) {
+    failures.push(`${label}: ${groupName.toLowerCase()} language control must contain ${expectedLocales.length} real anchors; found ${anchors.length}`);
     return anchors.length;
   }
-  const expectedLocales = Object.keys(config.V5_LOCALES);
   if (JSON.stringify(anchors.map(({ attributes }) => attributes['data-locale'])) !== JSON.stringify(expectedLocales)) {
     failures.push(`${label}: ${groupName.toLowerCase()} language anchors are not in registry order`);
   }
@@ -1061,7 +1070,9 @@ function validateControlsGate(normalized, config, inventory) {
     if (failures.length === pageFailuresBefore) passedPages += 1;
   }
 
-  const expectedTotalAnchors = config.V5_PAGE_STEMS.length * 15;
+  const anchorsPerGroup = Object.keys(config.V5_LOCALES).length;
+  const anchorsPerPage = anchorsPerGroup * 3;
+  const expectedTotalAnchors = config.V5_PAGE_STEMS.length * anchorsPerPage;
   if (totalAnchors !== expectedTotalAnchors) {
     failures.push(`Controls bundle must contain ${expectedTotalAnchors} language anchors; found ${totalAnchors}`);
   }
@@ -1072,8 +1083,8 @@ function validateControlsGate(normalized, config, inventory) {
       pages: config.V5_PAGE_STEMS.length,
       passedPages,
       controlGroupsPerPage: 3,
-      anchorsPerGroup: 5,
-      anchorsPerPage: 15,
+      anchorsPerGroup,
+      anchorsPerPage,
       totalAnchors,
     },
   };
@@ -1154,7 +1165,7 @@ function validateReleaseGate(normalized, config, inventory) {
       const expectedCluster = config.getHreflangCluster(stem).map(({ hreflang, url }) => ({ hreflang, url }));
       hreflangLinks += alternateTags.length;
       if (JSON.stringify(actualCluster) !== JSON.stringify(expectedCluster)) {
-        failures.push(`${label}: hreflang cluster is not the exact reciprocal six-link set`);
+        failures.push(`${label}: hreflang cluster is not the exact approved reciprocal set`);
       }
       const ogLocale = releaseHeadValues(html, 'property', 'og:locale');
       const ogAlternates = releaseHeadValues(html, 'property', 'og:locale:alternate');
@@ -1187,11 +1198,18 @@ function validateReleaseGate(normalized, config, inventory) {
   const sitemapFile = join(normalized.root, 'sitemap.xml');
   const sitemap = existsSync(sitemapFile) ? readFileSync(sitemapFile, 'utf8') : '';
   const sitemapUrls = [...sitemap.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map((match) => match[1]);
-  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) failures.push('Release sitemap must equal the deterministic 35-URL locale/page matrix');
+  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) {
+    failures.push(`Release sitemap must equal the deterministic ${expectedUrls.length}-URL locale/page matrix`);
+  }
   const robots = existsSync(join(normalized.root, 'robots.txt')) ? readFileSync(join(normalized.root, 'robots.txt'), 'utf8') : '';
   const expectedRobots = 'User-agent: *\nAllow: /\n\nSitemap: https://www.zxrubbertech.com/sitemap.xml\n';
   if (robots !== expectedRobots) failures.push('Release robots.txt differs from the exact approved content');
-  const exactReport = { locales: 5, publicPages: 35, hreflangLinks: 210, sitemapUrls: 35 };
+  const exactReport = {
+    locales: localeIds.length,
+    publicPages: expectedPages,
+    hreflangLinks: expectedPages * (localeIds.length + 1),
+    sitemapUrls: expectedPages,
+  };
   for (const [key, expected] of Object.entries(exactReport)) {
     if (report?.[key] !== expected) failures.push(`Release report ${key} must equal ${expected}; got ${String(report?.[key])}`);
   }
@@ -1218,7 +1236,7 @@ function validateFormGate(normalized, config) {
   let runtimeMessages = 0;
 
   if (normalized.profile !== 'release') failures.push('Form gate requires profile=release');
-  if (normalized.locale) failures.push('Form gate must validate all five release locales');
+  if (normalized.locale) failures.push(`Form gate must validate all ${localeIds.length} release locales`);
 
   for (const locale of localeIds) {
     const label = `${locale}/quote`;
@@ -1373,9 +1391,11 @@ async function validateRetirementGate(normalized, config) {
     ...expectedProductVariants('rubber-wheel', '#c-industrial'),
   ];
   if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)) {
-    failures.push('Retirement V5_URLS must exactly equal the 35 localized canonical URLs');
+    failures.push(`Retirement V5_URLS must exactly equal the ${expectedV5Urls.length} localized canonical URLs`);
   }
-  if (V5_URLS.length !== 35) failures.push(`Retirement inventory must contain 35 V5 URLs; found ${V5_URLS.length}`);
+  if (V5_URLS.length !== expectedV5Urls.length) {
+    failures.push(`Retirement inventory must contain ${expectedV5Urls.length} V5 URLs; found ${V5_URLS.length}`);
+  }
   if (LEGACY_REDIRECTS.length !== 25) failures.push(`Retirement inventory must contain 25 legacy paths; found ${LEGACY_REDIRECTS.length}`);
   const redirectFields = ['locale', 'htmlLang', 'path', 'target'];
   for (let index = 0; index < expectedLegacyRedirects.length; index += 1) {
@@ -1428,7 +1448,7 @@ async function validateRetirementGate(normalized, config) {
   } else {
     sitemapUrls = [...readFileSync(sitemapFile, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
     if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedV5Urls)) {
-      failures.push('Retirement sitemap must exactly equal the ordered 35 canonical URLs');
+      failures.push(`Retirement sitemap must exactly equal the ordered ${expectedV5Urls.length} canonical URLs`);
     }
   }
   return {
