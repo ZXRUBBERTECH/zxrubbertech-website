@@ -16,7 +16,12 @@ import {
   V5_ROUTE_MAP,
   seoPages,
 } from './v5-seo-config.mjs';
-import { getLocalizedRoute, getLocalizedUrl, V5_LOCALES } from './v5-i18n-config.mjs';
+import {
+  getHreflangCluster,
+  getLocalizedRoute,
+  getLocalizedUrl,
+  V5_LOCALES,
+} from './v5-i18n-config.mjs';
 import { applyV5LocalizationOperations, loadV5Catalog } from './v5-i18n-transform.mjs';
 import { injectV5LanguageControls } from './v5-language-controls.mjs';
 import { applyV5SeoHead } from './v5-seo-transform.mjs';
@@ -208,7 +213,7 @@ export function buildV5Release({ outputDir, locales = null, locale = null } = {}
     locales: activeLocales.length,
     localeIds: activeLocales,
     publicPages: pages.length,
-    hreflangLinks: pages.length * 6,
+    hreflangLinks: pages.length * getHreflangCluster(publicStems[0]).length,
     sitemapUrls: sitemap.urls.length,
     pages,
   };

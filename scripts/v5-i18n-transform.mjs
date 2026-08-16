@@ -14,7 +14,7 @@ import { injectV5LanguageControls } from './v5-language-controls.mjs';
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 const catalogRoot = join(scriptsRoot, 'v5-i18n');
 const CATALOG_GROUPS = Object.freeze(['shared', 'pages', 'seo', 'runtime']);
-const PERSIAN_LTR_LITERALS = Object.freeze([
+export const V5_PERSIAN_APPROVED_LTR_LITERALS = Object.freeze([
   'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD',
   'ZHIXIN RUBBER MATERIAL',
   'martin@zxrubbertech.com',
@@ -27,6 +27,14 @@ const PERSIAN_LTR_LITERALS = Object.freeze([
   'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC', 'PPAP',
   'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
 ]);
+const PERSIAN_RTL_STYLE = `
+/* V5:PERSIAN RTL START */
+html[dir="rtl"] body{direction:rtl}
+html[dir="rtl"] :is(.tab-hero,.cap-txt,.panel,.footv5-group,.footv5-legal-row,.v5-language-switcher__menu,.v5-language-mobile,.v5-language-footer){text-align:start}
+html[dir="rtl"] :is(input,textarea,select){text-align:start}
+html[dir="rtl"] :is(.eyebrow,.tab-hero .th-note,.stat>span,.panel h4,.hcat .go,.pstep b,.pcat .go,.pcat-src,.dl-card .go,.tags span,.prod3 figcaption,.compound-primary-code,.compound-primary-status,.capv5-route span,.capv5-quality-step b,.capv5-capacity-stat>span,.footv5-group h3,.footv5-legal-row){letter-spacing:normal;text-transform:none}
+/* V5:PERSIAN RTL END */
+`;
 
 function assertPlainObject(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -142,7 +150,7 @@ function escapeRegExp(value) {
 }
 
 const PERSIAN_LTR_PATTERN = new RegExp(
-  `(?<![A-Za-z0-9])(?:${[...PERSIAN_LTR_LITERALS]
+  `(?<![A-Za-z0-9])(?:${[...V5_PERSIAN_APPROVED_LTR_LITERALS]
     .sort((left, right) => right.length - left.length)
     .map(escapeRegExp)
     .join('|')})(?![A-Za-z0-9])`,
@@ -195,7 +203,15 @@ export function applyV5LocaleDirectionality(html, { stem, locale } = {}) {
   if (!V5_PAGE_STEMS.includes(stem)) throw new Error(`Unknown V5 page stem: ${String(stem)}`);
   if (!Object.hasOwn(V5_LOCALES, locale)) throw new Error(`Unsupported V5 directionality locale: ${String(locale)}`);
   if (locale !== 'fa') return html;
-  let transformed = isolatePersianVisibleLtrTokens(html, stem);
+  if (/V5:PERSIAN RTL (?:START|END)/.test(html)) throw new Error(`${stem}/fa: Persian RTL stylesheet already exists`);
+  let transformed = replaceExactCount(
+    html,
+    '</style>',
+    `${PERSIAN_RTL_STYLE}\n</style>`,
+    1,
+    `${stem}/fa Persian RTL stylesheet insertion`,
+  );
+  transformed = isolatePersianVisibleLtrTokens(transformed, stem);
   if (stem === 'quote') {
     for (const [name, direction] of [
       ['name', 'auto'],
@@ -258,6 +274,11 @@ export function applyV5QuoteRuntimeContract(html, { locale, flattenedCatalog = n
       || typeof invalidEmailMessage !== 'string' || !invalidEmailMessage.trim()) {
     throw new Error(`${locale}/quote: validation messages are missing from the catalog`);
   }
+  const visibleBackendFields = ['name', 'company', 'email', 'phone', 'message'];
+  const expectedBackendFields = [...visibleBackendFields, 'language'];
+  if (JSON.stringify(V5_QUOTE_BACKEND_FIELDS) !== JSON.stringify(expectedBackendFields)) {
+    throw new Error(`${locale}/quote: backend field contract must equal ${expectedBackendFields.join(', ')}`);
+  }
   if (/\bname=["']language["']/i.test(html)) throw new Error(`${locale}/quote: language field already exists`);
   if (/\bdata-language\s*=/i.test(html.match(/<div\b[^>]*\bclass=["'][^"']*\bcf-turnstile\b[^"']*["'][^>]*>/i)?.[0] ?? '')) {
     throw new Error(`${locale}/quote: Turnstile language already exists`);
@@ -273,10 +294,16 @@ export function applyV5QuoteRuntimeContract(html, { locale, flattenedCatalog = n
   if (html.split(validationAnchor).length - 1 !== 1) {
     throw new Error(`${locale}/quote: expected one Quote validation insertion anchor`);
   }
+  const sourceForm = html.match(/<form\b[^>]*\bid=["']contact-form["'][^>]*>[\s\S]*?<\/form\s*>/i)?.[0] ?? '';
+  const sourceBackendFields = [...sourceForm.matchAll(/<(?:input|textarea)\b[^>]*\bname=(?:"([^"]+)"|'([^']+)')[^>]*>/gi)]
+    .map((match) => match[1] ?? match[2]);
+  if (JSON.stringify(sourceBackendFields) !== JSON.stringify(visibleBackendFields)) {
+    throw new Error(`${locale}/quote: source backend fields must equal ${visibleBackendFields.join(', ')}`);
+  }
 
   let transformed = html.replace(
     formMarker,
-    `$1\n      <input type="hidden" name="${V5_QUOTE_BACKEND_FIELDS.at(-1)}" value="${locale}">`,
+    `$1\n      <input type="hidden" name="language" value="${locale}">`,
   );
   transformed = transformed.replace(
     widgetMarker,

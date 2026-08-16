@@ -13,6 +13,20 @@ export const V5_LANGUAGE_ALLOWED_FRAGMENTS = Object.freeze(new Set([
 
 export const V5_LANGUAGE_ALLOWED_QUERY_KEYS = Object.freeze(new Set(['industry']));
 
+export const V5_LANGUAGE_CONTROL_LABELS = Object.freeze({
+  en: 'Language',
+  de: 'Sprache',
+  'zh-CN': '语言',
+  ru: 'Язык',
+  tr: 'Dil',
+  ja: '言語',
+  ko: '언어',
+  fa: 'زبان',
+});
+if (JSON.stringify(Object.keys(V5_LANGUAGE_CONTROL_LABELS)) !== JSON.stringify(Object.keys(V5_LOCALES))) {
+  throw new Error('V5 language-control labels must exactly follow locale registry order');
+}
+
 const CONTROL_STYLE = `
 /* V5:LANGUAGE CONTROLS START */
 .v5-language-switcher{position:relative;flex:none}
@@ -22,12 +36,12 @@ const CONTROL_STYLE = `
 .v5-language-switcher .v5-language-switcher__button:hover,.v5-language-switcher .v5-language-switcher__button:focus-visible,.v5-language-switcher[data-open="true"] .v5-language-switcher__button{color:var(--ink);border-color:var(--accent)}
 .v5-language-switcher .v5-language-switcher__button:focus-visible,.v5-language-switcher .v5-language-switcher__menu a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .v5-language-switcher[data-open="true"] .v5-language-switcher__button i{transform:rotate(180deg)}
-.v5-language-switcher .v5-language-switcher__menu{position:absolute;top:calc(100% + 12px);right:0;z-index:80;min-width:172px;background:rgba(14,21,34,.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:3px;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.v5-language-switcher .v5-language-switcher__menu{position:absolute;top:calc(100% + 12px);inset-inline-end:0;z-index:80;min-width:172px;background:rgba(14,21,34,.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:3px;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
 .v5-language-switcher .v5-language-switcher__menu[hidden]{display:none}
-.v5-language-switcher .v5-language-switcher__menu a{display:block;width:100%;color:var(--ink-dim);font-size:13.5px;line-height:1.3;padding:9px 12px;border-radius:2px;transition:background .2s,color .2s}
+.v5-language-switcher .v5-language-switcher__menu a{display:flex;align-items:center;width:100%;color:var(--ink-dim);font-size:13.5px;line-height:1.3;padding:9px 12px;border-radius:2px;transition:background .2s,color .2s}
 .v5-language-switcher .v5-language-switcher__menu a:hover,.v5-language-switcher .v5-language-switcher__menu a:focus-visible{background:rgba(255,255,255,.06);color:var(--ink)}
 .v5-language-switcher .v5-language-switcher__menu a[aria-current="page"]{color:var(--accent)}
-.v5-language-switcher .v5-language-switcher__menu a[aria-current="page"]::after{content:"✓";float:right;font-size:11px}
+.v5-language-switcher .v5-language-switcher__menu a[aria-current="page"]::after{content:"✓";margin-inline-start:auto;font-size:11px}
 .v5-language-mobile{position:static;inset:auto;z-index:auto;display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
 .v5-language-mobile a{display:inline-block;color:var(--ink-dim);border:1px solid var(--line);border-radius:99px;font-size:13px;font-weight:600;line-height:1.2;padding:8px 14px;transition:color .25s,border-color .25s}
 .v5-language-mobile a:hover,.v5-language-mobile a:focus-visible{color:var(--ink);border-color:var(--accent)}
@@ -132,9 +146,10 @@ function languageAnchors(activeLocale, stem, { role = null } = {}) {
 
 function desktopControl(locale, stem) {
   const active = V5_LOCALES[locale];
+  const controlLabel = V5_LANGUAGE_CONTROL_LABELS[locale];
   return `<!-- V5:LANGUAGE DESKTOP START -->
       <div class="v5-language-switcher" data-open="false">
-        <button class="v5-language-switcher__button" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="v5-language-menu" aria-label="Language: ${escapeHtml(active.label)}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg><b>${escapeHtml(active.shortLabel)}</b><i aria-hidden="true">▾</i></button>
+        <button class="v5-language-switcher__button" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="v5-language-menu" aria-label="${escapeHtml(controlLabel)}: ${escapeHtml(active.label)}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg><b>${escapeHtml(active.shortLabel)}</b><i aria-hidden="true">▾</i></button>
         <div class="v5-language-switcher__menu" id="v5-language-menu" role="menu" hidden>
 ${languageAnchors(locale, stem, { role: 'menuitem' }).split('\n').map((line) => `          ${line}`).join('\n')}
         </div>
@@ -143,17 +158,19 @@ ${languageAnchors(locale, stem, { role: 'menuitem' }).split('\n').map((line) => 
 }
 
 function mobileControl(locale, stem) {
+  const controlLabel = V5_LANGUAGE_CONTROL_LABELS[locale];
   return `<!-- V5:LANGUAGE MOBILE START -->
-  <nav class="v5-language-mobile" aria-label="Language">
+  <nav class="v5-language-mobile" aria-label="${escapeHtml(controlLabel)}">
 ${languageAnchors(locale, stem).split('\n').map((line) => `    ${line}`).join('\n')}
   </nav>
 <!-- V5:LANGUAGE MOBILE END -->`;
 }
 
 function footerControl(locale, stem) {
+  const controlLabel = V5_LANGUAGE_CONTROL_LABELS[locale];
   return `<!-- V5:LANGUAGE FOOTER START -->
-    <nav class="v5-language-footer" aria-label="Language">
-      <span>Language:</span>
+    <nav class="v5-language-footer" aria-label="${escapeHtml(controlLabel)}">
+      <span>${escapeHtml(controlLabel)}:</span>
 ${languageAnchors(locale, stem).split('\n').map((line) => `      ${line}`).join('\n')}
     </nav>
 <!-- V5:LANGUAGE FOOTER END -->`;

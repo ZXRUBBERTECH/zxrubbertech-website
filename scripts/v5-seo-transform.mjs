@@ -73,6 +73,36 @@ function removeExistingSeoHead(head) {
     (attribute(tag, 'type') ?? '').toLowerCase() === 'application/ld+json');
 }
 
+function validatedHreflangCluster(stem) {
+  const localeIds = Object.keys(V5_LOCALES);
+  const cluster = getHreflangCluster(stem);
+  const expectedCodes = [...localeIds.map((locale) => V5_LOCALES[locale].hreflang), 'x-default'];
+  const codes = cluster.map(({ hreflang }) => hreflang);
+  if (cluster.length !== localeIds.length + 1
+      || new Set(codes).size !== cluster.length
+      || JSON.stringify(codes) !== JSON.stringify(expectedCodes)) {
+    throw new Error(`${stem}: hreflang cluster must contain the exact locale registry plus x-default`);
+  }
+  const english = cluster.find(({ hreflang }) => hreflang === V5_LOCALES.en.hreflang);
+  const xDefault = cluster.find(({ hreflang }) => hreflang === 'x-default');
+  if (!english || !xDefault || english.url !== xDefault.url || english.route !== xDefault.route) {
+    throw new Error(`${stem}: x-default hreflang must equal the English route`);
+  }
+  return cluster;
+}
+
+function validatedOgAlternates(locale, stem) {
+  const alternates = Object.entries(V5_LOCALES)
+    .filter(([candidate]) => candidate !== locale)
+    .map(([, candidate]) => candidate.ogLocale);
+  if (alternates.length !== Object.keys(V5_LOCALES).length - 1
+      || new Set(alternates).size !== alternates.length
+      || alternates.includes(V5_LOCALES[locale].ogLocale)) {
+    throw new Error(`${stem}/${locale}: Open Graph locale alternates must be the unique non-current registry set`);
+  }
+  return alternates;
+}
+
 function metadataBlock(stem, profile, locale, catalog) {
   const definition = V5_LOCALES[locale];
   if (!definition) throw new Error(`${stem}: unknown V5 SEO locale ${String(locale)}`);
@@ -93,13 +123,12 @@ function metadataBlock(stem, profile, locale, catalog) {
     : getV5StructuredData(stem);
   const structuredData = JSON.stringify(structured, null, 2).replaceAll('<', '\\u003c');
   const hreflangLinks = profile === 'release'
-    ? getHreflangCluster(stem).map(({ hreflang, url }) =>
+    ? validatedHreflangCluster(stem).map(({ hreflang, url }) =>
       `<link rel="alternate" hreflang="${escapeAttribute(hreflang)}" href="${escapeAttribute(url)}">`).join('\n')
     : '';
   const alternateLocales = profile === 'release'
-    ? Object.entries(V5_LOCALES)
-      .filter(([candidate]) => candidate !== locale)
-      .map(([, candidate]) => `<meta property="og:locale:alternate" content="${escapeAttribute(candidate.ogLocale)}">`)
+    ? validatedOgAlternates(locale, stem)
+      .map((candidate) => `<meta property="og:locale:alternate" content="${escapeAttribute(candidate)}">`)
       .join('\n')
     : '';
 

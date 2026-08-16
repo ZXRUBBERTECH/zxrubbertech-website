@@ -18,6 +18,17 @@ const SUPPORTED_GATES = new Set([
 const SUPPORTED_PROFILES = new Set(['preview', 'release']);
 const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa']);
 const SUPPORTED_FLAGS = new Set(['gate', 'profile', 'root', 'locale']);
+const EXPECTED_LANGUAGE_CONTROL_LABELS = Object.freeze({
+  en: 'Language', de: 'Sprache', 'zh-CN': '语言', ru: 'Язык', tr: 'Dil',
+  ja: '言語', ko: '언어', fa: 'زبان',
+});
+const PERSIAN_APPROVED_LTR_LITERALS = Object.freeze(new Set([
+  'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD', 'ZHIXIN RUBBER MATERIAL',
+  'martin@zxrubbertech.com', 'https://wa.me/8615256225135', '+86 152 5622 5135',
+  'ISO 9001:2015', 'WhatsApp', 'ZHIXIN', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
+  'OEM', 'ODM', 'MOQ', 'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC',
+  'PPAP', 'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
+]));
 
 const REQUIRED_GLOSSARY_TERMS = Object.freeze([
   'rubber compound', 'molded rubber parts', 'rubber-to-metal bonding',
@@ -197,7 +208,7 @@ function routeToReleaseFile(root, route) {
   return join(root, relativeRoute, 'index.html');
 }
 
-function discoverPageInventory({ profile, root }, config) {
+function discoverPageInventory({ profile, root, locale }, config) {
   const pages = [];
   const pageRoot = profile === 'preview' && existsSync(join(root, 'design-demos'))
     ? join(root, 'design-demos')
@@ -208,7 +219,8 @@ function discoverPageInventory({ profile, root }, config) {
       if (existsSync(file) && lstatSync(file).isFile()) pages.push(file);
     }
   } else {
-    for (const locale of Object.keys(config.V5_LOCALES)) {
+    const releaseLocales = locale ? [locale] : Object.keys(config.V5_LOCALES);
+    for (const locale of releaseLocales) {
       for (const stem of config.V5_PAGE_STEMS) {
         const file = routeToReleaseFile(root, config.getLocalizedRoute(locale, stem));
         if (existsSync(file) && lstatSync(file).isFile()) pages.push(file);
@@ -1278,19 +1290,32 @@ function validateControlsGate(normalized, config, inventory) {
     totalAnchors += validateControlGroup(mobile, 'MOBILE', locale, stem, config, label, failures);
     totalAnchors += validateControlGroup(footer, 'FOOTER', locale, stem, config, label, failures);
 
+    const localizedControlLabel = EXPECTED_LANGUAGE_CONTROL_LABELS[locale];
+    const desktopButton = desktop?.match(/<button\b[^>]*\bclass="v5-language-switcher__button"[^>]*>/i)?.[0] ?? '';
+    const mobileNav = mobile?.match(/<nav\b[^>]*\bclass="v5-language-mobile"[^>]*>/i)?.[0] ?? '';
+    const footerNav = footer?.match(/<nav\b[^>]*\bclass="v5-language-footer"[^>]*>/i)?.[0] ?? '';
+    if (htmlAttribute(desktopButton, 'aria-label') !== `${localizedControlLabel}: ${config.V5_LOCALES[locale].label}`) {
+      failures.push(`${label}: desktop language label must be localized as ${localizedControlLabel}`);
+    }
+    if (htmlAttribute(mobileNav, 'aria-label') !== localizedControlLabel) {
+      failures.push(`${label}: mobile language label must be localized as ${localizedControlLabel}`);
+    }
+    if (htmlAttribute(footerNav, 'aria-label') !== localizedControlLabel
+        || !footer?.includes(`<span>${localizedControlLabel}:</span>`)) {
+      failures.push(`${label}: Footer language label must be localized as ${localizedControlLabel}`);
+    }
     if (desktop && (!desktop.includes('aria-expanded="false"')
       || !desktop.includes('aria-controls="v5-language-menu"')
       || !desktop.includes('aria-haspopup="menu"')
       || !desktop.includes('role="menu"'))) {
       failures.push(`${label}: desktop language menu is missing its accessible button/menu contract`);
     }
-    if (mobile && !mobile.includes('aria-label="Language"')) failures.push(`${label}: mobile language control needs an accessible label`);
-    if (footer && (!footer.includes('aria-label="Language"') || !footer.includes('<span>Language:</span>'))) {
-      failures.push(`${label}: Footer language row is missing its accessible label`);
-    }
     if (markerCount(html, '/* V5:LANGUAGE CONTROLS START */') !== 1
       || markerCount(html, '/* V5:LANGUAGE CONTROLS END */') !== 1) {
       failures.push(`${label}: scoped language-control CSS is missing or duplicated`);
+    }
+    if (!html.includes('inset-inline-end:0') || !html.includes('margin-inline-start:auto')) {
+      failures.push(`${label}: language controls must use logical inline positioning`);
     }
     if (markerCount(html, '<!-- V5:LANGUAGE SCRIPT START -->') !== 1
       || markerCount(html, '<!-- V5:LANGUAGE SCRIPT END -->') !== 1) {
@@ -1347,6 +1372,54 @@ function releaseHeadValues(html, selectorName, selectorValue) {
   return values;
 }
 
+function validatePersianRtlContract(html, locale, stem, label, failures) {
+  const rtlStarts = markerCount(html, '/* V5:PERSIAN RTL START */');
+  const rtlEnds = markerCount(html, '/* V5:PERSIAN RTL END */');
+  const bdiTags = html.match(/<\/?bdi\b[^>]*>/gi) ?? [];
+  if (locale !== 'fa') {
+    if (rtlStarts !== 0 || rtlEnds !== 0) failures.push(`${label}: Persian RTL stylesheet is forbidden outside Persian pages`);
+    if (bdiTags.length) failures.push(`${label}: bidi isolation is allowed only on Persian pages`);
+    return false;
+  }
+  if (rtlStarts !== 1 || rtlEnds !== 1) {
+    failures.push(`${label}: expected one scoped Persian RTL stylesheet; found ${rtlStarts}/${rtlEnds} markers`);
+    return false;
+  }
+  const rtlCss = html.match(/\/\* V5:PERSIAN RTL START \*\/([\s\S]*?)\/\* V5:PERSIAN RTL END \*\//)?.[1] ?? '';
+  for (const required of ['html[dir="rtl"]', 'text-align:start', 'letter-spacing:normal', 'text-transform:none']) {
+    if (!rtlCss.includes(required)) failures.push(`${label}: scoped Persian RTL stylesheet is missing ${required}`);
+  }
+  const rtlRules = [...rtlCss.matchAll(/([^{}]+)\{[^{}]*\}/g)].map((match) => match[1].trim());
+  if (!rtlRules.length || rtlRules.some((selector) => !selector.startsWith('html[dir="rtl"]'))) {
+    failures.push(`${label}: every Persian RTL selector must be scoped by html[dir="rtl"]`);
+  }
+  if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map))/i.test(rtlCss)) {
+    failures.push(`${label}: Persian RTL CSS must not mirror media, Logo, map, or decorative elements`);
+  }
+
+  const pairs = [...html.matchAll(/<bdi dir="ltr">([^<]+)<\/bdi>/g)];
+  if (bdiTags.length !== pairs.length * 2) failures.push(`${label}: Persian LTR literals must use exact nonempty bdi dir=ltr pairs`);
+  for (const pair of pairs) {
+    if (!PERSIAN_APPROVED_LTR_LITERALS.has(pair[1])) {
+      failures.push(`${label}: unapproved Persian LTR bidi literal: ${pair[1]}`);
+    }
+  }
+  if (!pairs.length) failures.push(`${label}: Persian page must isolate its approved LTR literals`);
+  if (stem === 'quote') {
+    const expectedDirections = { name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto' };
+    for (const [name, direction] of Object.entries(expectedDirections)) {
+      const matches = html.match(new RegExp(`<(?:input|textarea)\\b(?=[^>]*\\bname=["']${name}["'])[^>]*>`, 'gi')) ?? [];
+      if (matches.length !== 1 || htmlAttribute(matches[0], 'dir') !== direction) {
+        failures.push(`${label}: ${name} direction must equal ${direction}`);
+      }
+      if (matches.some((tag) => htmlAttribute(tag, 'dirname') !== null)) {
+        failures.push(`${label}: ${name} must not submit a dirname backend field`);
+      }
+    }
+  }
+  return true;
+}
+
 function validateReleaseGate(normalized, config, inventory) {
   const failures = [];
   const localeIds = Object.keys(config.V5_LOCALES);
@@ -1356,6 +1429,7 @@ function validateReleaseGate(normalized, config, inventory) {
   if (inventory.length !== expectedPages) failures.push(`Release page inventory expected ${expectedPages}, found ${inventory.length}`);
   let hreflangLinks = 0;
   let passedPages = 0;
+  let persianRtlPages = 0;
   const reportPages = new Map();
   const reportFile = join(normalized.root, 'v5-release-report.json');
   let report = null;
@@ -1385,6 +1459,7 @@ function validateReleaseGate(normalized, config, inventory) {
       if (htmlAttribute(htmlTag, 'dir') !== definition.direction) {
         failures.push(`${label}: html dir must equal ${definition.direction}`);
       }
+      if (validatePersianRtlContract(html, locale, stem, label, failures)) persianRtlPages += 1;
       const expectedCanonical = config.getLocalizedUrl(locale, stem);
       const canonicalTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) =>
         (htmlAttribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/).includes('canonical'));
@@ -1465,6 +1540,7 @@ function validateReleaseGate(normalized, config, inventory) {
       passedPages,
       hreflangLinks,
       sitemapUrls: sitemapUrls.length,
+      persianRtlPages,
     },
   };
 }
@@ -1535,6 +1611,18 @@ function validateFormGate(normalized, config) {
       localeFields += 1;
     }
     const emailControl = controls.find(({ name }) => name === 'email');
+    if (controls.some(({ tag }) => htmlAttribute(tag, 'dirname') !== null)) {
+      failures.push(`${label}: Quote controls must not add dirname backend fields`);
+    }
+    if (locale === 'fa') {
+      const expectedDirections = { name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto' };
+      for (const [name, direction] of Object.entries(expectedDirections)) {
+        const control = controls.find((candidate) => candidate.name === name);
+        if (!control || htmlAttribute(control.tag, 'dir') !== direction) {
+          failures.push(`${label}: ${name} direction must equal ${direction}`);
+        }
+      }
+    }
     for (const requiredName of ['name', 'email', 'message']) {
       const control = controls.find(({ name }) => name === requiredName);
       if (!control || !/\brequired(?:\s|>|=)/i.test(control.tag)) failures.push(`${label}: ${requiredName} must remain required`);

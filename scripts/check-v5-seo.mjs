@@ -49,6 +49,13 @@ const turnstilePreviewTestSiteKeys = new Set([
 ]);
 const quoteFormspreeFormId = 'mrpzqado';
 const quoteFormspreeAction = `https://formspree.io/f/${quoteFormspreeFormId}`;
+const approvedPersianLtrLiterals = new Set([
+  'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD', 'ZHIXIN RUBBER MATERIAL',
+  'martin@zxrubbertech.com', 'https://wa.me/8615256225135', '+86 152 5622 5135',
+  'ISO 9001:2015', 'WhatsApp', 'ZHIXIN', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
+  'OEM', 'ODM', 'MOQ', 'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC',
+  'PPAP', 'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
+]);
 const approvedGate6Copy = Object.freeze({
   'demo-a': Object.freeze({
     h1: Object.freeze({
@@ -1893,11 +1900,33 @@ function stripApprovedQuoteLanguageField(body, stem, locale, label) {
   return body.replace(expected, '');
 }
 
+function stripApprovedPersianBidiIsolation(body, locale, label) {
+  const tags = body.match(/<\/?bdi\b[^>]*>/gi) ?? [];
+  if (locale !== 'fa') {
+    if (tags.length) throw new Error(`${label}: bidi isolation is forbidden outside Persian pages`);
+    return body;
+  }
+  const pairs = [...body.matchAll(/<bdi dir="ltr">([^<]+)<\/bdi>/g)];
+  if (!pairs.length || tags.length !== pairs.length * 2) {
+    throw new Error(`${label}: Persian bidi isolation must use exact nonempty bdi dir=ltr pairs`);
+  }
+  for (const pair of pairs) {
+    if (!approvedPersianLtrLiterals.has(pair[1])) {
+      throw new Error(`${label}: unapproved Persian LTR bidi literal: ${pair[1]}`);
+    }
+  }
+  return body.replace(/<bdi dir="ltr">([^<]+)<\/bdi>/g, '$1');
+}
+
 function bodyStructureSignature(html, label, { stem = null, locale = null, release = false } = {}) {
   const body = html.match(/<body\b[^>]*>[\s\S]*?<\/body>/i)?.[0];
   if (!body) throw new Error(`${label}: body is missing`);
   const releaseNormalized = release
-    ? stripApprovedQuoteLanguageField(body, stem, locale, label)
+    ? stripApprovedPersianBidiIsolation(
+      stripApprovedQuoteLanguageField(body, stem, locale, label),
+      locale,
+      label,
+    )
     : body;
   const normalized = stripLanguageAdditions(releaseNormalized)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>')
@@ -1966,6 +1995,7 @@ function localizedReleaseSeoChecks(root, gate) {
       const expectedCanonical = getLocalizedUrl(locale, stem);
       const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] ?? '';
       if (simpleAttribute(htmlTag, 'lang') !== definition.htmlLang) failures.push(`${label}: html lang must be ${definition.htmlLang}`);
+      if (simpleAttribute(htmlTag, 'dir') !== definition.direction) failures.push(`${label}: html dir must be ${definition.direction}`);
       const title = decodeSeoValue(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? '');
       if (title !== expectedSeo.title) failures.push(`${label}: localized title mismatch`);
       if (JSON.stringify(simpleMetaValues(html, 'name', 'description')) !== JSON.stringify([expectedSeo.description])) failures.push(`${label}: localized description mismatch`);
@@ -2050,7 +2080,7 @@ function localizedReleaseSeoChecks(root, gate) {
   const expectedUrls = localeIds.flatMap((locale) => V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem)));
   const sitemap = readReleaseArtifact(root, 'sitemap.xml', 'V5 multilingual sitemap');
   const sitemapUrls = parseSitemapUrls(sitemap, 'V5 multilingual sitemap');
-  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) failures.push('schema: sitemap must equal the deterministic 35 canonical URLs');
+  if (JSON.stringify(sitemapUrls) !== JSON.stringify(expectedUrls)) failures.push(`schema: sitemap must equal the deterministic ${expectedUrls.length} canonical URLs`);
   const robots = readReleaseArtifact(root, 'robots.txt', 'V5 robots candidate');
   if (robots !== `User-agent: *\nAllow: /\n\nSitemap: ${SEO_BASE_URL}/sitemap.xml\n`) failures.push('schema: release robots candidate differs from approved content');
   return {

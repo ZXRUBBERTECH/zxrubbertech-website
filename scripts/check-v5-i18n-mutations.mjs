@@ -1,5 +1,6 @@
 import {
   copyFileSync,
+  cpSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -15,6 +16,7 @@ import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { V5_LOCALES, V5_PAGE_STEMS, getLocalizedRoute } from './v5-i18n-config.mjs';
 
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(scriptsRoot, '..');
@@ -107,6 +109,25 @@ function replaceOnce(source, pattern, replacement, label) {
     throw new Error(`${label}: expected exactly one mutation target; found ${matches?.length ?? 0}`);
   }
   return source.replace(pattern, replacement);
+}
+
+function replaceFirstExact(source, from, to, label) {
+  const index = source.indexOf(from);
+  if (index === -1) throw new Error(`${label}: mutation target is missing`);
+  return `${source.slice(0, index)}${to}${source.slice(index + from.length)}`;
+}
+
+function mutateMarkedGroup(source, name, mutation) {
+  const start = `<!-- V5:LANGUAGE ${name} START -->`;
+  const end = `<!-- V5:LANGUAGE ${name} END -->`;
+  const startIndex = source.indexOf(start);
+  const endIndex = source.indexOf(end, startIndex + start.length);
+  if (startIndex === -1 || endIndex === -1 || source.indexOf(start, startIndex + 1) !== -1) {
+    throw new Error(`${name}: expected one language-control group`);
+  }
+  const contentStart = startIndex + start.length;
+  const group = source.slice(contentStart, endIndex);
+  return `${source.slice(0, contentStart)}${mutation(group)}${source.slice(endIndex)}`;
 }
 
 function prepareRegistryFixture() {
@@ -483,12 +504,301 @@ function runCatalogCase(testCase) {
   }
 }
 
+function releaseInventoryMetrics(root) {
+  const expected = Object.keys(V5_LOCALES).flatMap((locale) => V5_PAGE_STEMS.map((stem) => ({
+    locale,
+    stem,
+    file: join(root, getLocalizedRoute(locale, stem).slice(1), 'index.html'),
+  })));
+  const missing = expected.filter(({ file }) => !existsSync(file) || !lstatSync(file).isFile());
+  return {
+    locales: Object.keys(V5_LOCALES).length,
+    pageRoles: V5_PAGE_STEMS.length,
+    canonicalPages: expected.length - missing.length,
+    expectedCanonicalPages: expected.length,
+    missingFiles: missing.map(({ locale, stem }) => `${locale}/${stem}`),
+  };
+}
+
+function prepareReleaseFixture(root) {
+  const parent = mkdtempSync(join(tmpdir(), 'zxrubbertech-v5-release-mutation.'));
+  const fixtureRoot = join(parent, 'release');
+  cpSync(root, fixtureRoot, { recursive: true, errorOnExist: true, force: false });
+  return { parent, fixtureRoot };
+}
+
+function releasePage(root, locale, stem) {
+  return join(root, getLocalizedRoute(locale, stem).slice(1), 'index.html');
+}
+
+function mutateReleasePage(fixture, locale, stem, mutation) {
+  const file = releasePage(fixture.fixtureRoot, locale, stem);
+  const source = readFileSync(file, 'utf8');
+  const mutated = mutation(source);
+  writeFileSync(file, mutated, 'utf8');
+  const reportFile = join(fixture.fixtureRoot, 'v5-release-report.json');
+  const report = readJson(reportFile);
+  const reportPages = (report.pages ?? []).filter((page) => page.locale === locale && page.stem === stem);
+  if (reportPages.length !== 1) throw new Error(`${locale}/${stem}: expected one release report page to synchronize`);
+  reportPages[0].sha256 = sha256(mutated);
+  writeJson(reportFile, report);
+}
+
+function runReleaseChecker(fixture, checker) {
+  let file;
+  let args;
+  if (checker === 'seo') {
+    file = join(scriptsRoot, 'check-v5-seo.mjs');
+    args = ['--gate=all', '--profile=release', `--root=${fixture.fixtureRoot}`];
+  } else if (checker === 'controls') {
+    file = join(scriptsRoot, 'check-v5-i18n.mjs');
+    args = ['--gate=controls', '--profile=release', `--root=${fixture.fixtureRoot}`, '--locale=fa'];
+  } else if (checker === 'form') {
+    file = join(scriptsRoot, 'check-v5-i18n.mjs');
+    args = ['--gate=form', '--profile=release', `--root=${fixture.fixtureRoot}`];
+  } else {
+    throw new Error(`Unknown release mutation checker: ${checker}`);
+  }
+  return spawnSync(process.execPath, [realpathSync(file), ...args], {
+    cwd: repo,
+    encoding: 'utf8',
+    maxBuffer: 30 * 1024 * 1024,
+  });
+}
+
+function releaseGreenPassed(testCase, result, report) {
+  if (result.status !== 0 || report?.status !== 'PASS') return false;
+  if (testCase.checker === 'seo') {
+    return report.metrics?.locales === 8
+      && report.metrics?.publicPages === 56
+      && report.metrics?.hreflangLinks === 504
+      && report.metrics?.sitemapUrls === 56;
+  }
+  if (testCase.checker === 'controls') {
+    return report.controls?.pages === 7
+      && report.controls?.anchorsPerGroup === 8
+      && report.controls?.anchorsPerPage === 24
+      && report.controls?.totalAnchors === 168;
+  }
+  return report.form?.quotePages === 8
+    && report.form?.formspreeTargets === 8
+    && report.form?.turnstileWidgets === 8
+    && report.form?.localeFields === 8
+    && report.form?.runtimeMessages === 112
+    && report.form?.realSubmissions === 0;
+}
+
+function releaseCaseDefinitions() {
+  const desktopFaAnchor = /<a\b(?=[^>]*\bdata-locale="fa")[^>]*>[\s\S]*?<\/a>/g;
+  const desktopKoAnchor = /<a\b(?=[^>]*\bdata-locale="ko")[^>]*>[\s\S]*?<\/a>/g;
+  return [
+    {
+      name: 'missing-language-anchor', checker: 'controls',
+      expectedSignal: 'desktop language control must contain 8 real anchors; found 7',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => mutateMarkedGroup(
+        source,
+        'DESKTOP',
+        (group) => replaceOnce(group, desktopKoAnchor, '', 'missing-language-anchor'),
+      )),
+    },
+    {
+      name: 'duplicate-language-anchor', checker: 'controls',
+      expectedSignal: 'desktop language control must contain 8 real anchors; found 9',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => mutateMarkedGroup(
+        source,
+        'DESKTOP',
+        (group) => replaceOnce(group, desktopKoAnchor, (anchor) => `${anchor}\n${anchor}`, 'duplicate-language-anchor'),
+      )),
+    },
+    {
+      name: 'wrong-aria-current', checker: 'controls',
+      expectedSignal: 'desktop fa aria-current state is incorrect',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => mutateMarkedGroup(
+        source,
+        'DESKTOP',
+        (group) => replaceOnce(
+          group,
+          desktopFaAnchor,
+          (anchor) => anchor.replace(' aria-current="page"', ''),
+          'wrong-aria-current',
+        ),
+      )),
+    },
+    {
+      name: 'cross-language-canonical', checker: 'seo',
+      expectedSignal: 'fa/demo-a: canonical must equal https://www.zxrubbertech.com/fa/',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<link rel="canonical" href="https://www.zxrubbertech.com/fa/">',
+        '<link rel="canonical" href="https://www.zxrubbertech.com/ja/">',
+        'cross-language-canonical',
+      )),
+    },
+    {
+      name: 'missing-hreflang', checker: 'seo',
+      expectedSignal: 'fa/demo-a: reciprocal hreflang cluster mismatch',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<link rel="alternate" hreflang="ja" href="https://www.zxrubbertech.com/ja/">\n',
+        '',
+        'missing-hreflang',
+      )),
+    },
+    {
+      name: 'extra-hreflang', checker: 'seo',
+      expectedSignal: 'fa/demo-a: reciprocal hreflang cluster mismatch',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/">',
+        '<link rel="alternate" hreflang="x-default" href="https://www.zxrubbertech.com/">\n<link rel="alternate" hreflang="xx" href="https://www.zxrubbertech.com/fa/">',
+        'extra-hreflang',
+      )),
+    },
+    {
+      name: 'wrong-persian-dir', checker: 'seo',
+      expectedSignal: 'fa/demo-a: html dir must be rtl',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<html lang="fa" dir="rtl">',
+        '<html lang="fa" dir="ltr">',
+        'wrong-persian-dir',
+      )),
+    },
+    {
+      name: 'wrong-turnstile-language', checker: 'form',
+      expectedSignal: 'fa/quote: Turnstile data-language must equal fa',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
+        source,
+        ' data-language="fa"',
+        ' data-language="en"',
+        'wrong-turnstile-language',
+      )),
+    },
+    {
+      name: 'wrong-hidden-locale', checker: 'form',
+      expectedSignal: 'fa/quote: hidden language field must equal locale ID fa',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
+        source,
+        '<input type="hidden" name="language" value="fa">',
+        '<input type="hidden" name="language" value="en">',
+        'wrong-hidden-locale',
+      )),
+    },
+    {
+      name: 'changed-formspree-id', checker: 'form',
+      expectedSignal: 'fa/quote: Formspree target must contain mrpzqado exactly once',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
+        source,
+        'https://formspree.io/f/mrpzqado',
+        'https://formspree.io/f/changedid',
+        'changed-formspree-id',
+      )),
+    },
+    {
+      name: 'changed-turnstile-site-key', checker: 'form',
+      expectedSignal: 'fa/quote: Turnstile Site Key must equal the approved key exactly once',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
+        source,
+        '0x4AAAAAAENHOMMn_zK0WuNN',
+        '0x4AAAAAAENHOMMn_zK0WuNX',
+        'changed-turnstile-site-key',
+      )),
+    },
+    {
+      name: 'changed-backend-field', checker: 'form',
+      expectedSignal: 'fa/quote: stable backend fields must equal name, company, email, phone, message plus hidden language',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
+        source,
+        'name="company"',
+        'name="organisation"',
+        'changed-backend-field',
+      )),
+    },
+    {
+      name: 'english-internal-link-leakage', checker: 'seo',
+      expectedSignal: 'fa/products: internal href leaves active locale routes: /quote/',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'products', (source) => replaceFirstExact(
+        source,
+        'href="/fa/quote/"',
+        'href="/quote/"',
+        'english-internal-link-leakage',
+      )),
+    },
+    {
+      name: 'extra-dom-structure', checker: 'seo',
+      expectedSignal: 'fa/demo-a: localized body structure/media differs from English demo-a',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<body>',
+        '<body><span data-n5-extra="true"></span>',
+        'extra-dom-structure',
+      )),
+    },
+  ];
+}
+
+function runReleaseCase(root, testCase) {
+  const fixture = prepareReleaseFixture(root);
+  try {
+    const greenInventory = releaseInventoryMetrics(fixture.fixtureRoot);
+    const greenResult = runReleaseChecker(fixture, testCase.checker);
+    const greenReport = parseCheckerReport(greenResult);
+    const greenPassed = greenInventory.canonicalPages === 56
+      && greenInventory.missingFiles.length === 0
+      && releaseGreenPassed(testCase, greenResult, greenReport);
+
+    testCase.mutate(fixture);
+    const mutationInventory = releaseInventoryMetrics(fixture.fixtureRoot);
+    const result = runReleaseChecker(fixture, testCase.checker);
+    const checkerReport = parseCheckerReport(result);
+    const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+    const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
+    const actualSignalFound = output.includes(testCase.expectedSignal);
+    const unaffectedMetricsMatch = mutationInventory.canonicalPages === 56
+      && mutationInventory.missingFiles.length === 0;
+    return {
+      case: testCase.name,
+      checker: testCase.checker,
+      fixtureSha256: fixtureSha256(fixture.fixtureRoot),
+      greenExitCode: greenResult.status,
+      greenInventory,
+      greenMetrics: greenReport?.metrics ?? greenReport?.controls ?? greenReport?.form ?? null,
+      exitCode: result.status,
+      expectedExitCode: 1,
+      expectedSignal: testCase.expectedSignal,
+      actualSignalFound,
+      mutationInventory,
+      mutationMetrics: checkerReport?.metrics ?? checkerReport?.controls ?? checkerReport?.form ?? null,
+      unaffectedMetricsMatch,
+      missingFileNoise,
+      status: greenPassed && result.status === 1 && actualSignalFound && unaffectedMetricsMatch && missingFileNoise === 0
+        ? 'PASS'
+        : 'FAIL',
+      greenStdoutSha256: sha256(greenResult.stdout ?? ''),
+      greenStderrSha256: sha256(greenResult.stderr ?? ''),
+      stdoutSha256: sha256(result.stdout ?? ''),
+      stderrSha256: sha256(result.stderr ?? ''),
+      output: output.trim(),
+    };
+  } finally {
+    rmSync(fixture.parent, { recursive: true, force: true });
+  }
+}
+
 function runSuite({ suite, root }) {
   if (suite === 'registry') return registryCases().map(runRegistryCase);
   if (suite === 'catalog') {
     const missing = ['ja', 'ko', 'fa'].filter((locale) => !existsSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`)));
     if (missing.length) throw new CliError(`Catalog mutation suite requires complete catalogs; missing: ${missing.join(', ')}`);
     return catalogCaseDefinitions().map(runCatalogCase);
+  }
+  if (suite === 'release') {
+    if (!root) throw new CliError('Release mutation suite requires --root=<complete-green-release>');
+    const inventory = releaseInventoryMetrics(root);
+    if (inventory.canonicalPages !== 56 || inventory.missingFiles.length) {
+      throw new CliError(`Release mutation suite requires all 56 canonical pages; found ${inventory.canonicalPages}`);
+    }
+    return releaseCaseDefinitions().map((testCase) => runReleaseCase(root, testCase));
   }
   throw new CliError(`Mutation suite is registered but not implemented yet: ${suite}${root ? ` (${root})` : ''}`);
 }
