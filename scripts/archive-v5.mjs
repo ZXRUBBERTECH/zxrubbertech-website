@@ -464,12 +464,19 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
     pageViewportPassed: 112,
     persianRtlViewportChecks: 14,
     realSubmissions: 0,
+    formspreeAttemptedPostRequests: 0,
     formspreePostRequests: 0,
   };
   for (const [key, expected] of Object.entries(exactCounts)) {
     if (report[key] !== expected) {
       throw new Error(`Acceptance report ${key} must equal ${expected}; got ${String(report[key])}`);
     }
+  }
+  if (!Array.isArray(report.formspreeInterceptedUrls)) {
+    throw new Error('Acceptance report formspreeInterceptedUrls must be an array');
+  }
+  if (report.formspreeInterceptedUrls.length !== 0) {
+    throw new Error('Acceptance report formspreeInterceptedUrls must be exactly empty');
   }
   if (report.formSubmission !== 'deferred') throw new Error('Acceptance report must record formSubmission=deferred');
   if (!Array.isArray(report.failures) || report.failures.length) throw new Error('Acceptance report failures must be an empty array');

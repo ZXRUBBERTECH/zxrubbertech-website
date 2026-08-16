@@ -982,6 +982,7 @@ async function run(options) {
     if (!browser.formEvidence.allPassed) failures.push('Quote validation evidence failed');
     if (browser.formEvidence.attemptedPostRequests !== 0) failures.push('A Formspree POST was attempted');
     if (browser.formEvidence.actualPostRequests !== 0) failures.push('A Formspree POST reached the network');
+    if (browser.formEvidence.interceptedUrls.length !== 0) failures.push('A Formspree POST URL was intercepted');
 
     if (initialManifest) {
       const finalManifest = releaseManifest(options.root);
@@ -1030,6 +1031,7 @@ async function run(options) {
       realSubmissions: 0,
       formspreeAttemptedPostRequests: browser.formEvidence.attemptedPostRequests,
       formspreePostRequests: browser.formEvidence.actualPostRequests,
+      formspreeInterceptedUrls: browser.formEvidence.interceptedUrls,
       failures,
       cleanup,
     };
@@ -1082,6 +1084,7 @@ async function main() {
       realSubmissions: 0,
       formspreeAttemptedPostRequests: 0,
       formspreePostRequests: 0,
+      formspreeInterceptedUrls: [],
       failures: [error.message],
     };
     try { writeFileSync(options.output, `${JSON.stringify(report, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' }); } catch {}

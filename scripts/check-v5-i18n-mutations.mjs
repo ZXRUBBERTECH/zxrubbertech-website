@@ -985,7 +985,9 @@ export function syntheticAcceptance(releaseManifestSha256) {
     pageViewportPassed: 112,
     persianRtlViewportChecks: 14,
     realSubmissions: 0,
+    formspreeAttemptedPostRequests: 0,
     formspreePostRequests: 0,
+    formspreeInterceptedUrls: [],
     formSubmission: 'deferred',
     failures: [],
     httpResults,
@@ -1080,6 +1082,33 @@ function archiveCaseDefinitions(bundle, root) {
     {
       name: 'release-manifest-binding', expectedSignal: 'releaseManifestSha256 must bind',
       mutate: () => validateAcceptanceData({ ...acceptance, releaseManifestSha256: '0'.repeat(64) }, bundle.manifest.sha256),
+    },
+    {
+      name: 'formspree-intercepted-urls-missing', expectedSignal: 'formspreeInterceptedUrls must be an array',
+      mutate: () => {
+        const mutated = { ...acceptance };
+        delete mutated.formspreeInterceptedUrls;
+        return validateAcceptanceData(mutated, bundle.manifest.sha256);
+      },
+    },
+    {
+      name: 'formspree-intercepted-urls-nonarray', expectedSignal: 'formspreeInterceptedUrls must be an array',
+      mutate: () => validateAcceptanceData({ ...acceptance, formspreeInterceptedUrls: {} }, bundle.manifest.sha256),
+    },
+    {
+      name: 'formspree-intercepted-urls-nonempty', expectedSignal: 'formspreeInterceptedUrls must be exactly empty',
+      mutate: () => validateAcceptanceData({
+        ...acceptance,
+        formspreeInterceptedUrls: ['https://formspree.io/f/mrpzqado'],
+      }, bundle.manifest.sha256),
+    },
+    {
+      name: 'formspree-attempted-post-one', expectedSignal: 'formspreeAttemptedPostRequests must equal 0',
+      mutate: () => validateAcceptanceData({ ...acceptance, formspreeAttemptedPostRequests: 1 }, bundle.manifest.sha256),
+    },
+    {
+      name: 'formspree-actual-post-one', expectedSignal: 'formspreePostRequests must equal 0',
+      mutate: () => validateAcceptanceData({ ...acceptance, formspreePostRequests: 1 }, bundle.manifest.sha256),
     },
     {
       name: 'archive-extra-release-file', expectedSignal: 'exactly 521 files; found 522',
