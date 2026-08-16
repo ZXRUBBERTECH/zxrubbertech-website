@@ -394,7 +394,7 @@ function catalogCaseDefinitions() {
       mutateRaw: (file) => writeFileSync(file, Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), readFileSync(file)])),
     },
     {
-      name: 'modified-protected-literal', locale: 'fa', expectedSignal: 'fa: preserved literal "martin@zxrubbertech.com"',
+      name: 'modified-protected-literal', locale: 'fa', expectedSignal: 'fa V5 catalog changed preserved value: shared.html_text.martin-zxrubbertech-com',
       mutate: (catalog) => Object.assign(catalog, replaceFirstCatalogLiteral(
         catalog,
         'martin@zxrubbertech.com',

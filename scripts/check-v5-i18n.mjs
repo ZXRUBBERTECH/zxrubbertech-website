@@ -1709,7 +1709,13 @@ async function validateRetirementGate(normalized, config) {
 export async function runV5I18nChecks(options) {
   const normalized = normalizeOptions(options);
   const files = listFiles(normalized.root);
-  validateJsonFiles(files, normalized.root);
+  const selectedCatalogFile = normalized.gate === 'catalog' && normalized.locale
+    ? resolve(catalogPaths(normalized.root, normalized.locale).catalogFile)
+    : null;
+  validateJsonFiles(
+    selectedCatalogFile ? files.filter((file) => resolve(file) !== selectedCatalogFile) : files,
+    normalized.root,
+  );
   const config = await loadRegistry();
   const inventory = discoverPageInventory(normalized, config);
 
