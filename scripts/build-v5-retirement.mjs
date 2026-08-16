@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 
-import { existsSync, lstatSync, mkdirSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getHreflangCluster, getLocalizedRoute, getLocalizedUrl, V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
 import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map.mjs';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const registryLocales = Object.freeze(Object.keys(V5_LOCALES));
+const expectedV5Urls = Object.freeze(registryLocales.flatMap((locale) => (
+  V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem))
+)));
+const acceptedCsvSha256 = '8d17b3226a266ff4539cf9a6721e4854992121663aeebd60354b3e73cf76fb63';
+const exactRobots = `User-agent: *\nAllow: /\n\nSitemap: https://www.zxrubbertech.com/sitemap.xml\n`;
+const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 
 function isInside(parent, candidate) {
   const path = relative(parent, candidate);
@@ -73,14 +82,48 @@ export function buildV5Retirement({ root } = {}) {
   const allowedTargets = new Set(V5_URLS);
   const v5Paths = new Set(V5_URLS.map((url) => new URL(url).pathname));
   const paths = new Set();
-  if (V5_URLS.length !== 35 || LEGACY_REDIRECTS.length !== 25 || CLOUDFLARE_HOSTS.length !== 2) {
+  if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)
+      || V5_URLS.length !== registryLocales.length * V5_PAGE_STEMS.length
+      || LEGACY_REDIRECTS.length !== 25
+      || CLOUDFLARE_HOSTS.length !== 2) {
     throw new Error('Redirect inventory counts are invalid');
+  }
+  const reportFile = resolve(outputRoot, 'v5-release-report.json');
+  if (!existsSync(reportFile) || !statSync(reportFile).isFile()) throw new Error('Missing full V5 release report');
+  let releaseReport;
+  try {
+    releaseReport = JSON.parse(readFileSync(reportFile, 'utf8'));
+  } catch {
+    throw new Error('V5 release report is malformed');
+  }
+  const expectedPageRecords = registryLocales.flatMap((locale) => V5_PAGE_STEMS.map((stem) => ({
+    locale,
+    stem,
+    route: getLocalizedRoute(locale, stem),
+  })));
+  if (releaseReport?.status !== 'PASS'
+      || releaseReport.locales !== registryLocales.length
+      || JSON.stringify(releaseReport.localeIds) !== JSON.stringify(registryLocales)
+      || releaseReport.publicPages !== expectedPageRecords.length
+      || releaseReport.hreflangLinks !== expectedPageRecords.length * getHreflangCluster(V5_PAGE_STEMS[0]).length
+      || releaseReport.sitemapUrls !== expectedPageRecords.length
+      || !Array.isArray(releaseReport.pages)
+      || releaseReport.pages.length !== expectedPageRecords.length) {
+    throw new Error('Retirement requires the complete ordered 56-page V5 release report');
+  }
+  for (const [index, expected] of expectedPageRecords.entries()) {
+    const page = releaseReport.pages[index];
+    if (page?.locale !== expected.locale || page?.stem !== expected.stem || page?.route !== expected.route) {
+      throw new Error(`V5 release report page order mismatch at index ${index}`);
+    }
   }
   for (const url of V5_URLS) {
     const path = new URL(url).pathname;
     const page = resolve(outputRoot, `.${path}index.html`);
     if (!existsSync(page) || !statSync(page).isFile()) throw new Error(`Missing V5 release page: ${path}`);
   }
+  const robots = readFileSync(resolve(outputRoot, 'robots.txt'), 'utf8');
+  if (robots !== exactRobots) throw new Error('robots.txt differs from the exact approved V5 content');
   for (const item of LEGACY_REDIRECTS) {
     if (paths.has(item.path)) throw new Error(`Duplicate legacy path: ${item.path}`);
     paths.add(item.path);
@@ -94,6 +137,7 @@ export function buildV5Retirement({ root } = {}) {
   const csv = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
     `${host}${path},${target},301,true,false,false,false`
   ))).join('\n') + '\n';
+  if (sha256(csv) !== acceptedCsvSha256) throw new Error('Generated Cloudflare CSV differs from the approved 50-row artifact');
   atomicWrite(resolve(outputRoot, 'cloudflare/zxrubbertech-v5-legacy-redirects.csv'), csv);
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

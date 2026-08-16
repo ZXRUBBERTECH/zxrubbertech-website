@@ -21,6 +21,7 @@ import {
   getLocalizedRoute,
   getLocalizedUrl,
   V5_LOCALES,
+  V5_PAGE_STEMS,
 } from './v5-i18n-config.mjs';
 import { applyV5LocalizationOperations, loadV5Catalog } from './v5-i18n-transform.mjs';
 import { injectV5LanguageControls } from './v5-language-controls.mjs';
@@ -31,6 +32,11 @@ const previewRoot = join(repo, 'design-demos');
 const productionSitemapFile = join(repo, 'sitemap.xml');
 const productionLogoFile = join(repo, 'LOGO', 'ZXLOGO.png');
 const publicStems = Object.freeze(Object.keys(seoPages));
+const registryLocales = Object.freeze(Object.keys(V5_LOCALES));
+
+if (JSON.stringify(publicStems) !== JSON.stringify(V5_PAGE_STEMS)) {
+  throw new Error('V5 release page inventory must exactly match the registry order');
+}
 
 function isInside(parent, candidate) {
   const path = relative(parent, candidate);
@@ -152,7 +158,7 @@ function buildSitemapCandidate(locales) {
 
 export function buildV5Release({ outputDir, locales = null, locale = null } = {}) {
   if (locale !== null && locales !== null) throw new Error('Use either locale or locales, not both');
-  const activeLocales = locale !== null ? [locale] : (locales ?? Object.keys(V5_LOCALES));
+  const activeLocales = locale !== null ? [locale] : (locales ?? registryLocales);
   if (!Array.isArray(activeLocales) || !activeLocales.length || new Set(activeLocales).size !== activeLocales.length) {
     throw new Error('V5 release locales must be a nonempty unique array');
   }
@@ -160,6 +166,11 @@ export function buildV5Release({ outputDir, locales = null, locale = null } = {}
     if (!Object.hasOwn(V5_LOCALES, activeLocale)) {
       throw new Error(`Unsupported V5 release locale: ${String(activeLocale)}`);
     }
+  }
+  if (activeLocales.length !== 1 && JSON.stringify(activeLocales) !== JSON.stringify(registryLocales)) {
+    throw new Error(
+      `V5 release must use either one QA locale or the complete ordered registry: ${registryLocales.join(', ')}`,
+    );
   }
   const output = prepareOutputDirectory(outputDir);
   const pages = [];
@@ -213,7 +224,7 @@ export function buildV5Release({ outputDir, locales = null, locale = null } = {}
     locales: activeLocales.length,
     localeIds: activeLocales,
     publicPages: pages.length,
-    hreflangLinks: pages.length * getHreflangCluster(publicStems[0]).length,
+    hreflangLinks: pages.length * getHreflangCluster(V5_PAGE_STEMS[0]).length,
     sitemapUrls: sitemap.urls.length,
     pages,
   };

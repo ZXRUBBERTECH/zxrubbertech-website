@@ -1,6 +1,5 @@
 import {
   copyFileSync,
-  cpSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -14,22 +13,23 @@ import {
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { V5_LOCALES, V5_PAGE_STEMS, getLocalizedRoute } from './v5-i18n-config.mjs';
+import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map.mjs';
+import {
+  packageName as archivePackageName,
+  rollbackRevision as archiveRollbackRevision,
+  validateAcceptanceData,
+  validateArchiveIdentity,
+  validateReleaseBundle,
+  validateReleaseReportData,
+} from './archive-v5.mjs';
 
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(scriptsRoot, '..');
 const supportedSuites = new Set(['registry', 'catalog', 'release', 'retirement', 'archive', 'all']);
-const previewFiles = [
-  'demo-a-v5.html',
-  'products-v5.html',
-  'compounds-v5.html',
-  'industries-v5.html',
-  'capabilities-v5.html',
-  'faq-v5.html',
-  'quote-v5.html',
-];
+const previewFiles = V5_PAGE_STEMS.map((stem) => `${stem}-v5.html`);
 const registryDependencies = [
   'check-v5-i18n.mjs',
   'v5-i18n-config.mjs',
@@ -43,7 +43,7 @@ const catalogDependencies = [
   'v5-language-controls.mjs',
   'v5-i18n-baseline.json',
 ];
-const catalogLocales = ['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa'];
+const catalogLocales = Object.keys(V5_LOCALES);
 const mutationValuePath = ['pages', 'demo-a', 'html_text', 'engineered-rubber-compounds-and-components'];
 
 class CliError extends Error {}
@@ -88,6 +88,11 @@ function fixtureSha256(root) {
     for (const name of readdirSync(directory).sort()) {
       const file = join(directory, name);
       const info = lstatSync(file);
+      if (info.isSymbolicLink()) {
+        hash.update(relative(root, file).split('\\').join('/'));
+        hash.update('\0SYMLINK\0');
+        continue;
+      }
       if (info.isDirectory()) {
         visit(file);
         continue;
@@ -101,6 +106,20 @@ function fixtureSha256(root) {
   };
   visit(root);
   return hash.digest('hex');
+}
+
+function copyTreeSafe(source, destination) {
+  const info = lstatSync(source);
+  if (info.isSymbolicLink()) throw new Error(`Mutation fixture source contains a symbolic link: ${source}`);
+  if (info.isDirectory()) {
+    mkdirSync(destination, { recursive: false });
+    for (const name of readdirSync(source).sort()) {
+      copyTreeSafe(join(source, name), join(destination, name));
+    }
+    return;
+  }
+  if (!info.isFile()) throw new Error(`Mutation fixture source contains an unsupported entry: ${source}`);
+  copyFileSync(source, destination);
 }
 
 function replaceOnce(source, pattern, replacement, label) {
@@ -523,7 +542,7 @@ function releaseInventoryMetrics(root) {
 function prepareReleaseFixture(root) {
   const parent = mkdtempSync(join(tmpdir(), 'zxrubbertech-v5-release-mutation.'));
   const fixtureRoot = join(parent, 'release');
-  cpSync(root, fixtureRoot, { recursive: true, errorOnExist: true, force: false });
+  copyTreeSafe(root, fixtureRoot);
   return { parent, fixtureRoot };
 }
 
@@ -785,6 +804,323 @@ function runReleaseCase(root, testCase) {
   }
 }
 
+function writeRetirementMap(file, redirects = LEGACY_REDIRECTS) {
+  writeFileSync(file, [
+    `export const V5_URLS = Object.freeze(${JSON.stringify(V5_URLS)});`,
+    `export const CLOUDFLARE_HOSTS = Object.freeze(${JSON.stringify(CLOUDFLARE_HOSTS)});`,
+    `export const LEGACY_REDIRECTS = Object.freeze(${JSON.stringify(redirects)}.map((entry) => Object.freeze(entry)));`,
+    '',
+  ].join('\n'), 'utf8');
+}
+
+function prepareRetirementFixture(root) {
+  const parent = mkdtempSync(join(tmpdir(), 'zxrubbertech-v5-retirement-mutation.'));
+  const fixtureRepo = join(parent, 'zxrubbertech-website');
+  const fixtureScripts = join(fixtureRepo, 'scripts');
+  const fixtureRoot = join(parent, 'release');
+  mkdirSync(fixtureScripts, { recursive: true });
+  for (const file of registryDependencies) copyFileSync(join(scriptsRoot, file), join(fixtureScripts, file));
+  copyFileSync(join(scriptsRoot, 'check-v5-retirement.mjs'), join(fixtureScripts, 'check-v5-retirement.mjs'));
+  writeRetirementMap(join(fixtureScripts, 'v5-retirement-map.mjs'));
+  copyTreeSafe(root, fixtureRoot);
+  return { parent, fixtureRepo, fixtureScripts, fixtureRoot };
+}
+
+function runRetirementChecker(fixture) {
+  return spawnSync(process.execPath, [
+    realpathSync(join(fixture.fixtureScripts, 'check-v5-retirement.mjs')),
+    `--root=${fixture.fixtureRoot}`,
+  ], {
+    cwd: fixture.fixtureRepo,
+    encoding: 'utf8',
+    maxBuffer: 30 * 1024 * 1024,
+  });
+}
+
+function retirementCaseDefinitions() {
+  const csvFile = (fixture) => join(fixture.fixtureRoot, 'cloudflare', 'zxrubbertech-v5-legacy-redirects.csv');
+  return [
+    {
+      name: 'replace-historical-locale-with-japanese',
+      expectedSignal: 'missing approved legacy mapping',
+      mutate: (fixture) => {
+        const redirects = LEGACY_REDIRECTS.map((entry) => ({ ...entry }));
+        const previous = redirects[0];
+        redirects[0] = {
+          locale: 'ja', htmlLang: 'ja', path: '/ja/products/suspension-bushing/',
+          target: 'https://www.zxrubbertech.com/ja/products/#c-automotive',
+        };
+        writeRetirementMap(join(fixture.fixtureScripts, 'v5-retirement-map.mjs'), redirects);
+        const source = join(fixture.fixtureRoot, previous.path.slice(1), 'index.html');
+        const destination = join(fixture.fixtureRoot, redirects[0].path.slice(1), 'index.html');
+        mkdirSync(dirname(destination), { recursive: true });
+        copyFileSync(source, destination);
+        rmSync(source);
+      },
+    },
+    {
+      name: 'extra-japanese-legacy-fallback',
+      expectedSignal: 'unexpected HTML page in retirement bundle: ja/products/rubber-wheel/index.html',
+      mutate: (fixture) => {
+        const destination = join(fixture.fixtureRoot, 'ja/products/rubber-wheel/index.html');
+        mkdirSync(dirname(destination), { recursive: true });
+        copyFileSync(join(fixture.fixtureRoot, 'products/rubber-wheel/index.html'), destination);
+      },
+    },
+    {
+      name: 'fallback-target-swap',
+      expectedSignal: 'fallback token count must be 1',
+      mutate: (fixture) => {
+        const file = join(fixture.fixtureRoot, 'de/products/rubber-wheel/index.html');
+        const source = readFileSync(file, 'utf8');
+        writeFileSync(file, source.replaceAll('#c-industrial', '#c-automotive'), 'utf8');
+      },
+    },
+    {
+      name: 'cloudflare-csv-crlf',
+      expectedSignal: 'Cloudflare CSV SHA-256 mismatch',
+      mutate: (fixture) => writeFileSync(csvFile(fixture), readFileSync(csvFile(fixture), 'utf8').replaceAll('\n', '\r\n'), 'utf8'),
+    },
+    {
+      name: 'cloudflare-csv-missing-final-lf',
+      expectedSignal: 'Cloudflare CSV SHA-256 mismatch',
+      mutate: (fixture) => writeFileSync(csvFile(fixture), readFileSync(csvFile(fixture), 'utf8').replace(/\n$/, ''), 'utf8'),
+    },
+    {
+      name: 'cloudflare-csv-swapped-lines',
+      expectedSignal: 'Cloudflare CSV SHA-256 mismatch',
+      mutate: (fixture) => {
+        const rows = readFileSync(csvFile(fixture), 'utf8').trimEnd().split('\n');
+        [rows[0], rows[1]] = [rows[1], rows[0]];
+        writeFileSync(csvFile(fixture), `${rows.join('\n')}\n`, 'utf8');
+      },
+    },
+    {
+      name: 'extra-release-file',
+      expectedSignal: 'retirement bundle must contain exactly 521 files; found 522',
+      mutate: (fixture) => writeFileSync(join(fixture.fixtureRoot, 'extra.txt'), 'unexpected\n', 'utf8'),
+    },
+    {
+      name: 'release-symlink',
+      expectedSignal: 'symbolic link is not allowed in retirement root',
+      mutate: (fixture) => {
+        const target = join(fixture.fixtureRoot, 'extra-link');
+        const result = spawnSync('/bin/ln', ['-s', 'robots.txt', target], { encoding: 'utf8' });
+        if (result.status !== 0) throw new Error(`Unable to create symlink fixture: ${result.stderr}`);
+      },
+    },
+  ];
+}
+
+function runRetirementCase(root, testCase) {
+  const fixture = prepareRetirementFixture(root);
+  try {
+    const greenResult = runRetirementChecker(fixture);
+    const greenReport = parseCheckerReport(greenResult);
+    const greenPassed = greenResult.status === 0
+      && greenReport?.status === 'PASS'
+      && JSON.stringify(greenReport.metrics) === JSON.stringify({
+        v5Urls: 56, legacyPaths: 25, fallbackPages: 25, cloudflareEntries: 50, sitemapUrls: 56,
+      });
+    testCase.mutate(fixture);
+    const result = runRetirementChecker(fixture);
+    const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+    const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
+    const signalFound = output.includes(testCase.expectedSignal);
+    return {
+      case: testCase.name,
+      fixtureSha256: fixtureSha256(fixture.fixtureRoot),
+      greenExitCode: greenResult.status,
+      greenMetrics: greenReport?.metrics ?? null,
+      exitCode: result.status,
+      expectedExitCode: 1,
+      expectedSignal: testCase.expectedSignal,
+      actualSignalFound: signalFound,
+      missingFileNoise,
+      status: greenPassed && result.status === 1 && signalFound && missingFileNoise === 0 ? 'PASS' : 'FAIL',
+      greenStdoutSha256: sha256(greenResult.stdout ?? ''),
+      greenStderrSha256: sha256(greenResult.stderr ?? ''),
+      stdoutSha256: sha256(result.stdout ?? ''),
+      stderrSha256: sha256(result.stderr ?? ''),
+      output: output.trim(),
+    };
+  } finally {
+    rmSync(fixture.parent, { recursive: true, force: true });
+  }
+}
+
+export function syntheticAcceptance(releaseManifestSha256) {
+  const httpResults = [
+    ...Object.keys(V5_LOCALES).flatMap((locale) => V5_PAGE_STEMS.map((stem) => ({
+      route: getLocalizedRoute(locale, stem), ok: true, status: 200,
+    }))),
+    ...LEGACY_REDIRECTS.map(({ path }) => ({ route: path, ok: true, status: 200 })),
+  ];
+  const browserResults = Object.keys(V5_LOCALES).flatMap((locale) => V5_PAGE_STEMS.flatMap((stem) => (
+    ['1280x900', '390x844'].map((viewport) => ({
+      locale,
+      stem,
+      viewport,
+      ok: true,
+      h1Count: 1,
+      horizontalOverflow: false,
+      localOverflow: false,
+      brokenImages: 0,
+      failedVideos: 0,
+      controlsValid: true,
+      canonicalValid: true,
+      hreflangCount: 9,
+      internalNavigationValid: true,
+      migrationConsoleErrors: [],
+      ...(locale === 'fa' ? { rtlValid: true, mediaMirrored: false, mapMirrored: false } : {}),
+    }))
+  )));
+  return {
+    status: 'PASS',
+    releaseManifestSha256,
+    httpRoutes: 81,
+    httpPassed: 81,
+    browserPages: 56,
+    pageViewportChecks: 112,
+    pageViewportPassed: 112,
+    persianRtlViewportChecks: 14,
+    realSubmissions: 0,
+    formspreePostRequests: 0,
+    formSubmission: 'deferred',
+    failures: [],
+    httpResults,
+    browserResults,
+    clickPaths: {
+      samePageLanguageRoles: 7,
+      productsFragment: true,
+      compoundsFragment: true,
+      quoteIndustry: true,
+      quoteContact: true,
+      mobileFragments: true,
+      email: true,
+      whatsapp: true,
+      map: true,
+      localizedInternalNavigation: true,
+      keyboardTab: true,
+      keyboardArrows: true,
+      keyboardEscape: true,
+      persianFocusOrder: true,
+    },
+  };
+}
+
+function runWithMutatedReleaseRoot(root, mutation) {
+  const parent = mkdtempSync(join(tmpdir(), 'zxrubbertech-v5-archive-mutation.'));
+  const fixtureRoot = join(parent, 'release');
+  try {
+    copyTreeSafe(root, fixtureRoot);
+    mutation(fixtureRoot);
+    const realFixtureRoot = realpathSync(fixtureRoot);
+    try {
+      return validateReleaseBundle(realFixtureRoot);
+    } catch (error) {
+      const message = (error instanceof Error ? error.message : String(error)).replaceAll(realFixtureRoot, '<fixture-root>');
+      throw new Error(message);
+    }
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+}
+
+function archiveCaseDefinitions(bundle, root) {
+  const acceptance = syntheticAcceptance(bundle.manifest.sha256);
+  return [
+    {
+      name: 'old-package-identity', expectedSignal: 'Archive package identity must equal',
+      mutate: () => validateArchiveIdentity({ candidatePackageName: 'zxrubbertech-v5-language-routing-release-candidate-2026-08-15-rc1' }),
+    },
+    {
+      name: 'old-rollback-revision', expectedSignal: 'Archive rollback revision must equal',
+      mutate: () => validateArchiveIdentity({ candidateRollbackRevision: '17c079572603759a7c96dd3d2fbf7f756a7aea3e' }),
+    },
+    {
+      name: 'old-release-public-pages-35', expectedSignal: 'publicPages=35, expected 56',
+      mutate: () => validateReleaseReportData({ ...bundle.report, publicPages: 35 }),
+    },
+    {
+      name: 'old-release-hreflang-210', expectedSignal: 'hreflangLinks=210, expected 504',
+      mutate: () => validateReleaseReportData({ ...bundle.report, hreflangLinks: 210 }),
+    },
+    {
+      name: 'old-http-count-60', expectedSignal: 'httpRoutes must equal 81',
+      mutate: () => validateAcceptanceData({ ...acceptance, httpRoutes: 60, httpPassed: 60 }, bundle.manifest.sha256),
+    },
+    {
+      name: 'old-browser-count-70', expectedSignal: 'pageViewportChecks must equal 112',
+      mutate: () => validateAcceptanceData({ ...acceptance, pageViewportChecks: 70, pageViewportPassed: 70 }, bundle.manifest.sha256),
+    },
+    {
+      name: 'old-hreflang-count-6', expectedSignal: 'failed browser invariant',
+      mutate: () => validateAcceptanceData({
+        ...acceptance,
+        browserResults: acceptance.browserResults.map((result, index) => index === 0 ? { ...result, hreflangCount: 6 } : result),
+      }, bundle.manifest.sha256),
+    },
+    {
+      name: 'browser-delete-and-duplicate-preserving-112', expectedSignal: 'browser result order mismatch',
+      mutate: () => validateAcceptanceData({
+        ...acceptance,
+        browserResults: [...acceptance.browserResults.slice(0, -1), acceptance.browserResults[0]],
+      }, bundle.manifest.sha256),
+    },
+    {
+      name: 'persian-delete-and-duplicate-preserving-14', expectedSignal: 'browser result order mismatch',
+      mutate: () => {
+        const results = acceptance.browserResults.map((result) => ({ ...result }));
+        const faIndex = results.findIndex((result) => result.locale === 'fa');
+        results[faIndex] = { ...results[0] };
+        return validateAcceptanceData({ ...acceptance, browserResults: results }, bundle.manifest.sha256);
+      },
+    },
+    {
+      name: 'release-manifest-binding', expectedSignal: 'releaseManifestSha256 must bind',
+      mutate: () => validateAcceptanceData({ ...acceptance, releaseManifestSha256: '0'.repeat(64) }, bundle.manifest.sha256),
+    },
+    {
+      name: 'archive-extra-release-file', expectedSignal: 'exactly 521 files; found 522',
+      mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
+        writeFileSync(join(fixtureRoot, 'extra.txt'), 'unexpected\n', 'utf8');
+      }),
+    },
+    {
+      name: 'archive-release-symlink', expectedSignal: 'symbolic link',
+      mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
+        const result = spawnSync('/bin/ln', ['-s', 'robots.txt', join(fixtureRoot, 'extra-link')], { encoding: 'utf8' });
+        if (result.status !== 0) throw new Error(`Unable to create archive symlink fixture: ${result.stderr}`);
+      }),
+    },
+  ];
+}
+
+function runArchiveCase(bundle, testCase) {
+  let actualSignalFound = false;
+  let output = '';
+  try {
+    testCase.mutate();
+  } catch (error) {
+    output = error instanceof Error ? error.message : String(error);
+    actualSignalFound = output.includes(testCase.expectedSignal);
+  }
+  return {
+    case: testCase.name,
+    fixtureSha256: bundle.manifest.sha256,
+    greenExitCode: 0,
+    greenMetrics: { releaseFiles: 521, publicPages: 56, hreflangLinks: 504, sitemapUrls: 56 },
+    exitCode: actualSignalFound ? 1 : 0,
+    expectedExitCode: 1,
+    expectedSignal: testCase.expectedSignal,
+    actualSignalFound,
+    missingFileNoise: 0,
+    status: actualSignalFound ? 'PASS' : 'FAIL',
+    output,
+  };
+}
+
 function runSuite({ suite, root }) {
   if (suite === 'registry') return registryCases().map(runRegistryCase);
   if (suite === 'catalog') {
@@ -799,6 +1135,29 @@ function runSuite({ suite, root }) {
       throw new CliError(`Release mutation suite requires all 56 canonical pages; found ${inventory.canonicalPages}`);
     }
     return releaseCaseDefinitions().map((testCase) => runReleaseCase(root, testCase));
+  }
+  if (suite === 'retirement') {
+    if (!root) throw new CliError('Retirement mutation suite requires --root=<complete-green-release>');
+    return retirementCaseDefinitions().map((testCase) => runRetirementCase(root, testCase));
+  }
+  if (suite === 'archive') {
+    if (!root) throw new CliError('Archive mutation suite requires --root=<complete-green-release>');
+    const bundle = validateReleaseBundle(root);
+    validateArchiveIdentity({ candidatePackageName: archivePackageName, candidateRollbackRevision: archiveRollbackRevision });
+    validateReleaseReportData(bundle.report);
+    validateAcceptanceData(syntheticAcceptance(bundle.manifest.sha256), bundle.manifest.sha256);
+    return archiveCaseDefinitions(bundle, root).map((testCase) => runArchiveCase(bundle, testCase));
+  }
+  if (suite === 'all') {
+    if (!root) throw new CliError('All mutation suites require --root=<complete-green-release>');
+    const bundle = validateReleaseBundle(root);
+    return [
+      ...registryCases().map(runRegistryCase),
+      ...catalogCaseDefinitions().map(runCatalogCase),
+      ...releaseCaseDefinitions().map((testCase) => runReleaseCase(root, testCase)),
+      ...retirementCaseDefinitions().map((testCase) => runRetirementCase(root, testCase)),
+      ...archiveCaseDefinitions(bundle, root).map((testCase) => runArchiveCase(bundle, testCase)),
+    ];
   }
   throw new CliError(`Mutation suite is registered but not implemented yet: ${suite}${root ? ` (${root})` : ''}`);
 }
@@ -823,10 +1182,12 @@ function main() {
   if (failures.length > 0) process.exitCode = 1;
 }
 
-try {
-  main();
-} catch (error) {
-  const report = { checker: 'v5-i18n-mutations', status: 'FAIL', error: error.message };
-  process.stderr.write(`${JSON.stringify(report)}\n`);
-  process.exitCode = error instanceof CliError ? 2 : 1;
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  try {
+    main();
+  } catch (error) {
+    const report = { checker: 'v5-i18n-mutations', status: 'FAIL', error: error.message };
+    process.stderr.write(`${JSON.stringify(report)}\n`);
+    process.exitCode = error instanceof CliError ? 2 : 1;
+  }
 }

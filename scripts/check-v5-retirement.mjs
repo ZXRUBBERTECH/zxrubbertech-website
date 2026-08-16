@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync, statSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { join, relative, resolve, sep } from 'node:path';
+import { getLocalizedUrl, V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
 import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map.mjs';
 
 const cliFailures = [];
@@ -20,9 +22,12 @@ for (const argument of process.argv.slice(2)) {
   if (!rootArgument) cliFailures.push('--root must not be empty');
 }
 
-const repositoryRoot = resolve(rootArgument ?? resolve(import.meta.dirname, '..'));
-if (!existsSync(repositoryRoot)) cliFailures.push(`root does not exist: ${repositoryRoot}`);
-else if (!statSync(repositoryRoot).isDirectory()) cliFailures.push(`root is not a directory: ${repositoryRoot}`);
+const requestedRoot = resolve(rootArgument ?? resolve(import.meta.dirname, '..'));
+if (!existsSync(requestedRoot)) cliFailures.push(`root does not exist: ${requestedRoot}`);
+else if (lstatSync(requestedRoot).isSymbolicLink() || !lstatSync(requestedRoot).isDirectory()) {
+  cliFailures.push(`root must be a real directory: ${requestedRoot}`);
+}
+const repositoryRoot = existsSync(requestedRoot) ? realpathSync(requestedRoot) : requestedRoot;
 
 if (cliFailures.length) {
   process.stderr.write(`${JSON.stringify({ status: 'FAIL', failures: cliFailures }, null, 2)}\n`);
@@ -30,7 +35,18 @@ if (cliFailures.length) {
 }
 
 const failures = [];
-const expectedCounts = Object.freeze({ v5Urls: 35, legacyPaths: 25, hosts: 2, csvRows: 50 });
+const registryLocales = Object.freeze(Object.keys(V5_LOCALES));
+const expectedV5Urls = Object.freeze(registryLocales.flatMap((locale) => (
+  V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem))
+)));
+const expectedCounts = Object.freeze({
+  v5Urls: registryLocales.length * V5_PAGE_STEMS.length,
+  legacyPaths: 25,
+  hosts: 2,
+  csvRows: 50,
+});
+const acceptedCsvSha256 = '8d17b3226a266ff4539cf9a6721e4854992121663aeebd60354b3e73cf76fb63';
+const exactRobots = `User-agent: *\nAllow: /\n\nSitemap: https://www.zxrubbertech.com/sitemap.xml\n`;
 const allowedTargets = new Set(V5_URLS);
 const allowedFragments = new Set(['', '#c-automotive', '#c-industrial']);
 const legacyPaths = new Set();
@@ -71,8 +87,9 @@ const read = (relativePath) => {
     fail(`missing file: ${relativePath}`);
     return null;
   }
-  if (!statSync(absolutePath).isFile()) {
-    fail(`not a file: ${relativePath}`);
+  const info = lstatSync(absolutePath);
+  if (info.isSymbolicLink() || !info.isFile() || !realpathSync(absolutePath).startsWith(`${repositoryRoot}${sep}`)) {
+    fail(`not a real file inside root: ${relativePath}`);
     return null;
   }
   return readFileSync(absolutePath, 'utf8');
@@ -90,7 +107,9 @@ const decodeXml = (value) => value
   .replaceAll('&gt;', '>')
   .replaceAll('&apos;', "'");
 
-if (V5_URLS.length !== expectedCounts.v5Urls) fail(`expected 35 V5 URLs, found ${V5_URLS.length}`);
+if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)) {
+  fail(`V5 URL inventory must exactly match the ordered ${expectedCounts.v5Urls}-route registry`);
+}
 if (LEGACY_REDIRECTS.length !== expectedCounts.legacyPaths) fail(`expected 25 legacy paths, found ${LEGACY_REDIRECTS.length}`);
 const actualByPath = new Map(LEGACY_REDIRECTS.map((entry) => [entry.path, entry]));
 for (const expected of expectedLegacyRedirects) {
@@ -187,6 +206,10 @@ const csvRelativePath = 'cloudflare/zxrubbertech-v5-legacy-redirects.csv';
 const csvContents = read(csvRelativePath);
 let cloudflareEntries = 0;
 if (csvContents !== null) {
+  const csvSha256 = createHash('sha256').update(csvContents).digest('hex');
+  if (csvSha256 !== acceptedCsvSha256) {
+    fail(`Cloudflare CSV SHA-256 mismatch: expected ${acceptedCsvSha256}; actual ${csvSha256}`);
+  }
   const rows = csvContents.split(/\r?\n/).filter(Boolean);
   cloudflareEntries = rows.length;
   if (rows.length !== expectedCounts.csvRows) fail(`expected 50 CSV rows, found ${rows.length}`);
@@ -231,7 +254,7 @@ if (sitemapContents !== null) {
   const locations = [...sitemapContents.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeXml(match[1]));
   sitemapUrls = locations.length;
   if (JSON.stringify(locations) !== JSON.stringify(V5_URLS)) {
-    fail(`sitemap URLs must exactly equal the 35 V5 URLs: ${JSON.stringify(locations)}`);
+    fail(`sitemap URLs must exactly equal the ${expectedCounts.v5Urls} V5 URLs: ${JSON.stringify(locations)}`);
   }
   if (/hreflang=/i.test(sitemapContents)) fail('sitemap must not contain legacy hreflang annotations');
   if (locations.some((location) => location.includes('#'))) fail('sitemap URLs must not contain fragments');
@@ -242,15 +265,7 @@ if (sitemapContents !== null) {
 }
 
 const robotsContents = read('robots.txt');
-if (robotsContents !== null) {
-  for (const requiredLine of [
-    'User-agent: *',
-    'Allow: /',
-    'Sitemap: https://www.zxrubbertech.com/sitemap.xml',
-  ]) {
-    if (!robotsContents.includes(requiredLine)) fail(`robots.txt missing: ${requiredLine}`);
-  }
-}
+if (robotsContents !== null && robotsContents !== exactRobots) fail('robots.txt must equal the exact approved V5 content');
 
 const publicPages = Object.freeze(V5_URLS.map((canonical) => {
   const path = new URL(canonical).pathname;
@@ -279,6 +294,40 @@ for (const [relativePath, canonical] of publicPages) {
     }
   }
 }
+
+const allowedHtmlFiles = new Set([
+  ...publicPages.map(([relativePath]) => relativePath),
+  ...LEGACY_REDIRECTS.map(({ path }) => `${path.slice(1)}index.html`),
+]);
+const discoveredHtmlFiles = [];
+const discoveredFiles = [];
+const walkHtml = (directory) => {
+  for (const name of readdirSync(directory).sort()) {
+    const absolute = join(directory, name);
+    const info = lstatSync(absolute);
+    if (info.isSymbolicLink()) {
+      fail(`symbolic link is not allowed in retirement root: ${relative(repositoryRoot, absolute)}`);
+      continue;
+    }
+    if (info.isDirectory()) walkHtml(absolute);
+    else if (info.isFile()) {
+      const relativePath = relative(repositoryRoot, absolute).split(sep).join('/');
+      discoveredFiles.push(relativePath);
+      if (name.endsWith('.html')) discoveredHtmlFiles.push(relativePath);
+    }
+  }
+};
+walkHtml(repositoryRoot);
+for (const relativePath of discoveredHtmlFiles) {
+  if (!allowedHtmlFiles.has(relativePath)) fail(`unexpected HTML page in retirement bundle: ${relativePath}`);
+}
+for (const relativePath of allowedHtmlFiles) {
+  if (!discoveredHtmlFiles.includes(relativePath)) fail(`missing approved HTML page in retirement bundle: ${relativePath}`);
+}
+if (discoveredHtmlFiles.length !== expectedCounts.v5Urls + expectedCounts.legacyPaths) {
+  fail(`retirement bundle must contain exactly ${expectedCounts.v5Urls + expectedCounts.legacyPaths} HTML pages; found ${discoveredHtmlFiles.length}`);
+}
+if (discoveredFiles.length !== 521) fail(`retirement bundle must contain exactly 521 files; found ${discoveredFiles.length}`);
 
 const quoteContents = read('quote/index.html');
 if (quoteContents !== null) {
