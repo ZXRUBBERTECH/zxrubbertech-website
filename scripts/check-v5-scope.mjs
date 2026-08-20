@@ -19,6 +19,7 @@ const baselineFile = process.env.ZX_V5_SCOPE_BASELINE_FILE
 const productionRoots = [
   'index.html', 'CNAME', '.nojekyll', 'robots.txt', 'sitemap.xml', 'og-image.jpg', 'assets',
   'de', 'zh', 'ru', 'tr', 'ja', 'ko', 'fa', 'products',
+  'rubber-compounds', 'industries', 'capabilities', 'faq', 'quote',
 ];
 const productionVisualRoots = ['OptimizedPicture', '产品照片', '设备照片'];
 const productionScripts = ['extract_i18n.mjs','build_i18n_pages.py','build_products.py','build_sitemap.py'];

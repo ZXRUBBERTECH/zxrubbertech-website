@@ -1642,6 +1642,10 @@
       "sha256": "8c87df9e3bb909e88182ac48388049af7c290d8993818289f9029c1d82ee12ef"
     },
     {
+      "path": "zxrubbertech-website/capabilities/index.html",
+      "sha256": "78fc190b0998d8f8c06d71cc411ddc8498f1d6d6446005d06bd98f5fdc8b708b"
+    },
+    {
       "path": "zxrubbertech-website/CNAME",
       "sha256": "d04cf08af2aeb83bd9aa08d4ce5743fe0ab178e68e8ef1c105b6c359abf34057"
     },
@@ -3214,8 +3218,16 @@
       "sha256": "f8ad89ab946657297f476c05701a5694ba1842f5b47a191deb2521f8e148ce80"
     },
     {
+      "path": "zxrubbertech-website/faq/index.html",
+      "sha256": "3f253b4b8f3f832fb86e35cb427b34232dc11b82a1fceba1cee12c7f1891f207"
+    },
+    {
       "path": "zxrubbertech-website/index.html",
       "sha256": "f34e49756a63557c53da6341ef1a3ba35dd8104469876b55322a566699b1dfd9"
+    },
+    {
+      "path": "zxrubbertech-website/industries/index.html",
+      "sha256": "5f854b1249009258764681a6c88fa547529eb26f40bcbbb44d9d701593a7b469"
     },
     {
       "path": "zxrubbertech-website/ja/capabilities/index.html",
@@ -3378,6 +3390,10 @@
       "sha256": "69d9b3497ecd57f9a1024cf941cea825207418a6d3d3e419cbd0c1966040d869"
     },
     {
+      "path": "zxrubbertech-website/quote/index.html",
+      "sha256": "5c0d94d5ed5eda2940c0d2a513b87eb39812f7114a10709a06740405a6720b78"
+    },
+    {
       "path": "zxrubbertech-website/robots.txt",
       "sha256": "a32a65c85f0e957c923e8a87c3b9c5d6c9e86d23dad2a77759d33464e4cac141"
     },
@@ -3428,6 +3444,10 @@
     {
       "path": "zxrubbertech-website/ru/rubber-compounds/index.html",
       "sha256": "c049222a0b131fbef0aa432c479d369fb7386067887045e75f8f3ef2af5e071b"
+    },
+    {
+      "path": "zxrubbertech-website/rubber-compounds/index.html",
+      "sha256": "1ad290fc3848ef0ef6dc6be1b7f9b997a20208f4e54ecb3c786bba2a793207cd"
     },
     {
       "path": "zxrubbertech-website/scripts/build_i18n_pages.py",
