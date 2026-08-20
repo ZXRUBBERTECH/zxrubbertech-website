@@ -71,6 +71,13 @@
       "inquiryAcknowledgement": "ظرف ۲۴ ساعت",
       "regularCompoundMoq": "۲ تن متریک",
       "quotationWindow": "۲ تا ۷ روز کاری"
+    },
+    "ar": {
+      "annualCompoundCapacity": "حوالي ٣٬٠٠٠ طن متري",
+      "annualMoldedComponents": "أكثر من ١٥ مليون قطعة مطاطية مقولبة في السنة",
+      "inquiryAcknowledgement": "خلال ٢٤ ساعة",
+      "regularCompoundMoq": "٢ طن متري",
+      "quotationWindow": "من ٢ إلى ٧ أيام عمل"
     }
   },
   "terms": {
@@ -82,7 +89,8 @@
       "tr": "kauçuk karışımı",
       "ja": "ゴムコンパウンド",
       "ko": "고무 컴파운드",
-      "fa": "آمیزه لاستیکی"
+      "fa": "آمیزه لاستیکی",
+      "ar": "خلطة مطاطية"
     },
     "molded rubber parts": {
       "en": "molded rubber parts",
@@ -92,7 +100,8 @@
       "tr": "kalıplanmış kauçuk parçalar",
       "ja": "ゴム成形品",
       "ko": "성형 고무 부품",
-      "fa": "قطعات لاستیکی قالب‌گیری‌شده"
+      "fa": "قطعات لاستیکی قالب‌گیری‌شده",
+      "ar": "أجزاء مطاطية مقولبة"
     },
     "rubber-to-metal bonding": {
       "en": "rubber-to-metal bonding",
@@ -102,7 +111,8 @@
       "tr": "kauçuk-metal yapıştırma",
       "ja": "ゴムと金属の接着",
       "ko": "고무-금속 접착",
-      "fa": "اتصال لاستیک به فلز"
+      "fa": "اتصال لاستیک به فلز",
+      "ar": "ربط المطاط بالمعدن"
     },
     "compression molding": {
       "en": "compression molding",
@@ -112,7 +122,8 @@
       "tr": "sıkıştırma kalıplama",
       "ja": "圧縮成形",
       "ko": "압축 성형",
-      "fa": "قالب‌گیری فشاری"
+      "fa": "قالب‌گیری فشاری",
+      "ar": "القولبة بالضغط"
     },
     "injection molding": {
       "en": "injection molding",
@@ -122,7 +133,8 @@
       "tr": "enjeksiyon kalıplama",
       "ja": "射出成形",
       "ko": "사출 성형",
-      "fa": "قالب‌گیری تزریقی"
+      "fa": "قالب‌گیری تزریقی",
+      "ar": "القولبة بالحقن"
     },
     "extrusion": {
       "en": "extrusion",
@@ -132,7 +144,8 @@
       "tr": "ekstrüzyon",
       "ja": "押出成形",
       "ko": "압출 성형",
-      "fa": "اکستروژن"
+      "fa": "اکستروژن",
+      "ar": "البثق"
     },
     "tooling": {
       "en": "tooling",
@@ -142,7 +155,8 @@
       "tr": "kalıp",
       "ja": "金型",
       "ko": "금형",
-      "fa": "قالب و ابزار تولید"
+      "fa": "قالب و ابزار تولید",
+      "ar": "القوالب وأدوات الإنتاج"
     },
     "traceability": {
       "en": "traceability",
@@ -152,7 +166,8 @@
       "tr": "izlenebilirlik",
       "ja": "トレーサビリティ",
       "ko": "추적성",
-      "fa": "قابلیت ردیابی"
+      "fa": "قابلیت ردیابی",
+      "ar": "قابلية التتبع"
     },
     "batch release": {
       "en": "batch release",
@@ -162,7 +177,8 @@
       "tr": "parti serbest bırakma",
       "ja": "バッチリリース",
       "ko": "배치 승인",
-      "fa": "آزادسازی بچ تولید"
+      "fa": "آزادسازی بچ تولید",
+      "ar": "اعتماد الدفعة الإنتاجية"
     },
     "drawing": {
       "en": "drawing",
@@ -172,7 +188,8 @@
       "tr": "teknik resim",
       "ja": "図面",
       "ko": "도면",
-      "fa": "نقشه فنی"
+      "fa": "نقشه فنی",
+      "ar": "رسم فني"
     },
     "sample": {
       "en": "sample",
@@ -182,7 +199,8 @@
       "tr": "numune",
       "ja": "サンプル",
       "ko": "샘플",
-      "fa": "نمونه"
+      "fa": "نمونه",
+      "ar": "عينة"
     },
     "project requirements": {
       "en": "project requirements",
@@ -192,7 +210,8 @@
       "tr": "proje gereksinimleri",
       "ja": "プロジェクト要件",
       "ko": "프로젝트 요구사항",
-      "fa": "الزامات پروژه"
+      "fa": "الزامات پروژه",
+      "ar": "متطلبات المشروع"
     }
   }
 }

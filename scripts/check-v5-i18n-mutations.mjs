@@ -192,6 +192,13 @@ function setValueAtPath(object, path, value) {
   parent[key] = value;
 }
 
+function deleteValueAtPath(object, path) {
+  const parent = path.slice(0, -1).reduce((current, key) => current[key], object);
+  const key = path.at(-1);
+  if (typeof parent?.[key] !== 'string') throw new Error(`Missing catalog mutation key: ${path.join('.')}`);
+  delete parent[key];
+}
+
 function mapCatalogStrings(value, mapper, path = []) {
   if (typeof value === 'string') return mapper(value, path);
   if (Array.isArray(value) || !value || typeof value !== 'object') return value;
@@ -472,6 +479,175 @@ function catalogCaseDefinitions() {
       mutateRaw: (file) => writeFileSync(file, Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), readFileSync(file)])),
     },
     {
+      name: 'arabic-without-arabic-script', locale: 'ar', expectedSignal: 'ar: localized prose must contain Arabic text',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value, path) => {
+        if (path[0] === 'meta') return value;
+        const stripped = value.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/gu, '').trim();
+        return stripped || '123';
+      })),
+    },
+    {
+      name: 'arabic-without-arabic-yeh', locale: 'ar', expectedSignal: 'ar: catalog must use Arabic Yeh ي',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value) => value.replaceAll('\u064A', '\u0649'))),
+    },
+    {
+      name: 'arabic-without-arabic-kaf', locale: 'ar', expectedSignal: 'ar: catalog must use Arabic Kaf ك',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value) => value.replaceAll('\u0643', '\u0642'))),
+    },
+    {
+      name: 'arabic-without-arabic-indic-digits', locale: 'ar', expectedSignal: 'ar: catalog facts must use Arabic-Indic digits',
+      mutate: (catalog) => Object.assign(catalog, mapCatalogStrings(catalog, (value) => (
+        value.replace(/[\u0660-\u0669]/gu, (digit) => String(digit.codePointAt(0) - 0x0660))
+      ))),
+    },
+    {
+      name: 'arabic-persian-letters', locale: 'ar', expectedSignal: 'ar: Persian letters are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} پچژگیک`),
+    },
+    {
+      name: 'arabic-persian-digits', locale: 'ar', expectedSignal: 'ar: Persian digits are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} ۰۱۲۳۴۵۶۷۸۹`),
+    },
+    {
+      name: 'arabic-presentation-form-fe70-feff', locale: 'ar', expectedSignal: 'ar: Arabic presentation forms are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\uFE8E`),
+    },
+    {
+      name: 'arabic-presentation-form-fb50-fdff', locale: 'ar', expectedSignal: 'ar: Arabic presentation forms are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\uFB50`),
+    },
+    {
+      name: 'arabic-alm-control', locale: 'ar', expectedSignal: 'ar: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u061C`),
+    },
+    {
+      name: 'arabic-lrm-control', locale: 'ar', expectedSignal: 'ar: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u200E`),
+    },
+    {
+      name: 'arabic-rlm-control', locale: 'ar', expectedSignal: 'ar: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u200F`),
+    },
+    {
+      name: 'arabic-embedding-control', locale: 'ar', expectedSignal: 'ar: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u202E`),
+    },
+    {
+      name: 'arabic-isolate-control', locale: 'ar', expectedSignal: 'ar: hidden bidi controls are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u2067`),
+    },
+    {
+      name: 'arabic-zwj', locale: 'ar', expectedSignal: 'ar: ZWJ and ZWNJ are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u200D`),
+    },
+    {
+      name: 'arabic-zwnj', locale: 'ar', expectedSignal: 'ar: ZWJ and ZWNJ are not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u200C`),
+    },
+    {
+      name: 'arabic-tatweel', locale: 'ar', expectedSignal: 'ar: tatweel is not allowed',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)}\u0640`),
+    },
+    {
+      name: 'arabic-foreign-script-cyrillic', locale: 'ar', expectedSignal: 'ar: unapproved foreign-script residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} Ж`),
+    },
+    {
+      name: 'arabic-foreign-script-han', locale: 'ar', expectedSignal: 'ar: unapproved foreign-script residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} 漢`),
+    },
+    {
+      name: 'arabic-foreign-script-hiragana', locale: 'ar', expectedSignal: 'ar: unapproved foreign-script residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} あ`),
+    },
+    {
+      name: 'arabic-foreign-script-katakana', locale: 'ar', expectedSignal: 'ar: unapproved foreign-script residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} カ`),
+    },
+    {
+      name: 'arabic-foreign-script-hangul', locale: 'ar', expectedSignal: 'ar: unapproved foreign-script residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} 한`),
+    },
+    {
+      name: 'arabic-non-nfc', locale: 'ar', expectedSignal: 'ar: catalog value must use NFC normalization',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} ا\u0654`),
+    },
+    {
+      name: 'arabic-invalid-utf8', locale: 'ar', expectedSignal: 'ar: catalog must be valid UTF-8', allowsEarlyFailure: true,
+      mutateRaw: (file) => writeFileSync(file, Buffer.from([0xff, 0xfe, 0xfd])),
+    },
+    {
+      name: 'arabic-utf8-bom', locale: 'ar', expectedSignal: 'ar: catalog must not contain a UTF-8 BOM', allowsEarlyFailure: true,
+      mutateRaw: (file) => writeFileSync(file, Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), readFileSync(file)])),
+    },
+    {
+      name: 'arabic-missing-key', locale: 'ar', expectedSignal: 'ar: catalog key set differs from English',
+      mutate: (catalog) => deleteValueAtPath(catalog, mutationValuePath),
+    },
+    {
+      name: 'arabic-duplicate-key', locale: 'ar', expectedSignal: 'ar: duplicate catalog key at pages.demo-a.html_text.engineered-rubber-compounds-and-components', allowsEarlyFailure: true,
+      mutateRaw: (file) => {
+        const source = readFileSync(file, 'utf8');
+        const pattern = /^(\s*"engineered-rubber-compounds-and-components":\s*"[^"\n]*(?:\\.[^"\n]*)*",)$/m;
+        const match = source.match(pattern);
+        if (!match) throw new Error('Arabic duplicate-key mutation target is missing');
+        writeFileSync(file, source.replace(pattern, `${match[1]}\n${match[1]}`), 'utf8');
+      },
+    },
+    {
+      name: 'arabic-english-residue', locale: 'ar', expectedSignal: 'ar: unapproved English residue',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} industrial solution`),
+    },
+    {
+      name: 'arabic-approved-ascii-suffix-boundary',
+      locale: 'ar',
+      expectedSignal: 'ar: unapproved English residue at pages.demo-a.html_text.engineered-rubber-compounds-and-components: whatsappx',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} WhatsAppx`),
+    },
+    {
+      name: 'arabic-approved-ascii-prefix-boundary',
+      locale: 'ar',
+      expectedSignal: 'ar: unapproved English residue at pages.demo-a.html_text.engineered-rubber-compounds-and-components: xwhatsapp',
+      mutate: (catalog) => setValueAtPath(catalog, mutationValuePath, `${valueAtPath(catalog, mutationValuePath)} xWhatsApp`),
+    },
+    {
+      name: 'arabic-modified-protected-literal', locale: 'ar', expectedSignal: 'ar V5 catalog changed preserved value: shared.html_text.martin-zxrubbertech-com',
+      mutate: (catalog) => Object.assign(catalog, replaceFirstCatalogLiteral(
+        catalog,
+        'martin@zxrubbertech.com',
+        'martin@example.com',
+      )),
+    },
+    {
+      name: 'arabic-modified-verified-fact', locale: 'ar', expectedSignal: 'ar: verified fact annualCompoundCapacity',
+      mutate: (catalog, fixture) => {
+        const glossary = readJson(join(fixture.fixtureCatalogs, 'glossary.json'));
+        const rendering = glossary.verifiedFactRenderings.ar.annualCompoundCapacity;
+        const changed = rendering.replace('٣', '٤');
+        if (changed === rendering) throw new Error('Arabic fact mutation requires the approved ٣٬٠٠٠ rendering');
+        Object.assign(catalog, replaceFirstCatalogLiteral(catalog, rendering, changed));
+      },
+    },
+    {
+      name: 'arabic-missing-glossary-term', locale: 'ar', expectedSignal: 'V5 i18n glossary is missing ar term: tooling',
+      mutateFixture: (fixture) => {
+        const file = join(fixture.fixtureCatalogs, 'glossary.json');
+        const glossary = readJson(file);
+        delete glossary.terms.tooling.ar;
+        writeJson(file, glossary);
+      },
+    },
+    {
+      name: 'arabic-batch-release-shipping-semantics',
+      locale: 'ar',
+      expectedSignal: 'ar: glossary term "batch release" is not rendered as "اعتماد الدفعة الإنتاجية"',
+      mutate: (catalog) => Object.assign(catalog, replaceFirstCatalogLiteral(
+        catalog,
+        'اعتماد الدفعة الإنتاجية',
+        'شحن الدفعة الإنتاجية',
+      )),
+    },
+    {
       name: 'modified-protected-literal', locale: 'fa', expectedSignal: 'fa V5 catalog changed preserved value: shared.html_text.martin-zxrubbertech-com',
       mutate: (catalog) => Object.assign(catalog, replaceFirstCatalogLiteral(
         catalog,
@@ -524,6 +700,7 @@ function runCatalogCase(testCase) {
     const result = runCatalogChecker(fixture, testCase.locale);
     const checkerReport = parseCheckerReport(result);
     const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+    const checkerFailures = Array.isArray(checkerReport?.failures) ? checkerReport.failures : [];
     const mutationMetrics = {
       registry: checkerReport?.registry ?? null,
       catalogKeys: checkerReport?.catalog?.catalogKeys ?? null,
@@ -535,7 +712,7 @@ function runCatalogCase(testCase) {
         && (mutationMetrics.catalogKeys === null || mutationMetrics.catalogKeys === 531)
         && (mutationMetrics.operations === null || mutationMetrics.operations === 508);
     const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
-    const signalFound = output.includes(testCase.expectedSignal);
+    const signalFound = checkerFailures.some((failure) => failure.includes(testCase.expectedSignal));
     return {
       case: testCase.name,
       locale: testCase.locale,
@@ -546,6 +723,7 @@ function runCatalogCase(testCase) {
       expectedExitCode: 1,
       expectedSignal: testCase.expectedSignal,
       actualSignalFound: signalFound,
+      checkerFailures,
       mutationMetrics,
       unaffectedMetricsMatch,
       missingFileNoise,
@@ -1191,8 +1369,11 @@ function runArchiveCase(bundle, testCase) {
 function runSuite({ suite, root }) {
   if (suite === 'registry') return registryCases().map(runRegistryCase);
   if (suite === 'catalog') {
-    const missing = ['ja', 'ko', 'fa'].filter((locale) => !existsSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`)));
-    if (missing.length) throw new CliError(`Catalog mutation suite requires complete catalogs; missing: ${missing.join(', ')}`);
+    const missing = catalogLocales.filter((locale) => !existsSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`)));
+    if (missing.length) {
+      const state = missing.includes('ar') ? ' deferred/missing-ar' : '';
+      throw new CliError(`Catalog mutation suite${state}: complete registry catalogs required; missing: ${missing.join(', ')}`);
+    }
     return catalogCaseDefinitions().map(runCatalogCase);
   }
   if (suite === 'release') {
@@ -1217,6 +1398,11 @@ function runSuite({ suite, root }) {
   }
   if (suite === 'all') {
     if (!root) throw new CliError('All mutation suites require --root=<complete-green-release>');
+    const missing = catalogLocales.filter((locale) => !existsSync(join(scriptsRoot, 'v5-i18n', `${locale}.json`)));
+    if (missing.length) {
+      const state = missing.includes('ar') ? ' deferred/missing-ar' : '';
+      throw new CliError(`All mutation suites${state}: complete registry catalogs required; missing: ${missing.join(', ')}`);
+    }
     const bundle = validateReleaseBundle(root);
     return [
       ...registryCases().map(runRegistryCase),

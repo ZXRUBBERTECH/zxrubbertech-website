@@ -22,7 +22,7 @@ const EXPECTED_LANGUAGE_CONTROL_LABELS = Object.freeze({
   en: 'Language', de: 'Sprache', 'zh-CN': '语言', ru: 'Язык', tr: 'Dil',
   ja: '言語', ko: '언어', fa: 'زبان', ar: 'اللغة',
 });
-const PERSIAN_APPROVED_LTR_LITERALS = Object.freeze(new Set([
+const RTL_APPROVED_LTR_LITERALS = Object.freeze(new Set([
   'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD', 'ZHIXIN RUBBER MATERIAL',
   'martin@zxrubbertech.com', 'https://wa.me/8615256225135', '+86 152 5622 5135',
   'ISO 9001:2015', 'WhatsApp', 'ZHIXIN', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
@@ -42,7 +42,7 @@ const REQUIRED_VERIFIED_FACTS = Object.freeze([
   'regularCompoundMoq',
   'quotationWindow',
 ]);
-const VERIFIED_FACT_LOCALES = Object.freeze(['zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa']);
+const VERIFIED_FACT_LOCALES = Object.freeze(['zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa', 'ar']);
 
 // Russian technical nouns inflect by number and grammatical case. Validate
 // stable lexeme stems rather than forcing an ungrammatical nominative phrase
@@ -267,6 +267,85 @@ function readJsonFile(file, label) {
   return parsed;
 }
 
+function assertNoDuplicateJsonObjectKeys(source, locale) {
+  let index = 0;
+  const skipWhitespace = () => {
+    while (/\s/.test(source[index] ?? '')) index += 1;
+  };
+  const parseString = () => {
+    const start = index;
+    index += 1;
+    let escaped = false;
+    while (index < source.length) {
+      const character = source[index];
+      index += 1;
+      if (escaped) escaped = false;
+      else if (character === '\\') escaped = true;
+      else if (character === '"') return JSON.parse(source.slice(start, index));
+    }
+    throw new Error(`${locale}: unterminated JSON string`);
+  };
+  const parseValue = (path) => {
+    skipWhitespace();
+    if (source[index] === '{') {
+      index += 1;
+      const keys = new Set();
+      skipWhitespace();
+      if (source[index] === '}') {
+        index += 1;
+        return;
+      }
+      while (index < source.length) {
+        skipWhitespace();
+        const key = parseString();
+        if (keys.has(key)) throw new Error(`${locale}: duplicate catalog key at ${[...path, key].join('.')}`);
+        keys.add(key);
+        skipWhitespace();
+        if (source[index] !== ':') throw new Error(`${locale}: malformed JSON object`);
+        index += 1;
+        parseValue([...path, key]);
+        skipWhitespace();
+        if (source[index] === '}') {
+          index += 1;
+          return;
+        }
+        if (source[index] !== ',') throw new Error(`${locale}: malformed JSON object`);
+        index += 1;
+      }
+      throw new Error(`${locale}: unterminated JSON object`);
+    }
+    if (source[index] === '[') {
+      index += 1;
+      let item = 0;
+      skipWhitespace();
+      if (source[index] === ']') {
+        index += 1;
+        return;
+      }
+      while (index < source.length) {
+        parseValue([...path, String(item)]);
+        item += 1;
+        skipWhitespace();
+        if (source[index] === ']') {
+          index += 1;
+          return;
+        }
+        if (source[index] !== ',') throw new Error(`${locale}: malformed JSON array`);
+        index += 1;
+      }
+      throw new Error(`${locale}: unterminated JSON array`);
+    }
+    if (source[index] === '"') {
+      parseString();
+      return;
+    }
+    while (index < source.length && !/[\s,}\]]/.test(source[index])) index += 1;
+  };
+  parseValue([]);
+  skipWhitespace();
+  if (index !== source.length) throw new Error(`${locale}: trailing JSON content`);
+}
+
 function readCatalogJsonFile(file, locale) {
   if (!existsSync(file)) throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: file does not exist`);
   const info = lstatSync(file);
@@ -274,8 +353,8 @@ function readCatalogJsonFile(file, locale) {
     throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: expected a regular file`);
   }
   const bytes = readFileSync(file);
-  if (locale === 'fa' && bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
-    throw new Error('fa: catalog must not contain a UTF-8 BOM');
+  if (['fa', 'ar'].includes(locale) && bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    throw new Error(`${locale}: catalog must not contain a UTF-8 BOM`);
   }
   let source;
   try {
@@ -284,7 +363,9 @@ function readCatalogJsonFile(file, locale) {
     throw new Error(`${locale}: catalog must be valid UTF-8: ${error.message}`);
   }
   try {
-    return JSON.parse(source);
+    const parsed = JSON.parse(source);
+    assertNoDuplicateJsonObjectKeys(source, locale);
+    return parsed;
   } catch (error) {
     throw new Error(`${locale} V5 catalog is missing or malformed at ${file}: ${error.message}`);
   }
@@ -389,6 +470,26 @@ function maskResidueAllowlist(value, glossary) {
     .sort((left, right) => right.length - left.length);
   for (const phrase of phrases) {
     masked = masked.replace(new RegExp(escapeRegExp(phrase), 'giu'), ' ');
+  }
+  return masked.replace(/\s+/g, ' ').trim();
+}
+
+const ARABIC_APPROVED_ASCII_LITERALS = Object.freeze(new Set([
+  ...RTL_APPROVED_LTR_LITERALS,
+  'Formspree', 'Cloudflare', 'Turnstile', 'Google Maps', 'Google', 'Amap',
+  'OpenStreetMap', 'ODbL', '3D', 'FAQ', 'HTTP',
+]));
+
+function maskArabicApprovedAscii(value, glossary) {
+  let masked = normalizeCatalogText(value)
+    .replace(/https?:\/\/\S+|\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b/g, ' ');
+  const phrases = [...ARABIC_APPROVED_ASCII_LITERALS, ...(glossary.preservedLiterals ?? [])]
+    .sort((left, right) => right.length - left.length);
+  for (const phrase of phrases) {
+    masked = masked.replace(
+      new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(phrase)}(?![A-Za-z0-9])`, 'gu'),
+      ' ',
+    );
   }
   return masked.replace(/\s+/g, ' ').trim();
 }
@@ -511,7 +612,7 @@ function validateTurkishCatalog(locale, english, localized, glossary, operations
 }
 
 function validateLocaleNormalization(locale, localized) {
-  if (!['ja', 'ko', 'fa'].includes(locale)) return { failures: [], checks: 0 };
+  if (!['ja', 'ko', 'fa', 'ar'].includes(locale)) return { failures: [], checks: 0 };
   const failures = [];
   let checks = 0;
   for (const [key, value] of Object.entries(localized)) {
@@ -648,6 +749,95 @@ function validatePersianCatalog(locale, english, localized, glossary, operations
   return {
     failures, proseChecks, persianCharacterOccurrences, arabicVariantFindings,
     presentationFormFindings, hiddenBidiFindings, isolatedZwjFindings, foreignScriptFindings,
+  };
+}
+
+function validateArabicCatalog(locale, english, localized, glossary, operations) {
+  if (locale !== 'ar') return {
+    failures: [], proseChecks: 0, arabicCharacterOccurrences: 0, persianVariantFindings: 0,
+    persianDigitFindings: 0, presentationFormFindings: 0, hiddenBidiFindings: 0,
+    forbiddenJoinerFindings: 0, tatweelFindings: 0, foreignScriptFindings: 0,
+    englishResidueFindings: 0,
+  };
+  const failures = [];
+  let proseChecks = 0;
+  let arabicCharacterOccurrences = 0;
+  let arabicYehOccurrences = 0;
+  let arabicKafOccurrences = 0;
+  let arabicIndicDigitOccurrences = 0;
+  let persianVariantFindings = 0;
+  let persianDigitFindings = 0;
+  let presentationFormFindings = 0;
+  let hiddenBidiFindings = 0;
+  let forbiddenJoinerFindings = 0;
+  let tatweelFindings = 0;
+  let foreignScriptFindings = 0;
+  let englishResidueFindings = 0;
+  const preservedOperationKeys = new Set(operations.filter(({ preserve }) => preserve).map(({ key }) => key));
+  for (const [key, localizedValue] of Object.entries(localized)) {
+    const normalized = normalizeCatalogText(localizedValue);
+    const presentationForms = normalized.match(/[\uFB50-\uFDFF\uFE70-\uFEFF]/gu) ?? [];
+    if (presentationForms.length) {
+      presentationFormFindings += presentationForms.length;
+      failures.push(`ar: Arabic presentation forms are not allowed at ${key}`);
+    }
+    const bidiControls = normalized.match(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/gu) ?? [];
+    if (bidiControls.length) {
+      hiddenBidiFindings += bidiControls.length;
+      failures.push(`ar: hidden bidi controls are not allowed at ${key}`);
+    }
+    const joiners = normalized.match(/[\u200C\u200D]/gu) ?? [];
+    if (joiners.length) {
+      forbiddenJoinerFindings += joiners.length;
+      failures.push(`ar: ZWJ and ZWNJ are not allowed at ${key}`);
+    }
+    const tatweel = normalized.match(/\u0640/gu) ?? [];
+    if (tatweel.length) {
+      tatweelFindings += tatweel.length;
+      failures.push(`ar: tatweel is not allowed at ${key}`);
+    }
+    const persianVariants = normalized.match(/[\u067E\u0686\u0698\u06A9\u06AF\u06CC]/gu) ?? [];
+    if (persianVariants.length) {
+      persianVariantFindings += persianVariants.length;
+      failures.push(`ar: Persian letters are not allowed at ${key}`);
+    }
+    const persianDigits = normalized.match(/[\u06F0-\u06F9]/gu) ?? [];
+    if (persianDigits.length) {
+      persianDigitFindings += persianDigits.length;
+      failures.push(`ar: Persian digits are not allowed at ${key}`);
+    }
+    arabicCharacterOccurrences += (normalized.match(/\p{Script=Arabic}/gu) ?? []).length;
+    arabicYehOccurrences += (normalized.match(/\u064A/gu) ?? []).length;
+    arabicKafOccurrences += (normalized.match(/\u0643/gu) ?? []).length;
+    arabicIndicDigitOccurrences += (normalized.match(/[\u0660-\u0669]/gu) ?? []).length;
+    if (preservedOperationKeys.has(key)) continue;
+    const asciiResidues = [...asciiWordSet(maskArabicApprovedAscii(localizedValue, glossary))].sort();
+    if (asciiResidues.length) {
+      englishResidueFindings += asciiResidues.length;
+      failures.push(`ar: unapproved English residue at ${key}: ${asciiResidues.join(', ')}`);
+    }
+    const englishText = maskResidueAllowlist(english[key], glossary);
+    if (asciiWordSet(englishText).size < 2) continue;
+    proseChecks += 1;
+    const localizedText = maskResidueAllowlist(localizedValue, glossary);
+    if (!/\p{Script=Arabic}/u.test(localizedText)) {
+      failures.push(`ar: localized prose must contain Arabic text at ${key}`);
+    }
+    const foreignScripts = localizedText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}]/gu) ?? [];
+    if (foreignScripts.length) {
+      foreignScriptFindings += foreignScripts.length;
+      failures.push(`ar: unapproved foreign-script residue at ${key}: ${foreignScripts.join('')}`);
+    }
+  }
+  if (proseChecks > 0 && arabicCharacterOccurrences === 0) failures.push('ar: catalog must contain Arabic text');
+  if (proseChecks > 0 && arabicYehOccurrences === 0) failures.push('ar: catalog must use Arabic Yeh ي');
+  if (proseChecks > 0 && arabicKafOccurrences === 0) failures.push('ar: catalog must use Arabic Kaf ك');
+  if (proseChecks > 0 && arabicIndicDigitOccurrences === 0) failures.push('ar: catalog facts must use Arabic-Indic digits');
+  return {
+    failures, proseChecks, arabicCharacterOccurrences, arabicYehOccurrences,
+    arabicKafOccurrences, arabicIndicDigitOccurrences, persianVariantFindings,
+    persianDigitFindings, presentationFormFindings, hiddenBidiFindings,
+    forbiddenJoinerFindings, tatweelFindings, foreignScriptFindings, englishResidueFindings,
   };
 }
 
@@ -878,6 +1068,15 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
   let presentationFormFindings = 0;
   let hiddenBidiFindings = 0;
   let isolatedZwjFindings = 0;
+  let arabicProseChecks = 0;
+  let arabicCharacterOccurrences = 0;
+  let arabicYehOccurrences = 0;
+  let arabicKafOccurrences = 0;
+  let arabicIndicDigitOccurrences = 0;
+  let persianVariantFindings = 0;
+  let persianDigitFindings = 0;
+  let forbiddenJoinerFindings = 0;
+  let tatweelFindings = 0;
   if (locale === 'en') {
     englishRoundTrip = true;
     for (const stem of config.V5_PAGE_STEMS) {
@@ -907,8 +1106,9 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
     const flattenedEnglish = transformModule.validateV5Catalog('en', english);
     const englishKeys = Object.keys(flattenedEnglish).sort();
     const localeKeys = Object.keys(flattened).sort();
-    if (JSON.stringify(localeKeys) !== JSON.stringify(englishKeys)) failures.push(`${locale}: catalog key set differs from English`);
-    if (glossary) {
+    const catalogKeySetsMatch = JSON.stringify(localeKeys) === JSON.stringify(englishKeys);
+    if (!catalogKeySetsMatch) failures.push(`${locale}: catalog key set differs from English`);
+    if (glossary && catalogKeySetsMatch) {
       const glossaryResult = validateGlossaryConformance(locale, flattenedEnglish, flattened, glossary);
       glossaryChecks = glossaryResult.checks;
       failures.push(...glossaryResult.failures);
@@ -990,6 +1190,24 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       foreignScriptFindings += persianResult.foreignScriptFindings;
       failures.push(...persianResult.failures);
 
+      const arabicResult = validateArabicCatalog(locale, flattenedEnglish, flattened, glossary, operations);
+      if (locale === 'ar') {
+        arabicProseChecks = arabicResult.proseChecks;
+        arabicCharacterOccurrences = arabicResult.arabicCharacterOccurrences;
+        arabicYehOccurrences = arabicResult.arabicYehOccurrences;
+        arabicKafOccurrences = arabicResult.arabicKafOccurrences;
+        arabicIndicDigitOccurrences = arabicResult.arabicIndicDigitOccurrences;
+        persianVariantFindings = arabicResult.persianVariantFindings;
+        persianDigitFindings = arabicResult.persianDigitFindings;
+        presentationFormFindings = arabicResult.presentationFormFindings;
+        hiddenBidiFindings = arabicResult.hiddenBidiFindings;
+        forbiddenJoinerFindings = arabicResult.forbiddenJoinerFindings;
+        tatweelFindings = arabicResult.tatweelFindings;
+        foreignScriptFindings += arabicResult.foreignScriptFindings;
+        englishResidueFindings += arabicResult.englishResidueFindings;
+      }
+      failures.push(...arabicResult.failures);
+
       const factResult = validateVerifiedFacts(locale, flattenedEnglish, flattened, glossary);
       verifiedFactChecks = factResult.checks;
       failures.push(...factResult.failures);
@@ -1033,6 +1251,15 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
       presentationFormFindings,
       hiddenBidiFindings,
       isolatedZwjFindings,
+      arabicProseChecks,
+      arabicCharacterOccurrences,
+      arabicYehOccurrences,
+      arabicKafOccurrences,
+      arabicIndicDigitOccurrences,
+      persianVariantFindings,
+      persianDigitFindings,
+      forbiddenJoinerFindings,
+      tatweelFindings,
     } : null,
   };
 }
@@ -1388,39 +1615,42 @@ function releaseHeadValues(html, selectorName, selectorValue) {
   return values;
 }
 
-function validatePersianRtlContract(html, locale, stem, label, failures) {
-  const rtlStarts = markerCount(html, '/* V5:PERSIAN RTL START */');
-  const rtlEnds = markerCount(html, '/* V5:PERSIAN RTL END */');
+function validateRtlContract(html, locale, stem, label, definition, failures) {
+  const rtlStarts = markerCount(html, '/* V5:RTL START */');
+  const rtlEnds = markerCount(html, '/* V5:RTL END */');
   const bdiTags = html.match(/<\/?bdi\b[^>]*>/gi) ?? [];
-  if (locale !== 'fa') {
-    if (rtlStarts !== 0 || rtlEnds !== 0) failures.push(`${label}: Persian RTL stylesheet is forbidden outside Persian pages`);
-    if (bdiTags.length) failures.push(`${label}: bidi isolation is allowed only on Persian pages`);
+  if (definition.direction !== 'rtl') {
+    if (rtlStarts !== 0 || rtlEnds !== 0) failures.push(`${label}: shared RTL stylesheet is forbidden on LTR pages`);
+    if (bdiTags.length) failures.push(`${label}: bidi isolation is allowed only on RTL pages`);
     return false;
   }
   if (rtlStarts !== 1 || rtlEnds !== 1) {
-    failures.push(`${label}: expected one scoped Persian RTL stylesheet; found ${rtlStarts}/${rtlEnds} markers`);
+    failures.push(`${label}: expected one scoped RTL stylesheet; found ${rtlStarts}/${rtlEnds} markers`);
     return false;
   }
-  const rtlCss = html.match(/\/\* V5:PERSIAN RTL START \*\/([\s\S]*?)\/\* V5:PERSIAN RTL END \*\//)?.[1] ?? '';
+  const rtlCss = html.match(/\/\* V5:RTL START \*\/([\s\S]*?)\/\* V5:RTL END \*\//)?.[1] ?? '';
   for (const required of ['html[dir="rtl"]', 'text-align:start', 'letter-spacing:normal', 'text-transform:none']) {
-    if (!rtlCss.includes(required)) failures.push(`${label}: scoped Persian RTL stylesheet is missing ${required}`);
+    if (!rtlCss.includes(required)) failures.push(`${label}: scoped RTL stylesheet is missing ${required}`);
   }
   const rtlRules = [...rtlCss.matchAll(/([^{}]+)\{[^{}]*\}/g)].map((match) => match[1].trim());
   if (!rtlRules.length || rtlRules.some((selector) => !selector.startsWith('html[dir="rtl"]'))) {
-    failures.push(`${label}: every Persian RTL selector must be scoped by html[dir="rtl"]`);
+    failures.push(`${label}: every RTL selector must be scoped by html[dir="rtl"]`);
   }
   if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map))/i.test(rtlCss)) {
-    failures.push(`${label}: Persian RTL CSS must not mirror media, Logo, map, or decorative elements`);
+    failures.push(`${label}: RTL CSS must not mirror media, Logo, map, or decorative elements`);
+  }
+  if (/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/u.test(html)) {
+    failures.push(`${label}: hidden bidi controls are not allowed in RTL HTML`);
   }
 
   const pairs = [...html.matchAll(/<bdi dir="ltr">([^<]+)<\/bdi>/g)];
-  if (bdiTags.length !== pairs.length * 2) failures.push(`${label}: Persian LTR literals must use exact nonempty bdi dir=ltr pairs`);
+  if (bdiTags.length !== pairs.length * 2) failures.push(`${label}: RTL LTR literals must use exact nonempty non-nested bdi dir=ltr pairs`);
   for (const pair of pairs) {
-    if (!PERSIAN_APPROVED_LTR_LITERALS.has(pair[1])) {
-      failures.push(`${label}: unapproved Persian LTR bidi literal: ${pair[1]}`);
+    if (!RTL_APPROVED_LTR_LITERALS.has(pair[1])) {
+      failures.push(`${label}: unapproved RTL LTR bidi literal: ${pair[1]}`);
     }
   }
-  if (!pairs.length) failures.push(`${label}: Persian page must isolate its approved LTR literals`);
+  if (!pairs.length) failures.push(`${label}: RTL page must isolate its approved LTR literals`);
   if (stem === 'quote') {
     const expectedDirections = { name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto' };
     for (const [name, direction] of Object.entries(expectedDirections)) {
@@ -1445,7 +1675,10 @@ function validateReleaseGate(normalized, config, inventory) {
   if (inventory.length !== expectedPages) failures.push(`Release page inventory expected ${expectedPages}, found ${inventory.length}`);
   let hreflangLinks = 0;
   let passedPages = 0;
-  let persianRtlPages = 0;
+  let rtlPages = 0;
+  const rtlPagesByLocale = Object.fromEntries(
+    localeIds.filter((locale) => config.V5_LOCALES[locale].direction === 'rtl').map((locale) => [locale, 0]),
+  );
   const reportPages = new Map();
   const reportFile = join(normalized.root, 'v5-release-report.json');
   let report = null;
@@ -1475,7 +1708,10 @@ function validateReleaseGate(normalized, config, inventory) {
       if (htmlAttribute(htmlTag, 'dir') !== definition.direction) {
         failures.push(`${label}: html dir must equal ${definition.direction}`);
       }
-      if (validatePersianRtlContract(html, locale, stem, label, failures)) persianRtlPages += 1;
+      if (validateRtlContract(html, locale, stem, label, definition, failures)) {
+        rtlPages += 1;
+        rtlPagesByLocale[locale] += 1;
+      }
       const expectedCanonical = config.getLocalizedUrl(locale, stem);
       const canonicalTags = (html.match(/<link\b[^>]*>/gi) ?? []).filter((tag) =>
         (htmlAttribute(tag, 'rel') ?? '').toLowerCase().split(/\s+/).includes('canonical'));
@@ -1556,7 +1792,8 @@ function validateReleaseGate(normalized, config, inventory) {
       passedPages,
       hreflangLinks,
       sitemapUrls: sitemapUrls.length,
-      persianRtlPages,
+      rtlPages,
+      rtlPagesByLocale,
     },
   };
 }
