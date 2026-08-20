@@ -597,9 +597,40 @@ const pageInvariantExpression = (locale, stem, expectedCanonical) => `
   const expectedCanonical=${JSON.stringify(expectedCanonical)};
   const expectedLocales=${JSON.stringify(localeIds)};
   const expectedAlternates=${JSON.stringify(getHreflangCluster(stem).map(({ hreflang, url }) => ({ hreflang, href: url })))};
-  const waitImage=(image)=>{image.loading='eager';return image.complete&&image.naturalWidth>0?Promise.resolve():Promise.race([image.decode().catch(()=>{}),new Promise(resolve=>{image.addEventListener('load',resolve,{once:true});image.addEventListener('error',resolve,{once:true});setTimeout(resolve,5000)})])};
-  await Promise.all([...document.images].map(waitImage));
-  const brokenImages=[...document.images].filter(image=>!image.complete||image.naturalWidth===0).map(image=>image.currentSrc||image.src);
+  const images=[...document.images];
+  const imageDeadline=Date.now()+45000;
+  const waitImage=(image)=>new Promise(resolve=>{
+    let settled=false;
+    let timeoutId;
+    const cleanup=()=>{clearTimeout(timeoutId);image.removeEventListener('load',onLoad);image.removeEventListener('error',onError)};
+    const finish=async outcome=>{
+      if(settled)return;
+      settled=true;
+      cleanup();
+      const successful=outcome!=='error'&&outcome!=='timeout'&&image.complete&&image.naturalWidth>0;
+      if(successful&&typeof image.decode==='function'){
+        const remaining=Math.max(0,imageDeadline-Date.now());
+        if(remaining>0)await new Promise(done=>{
+          const decodeTimeoutId=setTimeout(done,remaining);
+          image.decode().catch(()=>{}).finally(()=>{clearTimeout(decodeTimeoutId);done()});
+        });
+      }
+      resolve({outcome,successful});
+    };
+    const onLoad=()=>finish(image.complete&&image.naturalWidth>0?'load':'load-without-dimensions');
+    const onError=()=>finish('error');
+    image.addEventListener('load',onLoad,{once:true});
+    image.addEventListener('error',onError,{once:true});
+    timeoutId=setTimeout(()=>finish('timeout'),Math.max(0,imageDeadline-Date.now()));
+    if(image.complete){finish(image.naturalWidth>0?'already-loaded':'already-broken');return}
+    image.loading='eager';
+    try{image.fetchPriority='high'}catch{}
+    void image.currentSrc;
+    void image.getBoundingClientRect();
+    if(image.complete)finish(image.naturalWidth>0?'loaded-after-trigger':'broken-after-trigger');
+  });
+  const imageResults=await Promise.all(images.map(waitImage));
+  const brokenImages=images.filter((image,index)=>!imageResults[index].successful||!image.complete||image.naturalWidth===0).map(image=>image.currentSrc||image.src);
   const videoChecks=await Promise.all([...document.querySelectorAll('video')].map(async video=>{
     const source=video.currentSrc||video.querySelector('source')?.src||video.src;
     if(!source)return {source:null,ok:false,reason:'missing source'};
