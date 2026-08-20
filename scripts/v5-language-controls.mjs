@@ -22,6 +22,7 @@ export const V5_LANGUAGE_CONTROL_LABELS = Object.freeze({
   ja: '言語',
   ko: '언어',
   fa: 'زبان',
+  ar: 'اللغة',
 });
 if (JSON.stringify(Object.keys(V5_LANGUAGE_CONTROL_LABELS)) !== JSON.stringify(Object.keys(V5_LOCALES))) {
   throw new Error('V5 language-control labels must exactly follow locale registry order');

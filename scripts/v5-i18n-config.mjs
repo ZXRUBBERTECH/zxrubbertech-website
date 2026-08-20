@@ -91,6 +91,16 @@ export const V5_LOCALES = Object.freeze({
     shortLabel: 'FA',
     turnstileLanguage: 'fa',
   }),
+  ar: Object.freeze({
+    prefix: 'ar',
+    htmlLang: 'ar',
+    hreflang: 'ar',
+    ogLocale: 'ar_SA',
+    direction: 'rtl',
+    label: 'العربية',
+    shortLabel: 'AR',
+    turnstileLanguage: 'ar',
+  }),
 });
 
 function requireLocale(locale) {

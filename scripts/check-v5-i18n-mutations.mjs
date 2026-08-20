@@ -231,7 +231,7 @@ function runRegistryCase(testCase) {
   try {
     const greenResult = runRegistryChecker(fixture);
     const greenReport = parseCheckerReport(greenResult);
-    const expectedGreenMetrics = { locales: 8, pageRoles: 7, routes: 56, hreflangsPerPage: 9 };
+    const expectedGreenMetrics = { locales: 9, pageRoles: 7, routes: 63, hreflangsPerPage: 10 };
     const greenMetrics = greenReport?.registry ?? null;
     const greenPassed = greenResult.status === 0
       && greenReport?.status === 'PASS'
@@ -241,6 +241,11 @@ function runRegistryCase(testCase) {
     if (testCase.mutateConfig) {
       const source = readFileSync(configFile, 'utf8');
       writeFileSync(configFile, testCase.mutateConfig(source), 'utf8');
+    }
+    if (testCase.mutateChecker) {
+      const checkerFile = join(fixture.fixtureScripts, 'check-v5-i18n.mjs');
+      const source = readFileSync(checkerFile, 'utf8');
+      writeFileSync(checkerFile, testCase.mutateChecker(source), 'utf8');
     }
     if (testCase.emptyInventory) {
       for (const file of previewFiles) rmSync(join(fixture.fixturePreview, file));
@@ -296,27 +301,60 @@ function registryCases() {
       ),
     },
     {
-      name: 'persian-direction-ltr',
+      name: 'duplicate-hreflang',
       expectedExit: 1,
-      expectedSignal: 'Locale definition does not match the approved registry: fa',
+      expectedSignal: 'Duplicate locale hreflang: fa',
       mutateConfig: (source) => replaceOnce(
         source,
-        /fa: Object\.freeze\(\{([\s\S]*?)direction: 'rtl'/g,
-        "fa: Object.freeze({$1direction: 'ltr'",
-        'persian-direction-ltr',
+        /ar: Object\.freeze\(\{([\s\S]*?)hreflang: 'ar'/g,
+        "ar: Object.freeze({$1hreflang: 'fa'",
+        'duplicate-hreflang',
       ),
     },
     {
-      name: 'japanese-og-locale',
+      name: 'arabic-direction-ltr',
       expectedExit: 1,
-      expectedSignal: 'Locale definition does not match the approved registry: ja',
-      mutateConfig: (source) => replaceOnce(source, /ogLocale: 'ja_JP'/g, "ogLocale: 'ja_US'", 'japanese-og-locale'),
+      expectedSignal: 'Locale definition does not match the approved registry: ar',
+      mutateConfig: (source) => replaceOnce(
+        source,
+        /ar: Object\.freeze\(\{([\s\S]*?)direction: 'rtl'/g,
+        "ar: Object.freeze({$1direction: 'ltr'",
+        'arabic-direction-ltr',
+      ),
+    },
+    {
+      name: 'arabic-og-locale',
+      expectedExit: 1,
+      expectedSignal: 'Locale definition does not match the approved registry: ar',
+      mutateConfig: (source) => replaceOnce(source, /ogLocale: 'ar_SA'/g, "ogLocale: 'ar_AE'", 'arabic-og-locale'),
     },
     {
       name: 'x-default-not-english',
       expectedExit: 1,
       expectedSignal: 'x-default for demo-a must equal the English equivalent',
       mutateConfig: (source) => replaceOnce(source, /const english = localeEntries\[0\];/g, 'const english = localeEntries[1];', 'x-default-not-english'),
+    },
+    {
+      name: 'misordered-registry',
+      expectedExit: 1,
+      expectedSignal: 'Locale registry must contain exactly: en, de, zh-CN, ru, tr, ja, ko, fa, ar',
+      mutateConfig: (source) => replaceOnce(
+        source,
+        /(  fa: Object\.freeze\(\{[\s\S]*?\n  \}\),\n)(  ar: Object\.freeze\(\{[\s\S]*?\n  \}\),\n)/g,
+        '$2$1',
+        'misordered-registry',
+      ),
+    },
+    {
+      name: 'arabic-language-control-label',
+      expectedExit: 1,
+      expectedSignal: 'Language-control labels do not match the approved locale contract',
+      mutateChecker: (source) => replaceOnce(
+        source,
+        /(const EXPECTED_LANGUAGE_CONTROL_LABELS = Object\.freeze\(\{[\s\S]*?fa: 'زبان', )ar: 'اللغة',/g,
+        "$1ar: 'لغة',",
+        'arabic-language-control-label',
+      ),
     },
     {
       name: 'empty-preview-inventory',
@@ -475,7 +513,7 @@ function runCatalogCase(testCase) {
     };
     const greenPassed = greenResult.status === 0
       && greenReport?.status === 'PASS'
-      && JSON.stringify(greenMetrics.registry) === JSON.stringify({ locales: 8, pageRoles: 7, routes: 56, hreflangsPerPage: 9 })
+      && JSON.stringify(greenMetrics.registry) === JSON.stringify({ locales: 9, pageRoles: 7, routes: 63, hreflangsPerPage: 10 })
       && greenMetrics.catalogKeys === 531
       && greenMetrics.operations === 508;
 

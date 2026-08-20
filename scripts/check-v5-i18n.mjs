@@ -16,11 +16,11 @@ const SUPPORTED_GATES = new Set([
   'all',
 ]);
 const SUPPORTED_PROFILES = new Set(['preview', 'release']);
-const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa']);
+const SUPPORTED_LOCALES = new Set(['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa', 'ar']);
 const SUPPORTED_FLAGS = new Set(['gate', 'profile', 'root', 'locale']);
 const EXPECTED_LANGUAGE_CONTROL_LABELS = Object.freeze({
   en: 'Language', de: 'Sprache', 'zh-CN': '语言', ru: 'Язык', tr: 'Dil',
-  ja: '言語', ko: '언어', fa: 'زبان',
+  ja: '言語', ko: '언어', fa: 'زبان', ar: 'اللغة',
 });
 const PERSIAN_APPROVED_LTR_LITERALS = Object.freeze(new Set([
   'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD', 'ZHIXIN RUBBER MATERIAL',
@@ -1039,7 +1039,11 @@ function validateCatalogGate(normalized, config, inventory, operationsModule, tr
 
 function validateRegistry(config) {
   const failures = [];
-  const expectedLocales = ['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa'];
+  const expectedLocales = ['en', 'de', 'zh-CN', 'ru', 'tr', 'ja', 'ko', 'fa', 'ar'];
+  const expectedLanguageControlLabels = {
+    en: 'Language', de: 'Sprache', 'zh-CN': '语言', ru: 'Язык', tr: 'Dil',
+    ja: '言語', ko: '언어', fa: 'زبان', ar: 'اللغة',
+  };
   const expectedStems = ['demo-a', 'products', 'compounds', 'industries', 'capabilities', 'faq', 'quote'];
   const expectedLocaleDefinitions = {
     en: { prefix: '', htmlLang: 'en', hreflang: 'en', ogLocale: 'en_US', direction: 'ltr', label: 'English', shortLabel: 'EN', turnstileLanguage: 'en' },
@@ -1050,6 +1054,7 @@ function validateRegistry(config) {
     ja: { prefix: 'ja', htmlLang: 'ja', hreflang: 'ja', ogLocale: 'ja_JP', direction: 'ltr', label: '日本語', shortLabel: 'JA', turnstileLanguage: 'ja' },
     ko: { prefix: 'ko', htmlLang: 'ko', hreflang: 'ko', ogLocale: 'ko_KR', direction: 'ltr', label: '한국어', shortLabel: 'KO', turnstileLanguage: 'ko' },
     fa: { prefix: 'fa', htmlLang: 'fa', hreflang: 'fa', ogLocale: 'fa_IR', direction: 'rtl', label: 'فارسی', shortLabel: 'FA', turnstileLanguage: 'fa' },
+    ar: { prefix: 'ar', htmlLang: 'ar', hreflang: 'ar', ogLocale: 'ar_SA', direction: 'rtl', label: 'العربية', shortLabel: 'AR', turnstileLanguage: 'ar' },
   };
   const expectedEnglishRoutes = {
     'demo-a': '/',
@@ -1066,6 +1071,9 @@ function validateRegistry(config) {
   if (JSON.stringify(localeKeys) !== JSON.stringify(expectedLocales)) {
     failures.push(`Locale registry must contain exactly: ${expectedLocales.join(', ')}`);
   }
+  if (JSON.stringify(EXPECTED_LANGUAGE_CONTROL_LABELS) !== JSON.stringify(expectedLanguageControlLabels)) {
+    failures.push('Language-control labels do not match the approved locale contract');
+  }
   if (JSON.stringify(stems) !== JSON.stringify(expectedStems)) {
     failures.push(`Page registry must contain exactly: ${expectedStems.join(', ')}`);
   }
@@ -1074,6 +1082,7 @@ function validateRegistry(config) {
   }
 
   const prefixes = new Set();
+  const hreflangs = new Set();
   for (const locale of localeKeys) {
     const definition = config.V5_LOCALES[locale];
     const expectedDefinition = expectedLocaleDefinitions[locale];
@@ -1088,6 +1097,13 @@ function validateRegistry(config) {
     }
     if (prefixes.has(prefix)) failures.push(`Duplicate locale prefix: ${prefix}`);
     prefixes.add(prefix);
+    const hreflang = definition?.hreflang;
+    if (typeof hreflang !== 'string' || !hreflang) {
+      failures.push(`Locale ${locale} has a malformed hreflang`);
+    } else {
+      if (hreflangs.has(hreflang)) failures.push(`Duplicate locale hreflang: ${hreflang}`);
+      hreflangs.add(hreflang);
+    }
   }
 
   const routeSet = new Set();
