@@ -25,10 +25,10 @@ import {
 import { LEGACY_REDIRECTS } from './v5-retirement-map.mjs';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-export const packageName = 'zxrubbertech-v5-ja-ko-fa-release-candidate-2026-08-16-rc1';
-export const rollbackRevision = '6f84d51dac660ff1bdb5a38c7cf87dbb69a0812f';
-const approvedPackageName = 'zxrubbertech-v5-ja-ko-fa-release-candidate-2026-08-16-rc1';
-const approvedRollbackRevision = '6f84d51dac660ff1bdb5a38c7cf87dbb69a0812f';
+export const packageName = 'zxrubbertech-v5-ar-release-candidate-2026-08-20-rc1';
+export const rollbackRevision = '1e0c849355c7bf3774db565d6c7a10c01d3522eb';
+const approvedPackageName = 'zxrubbertech-v5-ar-release-candidate-2026-08-20-rc1';
+const approvedRollbackRevision = '1e0c849355c7bf3774db565d6c7a10c01d3522eb';
 const localeIds = Object.freeze(Object.keys(V5_LOCALES));
 const localeCatalogs = Object.freeze([
   'scripts/v5-i18n/en.json',
@@ -39,6 +39,7 @@ const localeCatalogs = Object.freeze([
   'scripts/v5-i18n/ja.json',
   'scripts/v5-i18n/ko.json',
   'scripts/v5-i18n/fa.json',
+  'scripts/v5-i18n/ar.json',
 ]);
 const requiredFiles = [
   'AGENTS.md',
@@ -47,6 +48,7 @@ const requiredFiles = [
   'scripts/build-v5-release.mjs',
   'scripts/build-v5-retirement.mjs',
   'scripts/check-v5-hybrid.mjs',
+  'scripts/check-v5-acceptance.mjs',
   'scripts/check-v5-i18n.mjs',
   'scripts/check-v5-i18n-mutations.mjs',
   'scripts/check-v5-retirement.mjs',
@@ -86,6 +88,8 @@ const expectedV5HtmlFiles = [
 ].sort();
 const ignoredNames = new Set(['.DS_Store', 'Thumbs.db']);
 const v5DocMarker = /V5|Industries V5|Products|Compounds|Home|ZX Logo/i;
+const expectedReleaseFiles = 528;
+const acceptanceViewports = Object.freeze(['1280x900', '390x844']);
 
 function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -332,7 +336,58 @@ function runPreflightChecks(releaseRoot) {
     'V5 retirement checker',
     run(process.execPath, ['scripts/check-v5-retirement.mjs', `--root=${releaseRoot}`], { capture: true }),
   );
-  return { scope, content, previewSeo, previewI18n, releaseSeo, releaseI18n, retirement };
+  const checks = { scope, content, previewSeo, previewI18n, releaseSeo, releaseI18n, retirement };
+  validatePreflightChecks(checks);
+  return checks;
+}
+
+function expectedRuntimeMessageRecords() {
+  let englishCatalog;
+  try {
+    englishCatalog = JSON.parse(readFileSync(join(repo, 'scripts', 'v5-i18n', 'en.json'), 'utf8'));
+  } catch {
+    throw new Error('English V5 catalog is not valid JSON for archive preflight');
+  }
+  const keys = [
+    ...Object.keys(englishCatalog.runtime?.quote?.js_string ?? {}).map((key) => `js_string.${key}`),
+    ...Object.keys(englishCatalog.runtime?.quote?.validation ?? {}).map((key) => `validation.${key}`),
+  ];
+  if (keys.length !== 14 || new Set(keys).size !== 14) {
+    throw new Error(`English V5 Quote runtime inventory must contain exactly 14 ordered keys; found ${keys.length}`);
+  }
+  return localeIds.flatMap((locale) => keys.map((key) => ({ locale, key })));
+}
+
+export function validatePreflightChecks(preflightChecks) {
+  const releaseI18n = preflightChecks?.releaseI18n;
+  if (releaseI18n?.status !== 'PASS') throw new Error('Archive preflight release i18n check must record PASS');
+  const form = releaseI18n.form;
+  const exact = {
+    quotePages: localeIds.length,
+    passedPages: localeIds.length,
+    formspreeTargets: localeIds.length,
+    turnstileWidgets: localeIds.length,
+    localeFields: localeIds.length,
+    runtimeMessages: localeIds.length * 14,
+    realSubmissions: 0,
+  };
+  for (const [key, expected] of Object.entries(exact)) {
+    if (form?.[key] !== expected) {
+      throw new Error(`Archive preflight releaseI18n.form.${key} must equal ${expected}; got ${String(form?.[key])}`);
+    }
+  }
+  const expectedRecords = expectedRuntimeMessageRecords();
+  if (!Array.isArray(form.runtimeMessageResults) || form.runtimeMessageResults.length !== expectedRecords.length) {
+    throw new Error(`Archive preflight releaseI18n.form.runtimeMessageResults must contain ${expectedRecords.length} records`);
+  }
+  for (const [index, expected] of expectedRecords.entries()) {
+    const actual = form.runtimeMessageResults[index];
+    if (actual?.locale !== expected.locale || actual?.key !== expected.key || actual?.passed !== true
+        || JSON.stringify(Object.keys(actual)) !== JSON.stringify(['locale', 'key', 'passed'])) {
+      throw new Error(`Archive preflight releaseI18n.form.runtimeMessageResults mismatch at index ${index}`);
+    }
+  }
+  return { quotePages: exact.quotePages, runtimeMessages: exact.runtimeMessages };
 }
 
 export function validateReleaseReportData(releaseReport) {
@@ -437,8 +492,8 @@ export function validateReleaseBundle(releaseRoot) {
   const relativeFiles = files
     .map((file) => relative(safeRoot, file).split(sep).join('/'))
     .sort((left, right) => Buffer.compare(Buffer.from(left), Buffer.from(right)));
-  if (relativeFiles.length !== 521) {
-    throw new Error(`Accepted release must contain exactly 521 files; found ${relativeFiles.length}`);
+  if (relativeFiles.length !== expectedReleaseFiles) {
+    throw new Error(`Accepted release must contain exactly ${expectedReleaseFiles} files; found ${relativeFiles.length}`);
   }
   const manifest = releaseManifest(relativeFiles, safeRoot);
   return {
@@ -456,13 +511,29 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
       || report.releaseManifestSha256 !== expectedManifestSha256) {
     throw new Error('Acceptance report releaseManifestSha256 must bind the exact accepted release manifest');
   }
+  const expectedHttpRoutes = [
+    ...localeIds.flatMap((locale) => V5_PAGE_STEMS.map((stem) => getLocalizedRoute(locale, stem))),
+    ...LEGACY_REDIRECTS.map(({ path }) => path),
+  ];
+  const expectedBrowser = localeIds.flatMap((locale) => V5_PAGE_STEMS.flatMap((stem) => (
+    acceptanceViewports.map((viewport) => ({ locale, stem, viewport }))
+  )));
+  const expectedBrowserKeys = expectedBrowser.map(({ locale, stem, viewport }) => `${locale}\0${stem}\0${viewport}`);
+  const expectedPersianKeys = expectedBrowserKeys.filter((key) => key.startsWith('fa\0'));
+  const expectedArabicKeys = expectedBrowserKeys.filter((key) => key.startsWith('ar\0'));
+  const expectedRtlKeys = expectedBrowserKeys.filter((key) => key.startsWith('fa\0') || key.startsWith('ar\0'));
   const exactCounts = {
-    httpRoutes: 81,
-    httpPassed: 81,
-    browserPages: 56,
-    pageViewportChecks: 112,
-    pageViewportPassed: 112,
+    manifestFiles: expectedReleaseFiles,
+    httpRoutes: expectedHttpRoutes.length,
+    httpPassed: expectedHttpRoutes.length,
+    productionRedirectRows: 0,
+    productionRedirectPassed: 0,
+    browserPages: localeIds.length * V5_PAGE_STEMS.length,
+    pageViewportChecks: expectedBrowser.length,
+    pageViewportPassed: expectedBrowser.length,
     persianRtlViewportChecks: 14,
+    arabicRtlViewportChecks: 14,
+    rtlViewportChecks: 28,
     realSubmissions: 0,
     formspreeAttemptedPostRequests: 0,
     formspreePostRequests: 0,
@@ -478,15 +549,14 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
   if (report.formspreeInterceptedUrls.length !== 0) {
     throw new Error('Acceptance report formspreeInterceptedUrls must be exactly empty');
   }
+  if (!Array.isArray(report.redirectResults) || report.redirectResults.length !== 0) {
+    throw new Error('Local acceptance report redirectResults must be exactly empty');
+  }
   if (report.formSubmission !== 'deferred') throw new Error('Acceptance report must record formSubmission=deferred');
   if (!Array.isArray(report.failures) || report.failures.length) throw new Error('Acceptance report failures must be an empty array');
 
-  const expectedHttpRoutes = [
-    ...localeIds.flatMap((locale) => V5_PAGE_STEMS.map((stem) => getLocalizedRoute(locale, stem))),
-    ...LEGACY_REDIRECTS.map(({ path }) => path),
-  ];
   if (!Array.isArray(report.httpResults) || report.httpResults.length !== expectedHttpRoutes.length) {
-    throw new Error('Acceptance report must contain exactly 81 HTTP result records');
+    throw new Error(`Acceptance report must contain exactly ${expectedHttpRoutes.length} HTTP result records`);
   }
   for (const [index, expectedRoute] of expectedHttpRoutes.entries()) {
     const result = report.httpResults[index];
@@ -495,13 +565,11 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
     }
   }
 
-  const expectedBrowser = localeIds.flatMap((locale) => V5_PAGE_STEMS.flatMap((stem) => (
-    ['1280x900', '390x844'].map((viewport) => ({ locale, stem, viewport }))
-  )));
   if (!Array.isArray(report.browserResults) || report.browserResults.length !== expectedBrowser.length) {
-    throw new Error('Acceptance report must contain exactly 112 browser result records');
+    throw new Error(`Acceptance report must contain exactly ${expectedBrowser.length} browser result records`);
   }
   let persianRtlPassed = 0;
+  let arabicRtlPassed = 0;
   for (const [index, expected] of expectedBrowser.entries()) {
     const result = report.browserResults[index];
     const key = `${expected.locale}/${expected.stem}/${expected.viewport}`;
@@ -510,19 +578,23 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
     }
     if (result.ok !== true || result.h1Count !== 1 || result.horizontalOverflow !== false
         || result.localOverflow !== false || result.brokenImages !== 0 || result.failedVideos !== 0
-        || result.controlsValid !== true || result.canonicalValid !== true || result.hreflangCount !== 9
+        || result.controlsValid !== true || result.canonicalValid !== true
+        || result.hreflangCount !== localeIds.length + 1
         || result.internalNavigationValid !== true || !Array.isArray(result.migrationConsoleErrors)
         || result.migrationConsoleErrors.length !== 0) {
       throw new Error(`Acceptance report contains a failed browser invariant: ${key}`);
     }
-    if (expected.locale === 'fa') {
-      if (result.rtlValid !== true || result.mediaMirrored !== false || result.mapMirrored !== false) {
-        throw new Error(`Acceptance report contains a failed Persian RTL invariant: ${key}`);
+    if (V5_LOCALES[expected.locale].direction === 'rtl') {
+      if (result.rtlValid !== true || result.mediaMirrored !== false || result.mapMirrored !== false
+          || result.decorativeMirrored !== false) {
+        throw new Error(`Acceptance report contains a failed ${expected.locale} RTL invariant: ${key}`);
       }
-      persianRtlPassed += 1;
+      if (expected.locale === 'fa') persianRtlPassed += 1;
+      if (expected.locale === 'ar') arabicRtlPassed += 1;
     }
   }
   if (persianRtlPassed !== 14) throw new Error(`Acceptance report must contain exactly 14 passing Persian RTL checks; found ${persianRtlPassed}`);
+  if (arabicRtlPassed !== 14) throw new Error(`Acceptance report must contain exactly 14 passing Arabic RTL checks; found ${arabicRtlPassed}`);
 
   const clicks = report.clickPaths ?? {};
   for (const [key, expectedValue] of Object.entries({
@@ -540,9 +612,61 @@ export function validateAcceptanceData(report, expectedManifestSha256) {
     keyboardArrows: true,
     keyboardEscape: true,
     persianFocusOrder: true,
+    arabicFocusOrder: true,
   })) {
     if (clicks[key] !== expectedValue) {
       throw new Error(`Acceptance report clickPaths.${key} must equal ${String(expectedValue)}`);
+    }
+  }
+
+  const evidence = report.interactionEvidence;
+  const exactEvidence = {
+    exactHttpKeys: expectedHttpRoutes,
+    exactBrowserKeys: expectedBrowserKeys,
+    exactPersianKeys: expectedPersianKeys,
+    exactArabicKeys: expectedArabicKeys,
+    exactRtlKeys: expectedRtlKeys,
+  };
+  for (const [key, expected] of Object.entries(exactEvidence)) {
+    if (JSON.stringify(evidence?.[key]) !== JSON.stringify(expected)) {
+      throw new Error(`Acceptance interactionEvidence.${key} keys/order are not exact`);
+    }
+  }
+
+  const quoteValidation = evidence?.quoteValidation;
+  if (!Array.isArray(quoteValidation) || quoteValidation.length !== localeIds.length
+      || JSON.stringify(quoteValidation.map(({ locale }) => locale)) !== JSON.stringify(localeIds)) {
+    throw new Error('Acceptance interactionEvidence.quoteValidation must contain the exact ordered nine-locale array');
+  }
+  for (const [index, locale] of localeIds.entries()) {
+    const record = quoteValidation[index];
+    if (JSON.stringify(Object.keys(record ?? {})) !== JSON.stringify(['locale', 'ok', 'empty', 'badEmail', 'withoutTurnstile'])
+        || record.locale !== locale || record.ok !== true) {
+      throw new Error(`Acceptance Quote validation record schema mismatch at index ${index}`);
+    }
+    if (record.empty?.invalid !== 3 || !Array.isArray(record.empty?.messages)
+        || record.empty.messages.length !== 3 || !record.empty.messages.every((message) => typeof message === 'string' && message)) {
+      throw new Error(`Acceptance Quote empty-validation evidence failed for ${locale}`);
+    }
+    if (record.badEmail?.invalid !== true || typeof record.badEmail?.message !== 'string' || !record.badEmail.message) {
+      throw new Error(`Acceptance Quote email-validation evidence failed for ${locale}`);
+    }
+    const without = record.withoutTurnstile;
+    if (without?.state !== 'error' || typeof without?.status !== 'string' || !without.status
+        || without?.values?.name !== 'Acceptance Tester'
+        || without?.values?.email !== 'acceptance@example.com'
+        || without?.values?.message !== 'Acceptance only; do not submit.'
+        || without?.hiddenLocale !== locale
+        || without?.turnstileLanguage !== V5_LOCALES[locale].turnstileLanguage
+        || without?.formAction !== 'https://formspree.io/f/mrpzqado'
+        || without?.dirnameFields !== 0) {
+      throw new Error(`Acceptance Quote no-submit evidence failed for ${locale}`);
+    }
+    if (V5_LOCALES[locale].direction === 'rtl'
+        && JSON.stringify(without.directions) !== JSON.stringify({
+          name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto',
+        })) {
+      throw new Error(`Acceptance Quote RTL field directions failed for ${locale}`);
     }
   }
   return report;
@@ -661,6 +785,7 @@ function copyAcceptanceReport(acceptance, packageRoot) {
 
 function writeDeploymentManifest(packageRoot, summary, metadata) {
   validateArchiveIdentity();
+  const preflightForm = validatePreflightChecks(summary.preflightChecks);
   const manifestPath = join(packageRoot, 'V5-DEPLOYMENT-MANIFEST.json');
   const parentRevision = run('git', ['rev-parse', 'HEAD^'], { capture: true });
   const manifest = {
@@ -669,18 +794,26 @@ function writeDeploymentManifest(packageRoot, summary, metadata) {
     candidateParent: parentRevision,
     rollbackCommit: rollbackRevision,
     packageName,
-    routes: 56,
-    hreflangLinks: 504,
-    sitemapUrls: 56,
+    routes: 63,
+    hreflangLinks: 630,
+    sitemapUrls: 63,
     legacyFallbacks: 25,
     cloudflareRows: 50,
-    httpRoutes: 81,
-    browserPages: 56,
-    browserPageViewportChecks: 112,
+    httpRoutes: 88,
+    httpPassed: 88,
+    browserPages: 63,
+    browserPageViewportChecks: 126,
+    browserPageViewportPassed: 126,
     persianRtlViewportChecks: 14,
+    arabicRtlViewportChecks: 14,
+    rtlViewportChecks: 28,
+    quotePages: preflightForm.quotePages,
+    quoteRuntimeMessages: preflightForm.runtimeMessages,
     formSubmission: 'deferred',
     realSubmissions: 0,
+    formspreeAttemptedPostRequests: 0,
     formspreePostRequests: 0,
+    formspreeInterceptedUrls: [],
     releaseManifestSha256: summary.releaseManifestSha256,
     acceptanceReportSha256: summary.acceptanceReportSha256,
     sourceFiles: summary.fileCount,

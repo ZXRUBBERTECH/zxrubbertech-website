@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
-import { getLocalizedUrl, V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
+import { getHreflangCluster, getLocalizedRoute, getLocalizedUrl, V5_LOCALES, V5_PAGE_STEMS } from './v5-i18n-config.mjs';
 import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map.mjs';
 
 const cliFailures = [];
@@ -44,6 +44,7 @@ const expectedCounts = Object.freeze({
   legacyPaths: 25,
   hosts: 2,
   csvRows: 50,
+  releaseFiles: 528,
 });
 const acceptedCsvSha256 = '8d17b3226a266ff4539cf9a6721e4854992121663aeebd60354b3e73cf76fb63';
 const exactRobots = `User-agent: *\nAllow: /\n\nSitemap: https://www.zxrubbertech.com/sitemap.xml\n`;
@@ -106,6 +107,51 @@ const decodeXml = (value) => value
   .replaceAll('&lt;', '<')
   .replaceAll('&gt;', '>')
   .replaceAll('&apos;', "'");
+
+const releaseReportContents = read('v5-release-report.json');
+if (releaseReportContents !== null) {
+  let releaseReport;
+  try {
+    releaseReport = JSON.parse(releaseReportContents);
+  } catch {
+    fail('V5 release report is malformed');
+  }
+  if (releaseReport) {
+    const expectedPageRecords = registryLocales.flatMap((locale) => V5_PAGE_STEMS.map((stem) => {
+      const route = getLocalizedRoute(locale, stem);
+      return {
+        locale,
+        stem,
+        route,
+        file: route === '/' ? 'index.html' : `${route.slice(1)}index.html`,
+      };
+    }));
+    if (releaseReport.status !== 'PASS'
+        || releaseReport.locales !== registryLocales.length
+        || JSON.stringify(releaseReport.localeIds) !== JSON.stringify(registryLocales)
+        || releaseReport.publicPages !== expectedPageRecords.length
+        || releaseReport.hreflangLinks !== expectedPageRecords.length * getHreflangCluster(V5_PAGE_STEMS[0]).length
+        || releaseReport.sitemapUrls !== expectedPageRecords.length
+        || !Array.isArray(releaseReport.pages)
+        || releaseReport.pages.length !== expectedPageRecords.length) {
+      fail(`retirement requires the complete ordered ${expectedPageRecords.length}-page V5 release report`);
+    } else {
+      for (const [index, expected] of expectedPageRecords.entries()) {
+        const page = releaseReport.pages[index];
+        if (page?.locale !== expected.locale || page?.stem !== expected.stem
+            || page?.route !== expected.route || page?.file !== expected.file
+            || !/^[a-f0-9]{64}$/.test(page?.sha256 ?? '')) {
+          fail(`V5 release report page order mismatch at index ${index}`);
+          continue;
+        }
+        const pageContents = read(expected.file);
+        if (pageContents !== null && createHash('sha256').update(pageContents).digest('hex') !== page.sha256) {
+          fail(`V5 release report page hash mismatch: ${expected.file}`);
+        }
+      }
+    }
+  }
+}
 
 if (JSON.stringify(V5_URLS) !== JSON.stringify(expectedV5Urls)) {
   fail(`V5 URL inventory must exactly match the ordered ${expectedCounts.v5Urls}-route registry`);
@@ -314,7 +360,7 @@ const walkHtml = (directory) => {
       const relativePath = relative(repositoryRoot, absolute).split(sep).join('/');
       discoveredFiles.push(relativePath);
       if (name.endsWith('.html')) discoveredHtmlFiles.push(relativePath);
-    }
+    } else fail(`unsupported file type in retirement root: ${relative(repositoryRoot, absolute)}`);
   }
 };
 walkHtml(repositoryRoot);
@@ -327,7 +373,9 @@ for (const relativePath of allowedHtmlFiles) {
 if (discoveredHtmlFiles.length !== expectedCounts.v5Urls + expectedCounts.legacyPaths) {
   fail(`retirement bundle must contain exactly ${expectedCounts.v5Urls + expectedCounts.legacyPaths} HTML pages; found ${discoveredHtmlFiles.length}`);
 }
-if (discoveredFiles.length !== 521) fail(`retirement bundle must contain exactly 521 files; found ${discoveredFiles.length}`);
+if (discoveredFiles.length !== expectedCounts.releaseFiles) {
+  fail(`retirement bundle must contain exactly ${expectedCounts.releaseFiles} files; found ${discoveredFiles.length}`);
+}
 
 const quoteContents = read('quote/index.html');
 if (quoteContents !== null) {

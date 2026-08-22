@@ -22,6 +22,7 @@ import {
   rollbackRevision as archiveRollbackRevision,
   validateAcceptanceData,
   validateArchiveIdentity,
+  validatePreflightChecks,
   validateReleaseBundle,
   validateReleaseReportData,
 } from './archive-v5.mjs';
@@ -97,7 +98,11 @@ function fixtureSha256(root) {
         visit(file);
         continue;
       }
-      if (!info.isFile()) throw new Error(`Unsupported mutation fixture entry: ${file}`);
+      if (!info.isFile()) {
+        hash.update(relative(root, file).split('\\').join('/'));
+        hash.update(`\0SPECIAL:${info.mode}\0`);
+        continue;
+      }
       hash.update(relative(root, file).split('\\').join('/'));
       hash.update('\0');
       hash.update(readFileSync(file));
@@ -1160,6 +1165,7 @@ function prepareRetirementFixture(root) {
   const fixtureRoot = join(parent, 'release');
   mkdirSync(fixtureScripts, { recursive: true });
   for (const file of registryDependencies) copyFileSync(join(scriptsRoot, file), join(fixtureScripts, file));
+  copyFileSync(join(scriptsRoot, 'build-v5-retirement.mjs'), join(fixtureScripts, 'build-v5-retirement.mjs'));
   copyFileSync(join(scriptsRoot, 'check-v5-retirement.mjs'), join(fixtureScripts, 'check-v5-retirement.mjs'));
   writeRetirementMap(join(fixtureScripts, 'v5-retirement-map.mjs'));
   copyTreeSafe(root, fixtureRoot);
@@ -1169,6 +1175,17 @@ function prepareRetirementFixture(root) {
 function runRetirementChecker(fixture) {
   return spawnSync(process.execPath, [
     realpathSync(join(fixture.fixtureScripts, 'check-v5-retirement.mjs')),
+    `--root=${fixture.fixtureRoot}`,
+  ], {
+    cwd: fixture.fixtureRepo,
+    encoding: 'utf8',
+    maxBuffer: 30 * 1024 * 1024,
+  });
+}
+
+function runRetirementBuilder(fixture) {
+  return spawnSync(process.execPath, [
+    realpathSync(join(fixture.fixtureScripts, 'build-v5-retirement.mjs')),
     `--root=${fixture.fixtureRoot}`,
   ], {
     cwd: fixture.fixtureRepo,
@@ -1208,6 +1225,45 @@ function retirementCaseDefinitions() {
       },
     },
     {
+      name: 'extra-arabic-legacy-fallback',
+      expectedSignal: 'unexpected HTML page in retirement bundle: ar/products/rubber-wheel/index.html',
+      mutate: (fixture) => {
+        const destination = join(fixture.fixtureRoot, 'ar/products/rubber-wheel/index.html');
+        mkdirSync(dirname(destination), { recursive: true });
+        copyFileSync(join(fixture.fixtureRoot, 'products/rubber-wheel/index.html'), destination);
+      },
+    },
+    {
+      name: 'extra-arabic-cloudflare-row',
+      expectedSignal: 'Cloudflare CSV SHA-256 mismatch',
+      mutate: (fixture) => {
+        const file = csvFile(fixture);
+        const source = readFileSync(file, 'utf8');
+        writeFileSync(
+          file,
+          `${source}www.zxrubbertech.com/ar/products/rubber-wheel/,https://www.zxrubbertech.com/ar/products/#c-industrial,301,true,false,false,false\n`,
+          'utf8',
+        );
+      },
+    },
+    {
+      name: 'single-arabic-release-rejected-before-retirement-write',
+      runner: 'builder',
+      requireFixtureUnchanged: true,
+      expectedSignal: 'Retirement requires the complete ordered 63-page V5 release report',
+      mutate: (fixture) => {
+        const file = join(fixture.fixtureRoot, 'v5-release-report.json');
+        const report = readJson(file);
+        report.locales = 1;
+        report.localeIds = ['ar'];
+        report.publicPages = 7;
+        report.hreflangLinks = 14;
+        report.sitemapUrls = 7;
+        report.pages = report.pages.filter(({ locale }) => locale === 'ar');
+        writeJson(file, report);
+      },
+    },
+    {
       name: 'fallback-target-swap',
       expectedSignal: 'fallback token count must be 1',
       mutate: (fixture) => {
@@ -1237,7 +1293,7 @@ function retirementCaseDefinitions() {
     },
     {
       name: 'extra-release-file',
-      expectedSignal: 'retirement bundle must contain exactly 521 files; found 522',
+      expectedSignal: 'retirement bundle must contain exactly 528 files; found 529',
       mutate: (fixture) => writeFileSync(join(fixture.fixtureRoot, 'extra.txt'), 'unexpected\n', 'utf8'),
     },
     {
@@ -1249,35 +1305,57 @@ function retirementCaseDefinitions() {
         if (result.status !== 0) throw new Error(`Unable to create symlink fixture: ${result.stderr}`);
       },
     },
+    {
+      name: 'release-special-file',
+      expectedSignal: 'unsupported file type in retirement root',
+      mutate: (fixture) => {
+        const result = spawnSync('/usr/bin/mkfifo', [join(fixture.fixtureRoot, 'extra-fifo')], { encoding: 'utf8' });
+        if (result.status !== 0) throw new Error(`Unable to create FIFO fixture: ${result.stderr}`);
+      },
+    },
   ];
 }
 
 function runRetirementCase(root, testCase) {
   const fixture = prepareRetirementFixture(root);
   try {
-    const greenResult = runRetirementChecker(fixture);
+    const runner = testCase.runner === 'builder' ? runRetirementBuilder : runRetirementChecker;
+    const greenResult = runner(fixture);
     const greenReport = parseCheckerReport(greenResult);
+    const greenMetrics = testCase.runner === 'builder'
+      ? greenReport && {
+        v5Urls: greenReport.v5Urls,
+        legacyPaths: LEGACY_REDIRECTS.length,
+        fallbackPages: greenReport.fallbackPages,
+        cloudflareEntries: greenReport.cloudflareEntries,
+        sitemapUrls: greenReport.sitemapUrls,
+      }
+      : greenReport?.metrics;
     const greenPassed = greenResult.status === 0
       && greenReport?.status === 'PASS'
-      && JSON.stringify(greenReport.metrics) === JSON.stringify({
-        v5Urls: 56, legacyPaths: 25, fallbackPages: 25, cloudflareEntries: 50, sitemapUrls: 56,
+      && JSON.stringify(greenMetrics) === JSON.stringify({
+        v5Urls: 63, legacyPaths: 25, fallbackPages: 25, cloudflareEntries: 50, sitemapUrls: 63,
       });
     testCase.mutate(fixture);
-    const result = runRetirementChecker(fixture);
+    const beforeRunSha256 = fixtureSha256(fixture.fixtureRoot);
+    const result = runner(fixture);
+    const afterRunSha256 = fixtureSha256(fixture.fixtureRoot);
     const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
     const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
     const signalFound = output.includes(testCase.expectedSignal);
+    const fixtureUnchanged = testCase.requireFixtureUnchanged !== true || beforeRunSha256 === afterRunSha256;
     return {
       case: testCase.name,
       fixtureSha256: fixtureSha256(fixture.fixtureRoot),
       greenExitCode: greenResult.status,
-      greenMetrics: greenReport?.metrics ?? null,
+      greenMetrics: greenMetrics ?? null,
       exitCode: result.status,
       expectedExitCode: 1,
       expectedSignal: testCase.expectedSignal,
       actualSignalFound: signalFound,
+      fixtureUnchanged,
       missingFileNoise,
-      status: greenPassed && result.status === 1 && signalFound && missingFileNoise === 0 ? 'PASS' : 'FAIL',
+      status: greenPassed && result.status === 1 && signalFound && fixtureUnchanged && missingFileNoise === 0 ? 'PASS' : 'FAIL',
       greenStdoutSha256: sha256(greenResult.stdout ?? ''),
       greenStderrSha256: sha256(greenResult.stderr ?? ''),
       stdoutSha256: sha256(result.stdout ?? ''),
@@ -1290,13 +1368,14 @@ function runRetirementCase(root, testCase) {
 }
 
 export function syntheticAcceptance(releaseManifestSha256) {
+  const localeIds = Object.keys(V5_LOCALES);
   const httpResults = [
-    ...Object.keys(V5_LOCALES).flatMap((locale) => V5_PAGE_STEMS.map((stem) => ({
+    ...localeIds.flatMap((locale) => V5_PAGE_STEMS.map((stem) => ({
       route: getLocalizedRoute(locale, stem), ok: true, status: 200,
     }))),
     ...LEGACY_REDIRECTS.map(({ path }) => ({ route: path, ok: true, status: 200 })),
   ];
-  const browserResults = Object.keys(V5_LOCALES).flatMap((locale) => V5_PAGE_STEMS.flatMap((stem) => (
+  const browserResults = localeIds.flatMap((locale) => V5_PAGE_STEMS.flatMap((stem) => (
     ['1280x900', '390x844'].map((viewport) => ({
       locale,
       stem,
@@ -1309,21 +1388,54 @@ export function syntheticAcceptance(releaseManifestSha256) {
       failedVideos: 0,
       controlsValid: true,
       canonicalValid: true,
-      hreflangCount: 9,
+      hreflangCount: 10,
       internalNavigationValid: true,
       migrationConsoleErrors: [],
-      ...(locale === 'fa' ? { rtlValid: true, mediaMirrored: false, mapMirrored: false } : {}),
+      ...(V5_LOCALES[locale].direction === 'rtl'
+        ? { rtlValid: true, mediaMirrored: false, mapMirrored: false, decorativeMirrored: false }
+        : {}),
     }))
   )));
+  const browserKeys = browserResults.map(({ locale, stem, viewport }) => `${locale}\0${stem}\0${viewport}`);
+  const quoteValidation = localeIds.map((locale) => ({
+    locale,
+    ok: true,
+    empty: { invalid: 3, messages: ['required', 'required', 'required'] },
+    badEmail: { invalid: true, message: 'invalid email' },
+    withoutTurnstile: {
+      status: 'verification required',
+      state: 'error',
+      values: {
+        name: 'Acceptance Tester',
+        company: '',
+        email: 'acceptance@example.com',
+        phone: '',
+        message: 'Acceptance only; do not submit.',
+      },
+      hiddenLocale: locale,
+      turnstileLanguage: V5_LOCALES[locale].turnstileLanguage,
+      formAction: 'https://formspree.io/f/mrpzqado',
+      directions: V5_LOCALES[locale].direction === 'rtl'
+        ? { name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto' }
+        : { name: null, company: null, email: null, phone: null, message: null },
+      dirnameFields: 0,
+    },
+  }));
   return {
     status: 'PASS',
     releaseManifestSha256,
-    httpRoutes: 81,
-    httpPassed: 81,
-    browserPages: 56,
-    pageViewportChecks: 112,
-    pageViewportPassed: 112,
+    manifestFiles: 528,
+    httpRoutes: 88,
+    httpPassed: 88,
+    productionRedirectRows: 0,
+    productionRedirectPassed: 0,
+    redirectResults: [],
+    browserPages: 63,
+    pageViewportChecks: 126,
+    pageViewportPassed: 126,
     persianRtlViewportChecks: 14,
+    arabicRtlViewportChecks: 14,
+    rtlViewportChecks: 28,
     realSubmissions: 0,
     formspreeAttemptedPostRequests: 0,
     formspreePostRequests: 0,
@@ -1332,6 +1444,14 @@ export function syntheticAcceptance(releaseManifestSha256) {
     failures: [],
     httpResults,
     browserResults,
+    interactionEvidence: {
+      quoteValidation,
+      exactHttpKeys: httpResults.map(({ route }) => route),
+      exactBrowserKeys: browserKeys,
+      exactPersianKeys: browserKeys.filter((key) => key.startsWith('fa\0')),
+      exactArabicKeys: browserKeys.filter((key) => key.startsWith('ar\0')),
+      exactRtlKeys: browserKeys.filter((key) => key.startsWith('fa\0') || key.startsWith('ar\0')),
+    },
     clickPaths: {
       samePageLanguageRoles: 7,
       productsFragment: true,
@@ -1347,6 +1467,7 @@ export function syntheticAcceptance(releaseManifestSha256) {
       keyboardArrows: true,
       keyboardEscape: true,
       persianFocusOrder: true,
+      arabicFocusOrder: true,
     },
   };
 }
@@ -1369,89 +1490,215 @@ function runWithMutatedReleaseRoot(root, mutation) {
   }
 }
 
+function syntheticPreflightChecks() {
+  const english = readJson(join(scriptsRoot, 'v5-i18n', 'en.json'));
+  const runtimeKeys = [
+    ...Object.keys(english.runtime?.quote?.js_string ?? {}).map((key) => `js_string.${key}`),
+    ...Object.keys(english.runtime?.quote?.validation ?? {}).map((key) => `validation.${key}`),
+  ];
+  return {
+    releaseI18n: {
+      status: 'PASS',
+      form: {
+        locales: 9,
+        quotePages: 9,
+        passedPages: 9,
+        formspreeTargets: 9,
+        turnstileWidgets: 9,
+        localeFields: 9,
+        runtimeMessages: 126,
+        runtimeMessageResults: Object.keys(V5_LOCALES).flatMap((locale) => (
+          runtimeKeys.map((key) => ({ locale, key, passed: true }))
+        )),
+        realSubmissions: 0,
+      },
+    },
+  };
+}
+
 function archiveCaseDefinitions(bundle, root) {
   const acceptance = syntheticAcceptance(bundle.manifest.sha256);
+  const preflight = syntheticPreflightChecks();
+  const mutateAcceptance = (mutation) => {
+    const copy = structuredClone(acceptance);
+    mutation(copy);
+    return validateAcceptanceData(copy, bundle.manifest.sha256);
+  };
+  const mutatePreflight = (mutation) => {
+    const copy = structuredClone(preflight);
+    mutation(copy);
+    return validatePreflightChecks(copy);
+  };
   return [
     {
       name: 'old-package-identity', expectedSignal: 'Archive package identity must equal',
-      mutate: () => validateArchiveIdentity({ candidatePackageName: 'zxrubbertech-v5-language-routing-release-candidate-2026-08-15-rc1' }),
+      mutate: () => validateArchiveIdentity({ candidatePackageName: 'zxrubbertech-v5-ja-ko-fa-release-candidate-2026-08-16-rc1' }),
     },
     {
       name: 'old-rollback-revision', expectedSignal: 'Archive rollback revision must equal',
-      mutate: () => validateArchiveIdentity({ candidateRollbackRevision: '17c079572603759a7c96dd3d2fbf7f756a7aea3e' }),
+      mutate: () => validateArchiveIdentity({ candidateRollbackRevision: '6f84d51dac660ff1bdb5a38c7cf87dbb69a0812f' }),
     },
     {
-      name: 'old-release-public-pages-35', expectedSignal: 'publicPages=35, expected 56',
-      mutate: () => validateReleaseReportData({ ...bundle.report, publicPages: 35 }),
+      name: 'old-release-public-pages-56', expectedSignal: 'publicPages=56, expected 63',
+      mutate: () => validateReleaseReportData({ ...bundle.report, publicPages: 56 }),
     },
     {
-      name: 'old-release-hreflang-210', expectedSignal: 'hreflangLinks=210, expected 504',
-      mutate: () => validateReleaseReportData({ ...bundle.report, hreflangLinks: 210 }),
+      name: 'old-release-hreflang-504', expectedSignal: 'hreflangLinks=504, expected 630',
+      mutate: () => validateReleaseReportData({ ...bundle.report, hreflangLinks: 504 }),
     },
     {
-      name: 'old-http-count-60', expectedSignal: 'httpRoutes must equal 81',
-      mutate: () => validateAcceptanceData({ ...acceptance, httpRoutes: 60, httpPassed: 60 }, bundle.manifest.sha256),
+      name: 'old-release-sitemap-56', expectedSignal: 'sitemapUrls=56, expected 63',
+      mutate: () => validateReleaseReportData({ ...bundle.report, sitemapUrls: 56 }),
     },
     {
-      name: 'old-browser-count-70', expectedSignal: 'pageViewportChecks must equal 112',
-      mutate: () => validateAcceptanceData({ ...acceptance, pageViewportChecks: 70, pageViewportPassed: 70 }, bundle.manifest.sha256),
+      name: 'single-arabic-release-report', expectedSignal: 'localeIds must equal en, de, zh-CN, ru, tr, ja, ko, fa, ar',
+      mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
+        const file = join(fixtureRoot, 'v5-release-report.json');
+        const report = readJson(file);
+        report.locales = 1;
+        report.localeIds = ['ar'];
+        report.publicPages = 7;
+        report.hreflangLinks = 14;
+        report.sitemapUrls = 7;
+        report.pages = report.pages.filter(({ locale }) => locale === 'ar');
+        writeJson(file, report);
+      }),
     },
     {
-      name: 'old-hreflang-count-6', expectedSignal: 'failed browser invariant',
-      mutate: () => validateAcceptanceData({
-        ...acceptance,
-        browserResults: acceptance.browserResults.map((result, index) => index === 0 ? { ...result, hreflangCount: 6 } : result),
-      }, bundle.manifest.sha256),
+      name: 'old-http-count-81', expectedSignal: 'httpRoutes must equal 88',
+      mutate: () => mutateAcceptance((copy) => { copy.httpRoutes = 81; copy.httpPassed = 81; }),
     },
     {
-      name: 'browser-delete-and-duplicate-preserving-112', expectedSignal: 'browser result order mismatch',
-      mutate: () => validateAcceptanceData({
-        ...acceptance,
-        browserResults: [...acceptance.browserResults.slice(0, -1), acceptance.browserResults[0]],
-      }, bundle.manifest.sha256),
+      name: 'old-browser-pages-56', expectedSignal: 'browserPages must equal 63',
+      mutate: () => mutateAcceptance((copy) => { copy.browserPages = 56; }),
+    },
+    {
+      name: 'old-browser-viewport-count-112', expectedSignal: 'pageViewportChecks must equal 126',
+      mutate: () => mutateAcceptance((copy) => { copy.pageViewportChecks = 112; copy.pageViewportPassed = 112; }),
+    },
+    {
+      name: 'old-total-rtl-count-14', expectedSignal: 'rtlViewportChecks must equal 28',
+      mutate: () => mutateAcceptance((copy) => { copy.rtlViewportChecks = 14; }),
+    },
+    {
+      name: 'missing-arabic-rtl-count', expectedSignal: 'arabicRtlViewportChecks must equal 14',
+      mutate: () => mutateAcceptance((copy) => { delete copy.arabicRtlViewportChecks; }),
+    },
+    {
+      name: 'wrong-arabic-exact-key-order', expectedSignal: 'interactionEvidence.exactArabicKeys keys/order are not exact',
+      mutate: () => mutateAcceptance((copy) => {
+        [copy.interactionEvidence.exactArabicKeys[0], copy.interactionEvidence.exactArabicKeys[1]] = [
+          copy.interactionEvidence.exactArabicKeys[1], copy.interactionEvidence.exactArabicKeys[0],
+        ];
+      }),
+    },
+    {
+      name: 'false-arabic-focus-order', expectedSignal: 'clickPaths.arabicFocusOrder must equal true',
+      mutate: () => mutateAcceptance((copy) => { copy.clickPaths.arabicFocusOrder = false; }),
+    },
+    {
+      name: 'old-browser-hreflang-count-9', expectedSignal: 'failed browser invariant',
+      mutate: () => mutateAcceptance((copy) => { copy.browserResults[0].hreflangCount = 9; }),
+    },
+    {
+      name: 'browser-delete-and-duplicate-preserving-126', expectedSignal: 'browser result order mismatch',
+      mutate: () => mutateAcceptance((copy) => {
+        copy.browserResults = [...copy.browserResults.slice(0, -1), structuredClone(copy.browserResults[0])];
+      }),
+    },
+    {
+      name: 'browser-reordered-preserving-126', expectedSignal: 'browser result order mismatch',
+      mutate: () => mutateAcceptance((copy) => {
+        [copy.browserResults[0], copy.browserResults[1]] = [copy.browserResults[1], copy.browserResults[0]];
+      }),
+    },
+    {
+      name: 'wrong-arabic-browser-record', expectedSignal: 'browser result order mismatch',
+      mutate: () => mutateAcceptance((copy) => {
+        const index = copy.browserResults.findIndex(({ locale }) => locale === 'ar');
+        copy.browserResults[index].locale = 'fa';
+      }),
     },
     {
       name: 'persian-delete-and-duplicate-preserving-14', expectedSignal: 'browser result order mismatch',
-      mutate: () => {
-        const results = acceptance.browserResults.map((result) => ({ ...result }));
-        const faIndex = results.findIndex((result) => result.locale === 'fa');
-        results[faIndex] = { ...results[0] };
-        return validateAcceptanceData({ ...acceptance, browserResults: results }, bundle.manifest.sha256);
-      },
+      mutate: () => mutateAcceptance((copy) => {
+        const index = copy.browserResults.findIndex(({ locale }) => locale === 'fa');
+        copy.browserResults[index] = structuredClone(copy.browserResults[0]);
+      }),
+    },
+    {
+      name: 'quote-validation-delete-and-duplicate-preserving-9', expectedSignal: 'exact ordered nine-locale array',
+      mutate: () => mutateAcceptance((copy) => {
+        const records = copy.interactionEvidence.quoteValidation;
+        copy.interactionEvidence.quoteValidation = [...records.slice(0, -1), structuredClone(records[0])];
+      }),
+    },
+    {
+      name: 'quote-validation-reordered-preserving-9', expectedSignal: 'exact ordered nine-locale array',
+      mutate: () => mutateAcceptance((copy) => {
+        const records = copy.interactionEvidence.quoteValidation;
+        [records[0], records[1]] = [records[1], records[0]];
+      }),
+    },
+    {
+      name: 'wrong-arabic-quote-record', expectedSignal: 'Quote no-submit evidence failed for ar',
+      mutate: () => mutateAcceptance((copy) => {
+        const record = copy.interactionEvidence.quoteValidation.find(({ locale }) => locale === 'ar');
+        record.withoutTurnstile.hiddenLocale = 'fa';
+      }),
+    },
+    {
+      name: 'preflight-form-missing', expectedSignal: 'releaseI18n.form.quotePages must equal 9',
+      mutate: () => mutatePreflight((copy) => { delete copy.releaseI18n.form; }),
+    },
+    {
+      name: 'preflight-form-wrong-quote-pages', expectedSignal: 'releaseI18n.form.quotePages must equal 9',
+      mutate: () => mutatePreflight((copy) => { copy.releaseI18n.form.quotePages = 8; }),
+    },
+    {
+      name: 'preflight-form-wrong-runtime-messages', expectedSignal: 'releaseI18n.form.runtimeMessages must equal 126',
+      mutate: () => mutatePreflight((copy) => { copy.releaseI18n.form.runtimeMessages = 112; }),
+    },
+    {
+      name: 'preflight-form-runtime-order', expectedSignal: 'runtimeMessageResults mismatch at index 0',
+      mutate: () => mutatePreflight((copy) => {
+        const results = copy.releaseI18n.form.runtimeMessageResults;
+        [results[0], results[1]] = [results[1], results[0]];
+      }),
     },
     {
       name: 'release-manifest-binding', expectedSignal: 'releaseManifestSha256 must bind',
-      mutate: () => validateAcceptanceData({ ...acceptance, releaseManifestSha256: '0'.repeat(64) }, bundle.manifest.sha256),
+      mutate: () => mutateAcceptance((copy) => { copy.releaseManifestSha256 = '0'.repeat(64); }),
     },
     {
       name: 'formspree-intercepted-urls-missing', expectedSignal: 'formspreeInterceptedUrls must be an array',
-      mutate: () => {
-        const mutated = { ...acceptance };
-        delete mutated.formspreeInterceptedUrls;
-        return validateAcceptanceData(mutated, bundle.manifest.sha256);
-      },
+      mutate: () => mutateAcceptance((copy) => { delete copy.formspreeInterceptedUrls; }),
     },
     {
       name: 'formspree-intercepted-urls-nonarray', expectedSignal: 'formspreeInterceptedUrls must be an array',
-      mutate: () => validateAcceptanceData({ ...acceptance, formspreeInterceptedUrls: {} }, bundle.manifest.sha256),
+      mutate: () => mutateAcceptance((copy) => { copy.formspreeInterceptedUrls = {}; }),
     },
     {
       name: 'formspree-intercepted-urls-nonempty', expectedSignal: 'formspreeInterceptedUrls must be exactly empty',
-      mutate: () => validateAcceptanceData({
-        ...acceptance,
-        formspreeInterceptedUrls: ['https://formspree.io/f/mrpzqado'],
-      }, bundle.manifest.sha256),
+      mutate: () => mutateAcceptance((copy) => { copy.formspreeInterceptedUrls = ['https://formspree.io/f/mrpzqado']; }),
     },
     {
       name: 'formspree-attempted-post-one', expectedSignal: 'formspreeAttemptedPostRequests must equal 0',
-      mutate: () => validateAcceptanceData({ ...acceptance, formspreeAttemptedPostRequests: 1 }, bundle.manifest.sha256),
+      mutate: () => mutateAcceptance((copy) => { copy.formspreeAttemptedPostRequests = 1; }),
     },
     {
       name: 'formspree-actual-post-one', expectedSignal: 'formspreePostRequests must equal 0',
-      mutate: () => validateAcceptanceData({ ...acceptance, formspreePostRequests: 1 }, bundle.manifest.sha256),
+      mutate: () => mutateAcceptance((copy) => { copy.formspreePostRequests = 1; }),
     },
     {
-      name: 'archive-extra-release-file', expectedSignal: 'exactly 521 files; found 522',
+      name: 'archive-release-page-manifest-drift', expectedSignal: 'release page hash mismatch',
+      mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
+        const file = join(fixtureRoot, 'ar', 'index.html');
+        writeFileSync(file, `${readFileSync(file, 'utf8')}\n`, 'utf8');
+      }),
+    },
+    {
+      name: 'archive-extra-release-file', expectedSignal: 'exactly 528 files; found 529',
       mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
         writeFileSync(join(fixtureRoot, 'extra.txt'), 'unexpected\n', 'utf8');
       }),
@@ -1461,6 +1708,13 @@ function archiveCaseDefinitions(bundle, root) {
       mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
         const result = spawnSync('/bin/ln', ['-s', 'robots.txt', join(fixtureRoot, 'extra-link')], { encoding: 'utf8' });
         if (result.status !== 0) throw new Error(`Unable to create archive symlink fixture: ${result.stderr}`);
+      }),
+    },
+    {
+      name: 'archive-release-special-file', expectedSignal: 'unsupported file type',
+      mutate: () => runWithMutatedReleaseRoot(root, (fixtureRoot) => {
+        const result = spawnSync('/usr/bin/mkfifo', [join(fixtureRoot, 'extra-fifo')], { encoding: 'utf8' });
+        if (result.status !== 0) throw new Error(`Unable to create archive FIFO fixture: ${result.stderr}`);
       }),
     },
   ];
@@ -1479,7 +1733,7 @@ function runArchiveCase(bundle, testCase) {
     case: testCase.name,
     fixtureSha256: bundle.manifest.sha256,
     greenExitCode: 0,
-    greenMetrics: { releaseFiles: 521, publicPages: 56, hreflangLinks: 504, sitemapUrls: 56 },
+    greenMetrics: { releaseFiles: 528, publicPages: 63, hreflangLinks: 630, sitemapUrls: 63 },
     exitCode: actualSignalFound ? 1 : 0,
     expectedExitCode: 1,
     expectedSignal: testCase.expectedSignal,
@@ -1519,6 +1773,7 @@ function runSuite({ suite, root }) {
     validateArchiveIdentity({ candidatePackageName: archivePackageName, candidateRollbackRevision: archiveRollbackRevision });
     validateReleaseReportData(bundle.report);
     validateAcceptanceData(syntheticAcceptance(bundle.manifest.sha256), bundle.manifest.sha256);
+    validatePreflightChecks(syntheticPreflightChecks());
     return archiveCaseDefinitions(bundle, root).map((testCase) => runArchiveCase(bundle, testCase));
   }
   if (suite === 'all') {
@@ -1529,6 +1784,7 @@ function runSuite({ suite, root }) {
       throw new CliError(`All mutation suites${state}: complete registry catalogs required; missing: ${missing.join(', ')}`);
     }
     const bundle = validateReleaseBundle(root);
+    validatePreflightChecks(syntheticPreflightChecks());
     return [
       ...registryCases().map(runRegistryCase),
       ...catalogCaseDefinitions().map(runCatalogCase),

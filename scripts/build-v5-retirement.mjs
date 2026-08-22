@@ -9,6 +9,7 @@ import { CLOUDFLARE_HOSTS, LEGACY_REDIRECTS, V5_URLS } from './v5-retirement-map
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const registryLocales = Object.freeze(Object.keys(V5_LOCALES));
+const legacyLocales = Object.freeze(['en', 'de', 'zh-CN', 'ru', 'tr']);
 const expectedV5Urls = Object.freeze(registryLocales.flatMap((locale) => (
   V5_PAGE_STEMS.map((stem) => getLocalizedUrl(locale, stem))
 )));
@@ -109,7 +110,7 @@ export function buildV5Retirement({ root } = {}) {
       || releaseReport.sitemapUrls !== expectedPageRecords.length
       || !Array.isArray(releaseReport.pages)
       || releaseReport.pages.length !== expectedPageRecords.length) {
-    throw new Error('Retirement requires the complete ordered 56-page V5 release report');
+    throw new Error(`Retirement requires the complete ordered ${expectedPageRecords.length}-page V5 release report`);
   }
   for (const [index, expected] of expectedPageRecords.entries()) {
     const page = releaseReport.pages[index];
@@ -131,13 +132,25 @@ export function buildV5Retirement({ root } = {}) {
     if (!/^\/[a-z0-9/-]+\/$/.test(item.path)) throw new Error(`Malformed legacy path: ${item.path}`);
     if (!allowedTargets.has(item.target.split('#')[0])) throw new Error(`Target is outside V5: ${item.target}`);
   }
-  for (const item of LEGACY_REDIRECTS) {
-    atomicWrite(resolve(outputRoot, `.${item.path}index.html`), fallbackHtml(item));
+  const legacyCounts = new Map(legacyLocales.map((locale) => [locale, 0]));
+  for (const { locale } of LEGACY_REDIRECTS) {
+    if (!legacyCounts.has(locale)) throw new Error(`Unexpected legacy locale: ${String(locale)}`);
+    legacyCounts.set(locale, legacyCounts.get(locale) + 1);
+  }
+  for (const locale of legacyLocales) {
+    if (legacyCounts.get(locale) !== 5) {
+      throw new Error(`Legacy locale ${locale} must contain exactly 5 redirects`);
+    }
   }
   const csv = LEGACY_REDIRECTS.flatMap(({ path, target }) => CLOUDFLARE_HOSTS.map((host) => (
     `${host}${path},${target},301,true,false,false,false`
   ))).join('\n') + '\n';
   if (sha256(csv) !== acceptedCsvSha256) throw new Error('Generated Cloudflare CSV differs from the approved 50-row artifact');
+  const fallbackOutputs = LEGACY_REDIRECTS.map((item) => ({
+    file: resolve(outputRoot, `.${item.path}index.html`),
+    html: fallbackHtml(item),
+  }));
+  for (const { file, html } of fallbackOutputs) atomicWrite(file, html);
   atomicWrite(resolve(outputRoot, 'cloudflare/zxrubbertech-v5-legacy-redirects.csv'), csv);
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
