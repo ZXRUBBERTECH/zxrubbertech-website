@@ -49,6 +49,13 @@ const expectedBrowserKeys = Object.freeze(canonicalCases.flatMap(({ locale, stem
 const expectedPersianKeys = Object.freeze(V5_PAGE_STEMS.flatMap((stem) => (
   viewports.map(({ label }) => `fa\0${stem}\0${label}`)
 )));
+const expectedArabicKeys = Object.freeze(V5_PAGE_STEMS.flatMap((stem) => (
+  viewports.map(({ label }) => `ar\0${stem}\0${label}`)
+)));
+const expectedRtlKeys = Object.freeze([
+  ...expectedPersianKeys,
+  ...expectedArabicKeys,
+]);
 const acceptedCsvSha256 = '8d17b3226a266ff4539cf9a6721e4854992121663aeebd60354b3e73cf76fb63';
 const allowedCliKeys = new Set(['root', 'base-url', 'cloudflare-csv', 'output', 'browser']);
 const formspreeOrigin = 'https://formspree.io';
@@ -188,7 +195,7 @@ function releaseManifest(root) {
   const relativeFiles = walkFiles(root)
     .map((file) => relative(root, file).split(sep).join('/'))
     .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
-  if (relativeFiles.length !== 521) throw new AcceptanceError(`Release manifest must contain exactly 521 files; found ${relativeFiles.length}`);
+  if (relativeFiles.length !== 528) throw new AcceptanceError(`Release manifest must contain exactly 528 files; found ${relativeFiles.length}`);
   const contents = relativeFiles.map((file) => `${sha256File(join(root, ...file.split('/')))}  ./${file}\n`).join('');
   return { files: relativeFiles.length, relativeFiles, contents, sha256: sha256Bytes(contents) };
 }
@@ -287,7 +294,7 @@ async function runHttpChecks(baseUrl, mode, acceptedCsv) {
   if (mode === 'production') {
     const rows = readFileSync(acceptedCsv, 'utf8').split(/\r?\n/).filter(Boolean);
     if (rows.length !== 50) throw new AcceptanceError(`Accepted Cloudflare CSV must contain exactly 50 rows; found ${rows.length}`);
-    const testQuery = 'source=ja-ko-fa-release';
+    const testQuery = 'source=ar-release';
     for (const [index, line] of rows.entries()) {
       const [hostPath, target, status, preserveQuery, subdomains, pathSuffix, queryString] = line.split(',');
       if (![hostPath, target, status, preserveQuery, subdomains, pathSuffix, queryString].every((value) => value !== undefined)) {
@@ -645,17 +652,20 @@ const pageInvariantExpression = (locale, stem, expectedCanonical) => `
   const groups=['.v5-language-switcher','.v5-language-mobile','.v5-language-footer'].map(selector=>{
     const root=document.querySelector(selector);const links=[...(root?.querySelectorAll('a[data-language-link]')||[])];return {selector,exists:!!root,count:links.length,locales:links.map(link=>link.dataset.locale),current:links.filter(link=>link.getAttribute('aria-current')==='page').map(link=>link.dataset.locale)};
   });
-  const controlsValid=groups.every(group=>group.exists&&group.count===8&&JSON.stringify(group.locales)===JSON.stringify(expectedLocales)&&JSON.stringify(group.current)===JSON.stringify([locale]));
+  const controlsValid=groups.every(group=>group.exists&&group.count===expectedLocales.length&&JSON.stringify(group.locales)===JSON.stringify(expectedLocales)&&JSON.stringify(group.current)===JSON.stringify([locale]));
   const canonical=document.querySelector('link[rel="canonical"]')?.href||null;
   const alternates=[...document.querySelectorAll('link[rel="alternate"][hreflang]')].map(link=>({hreflang:link.hreflang,href:link.href}));
   const hrefs=[...document.querySelectorAll('a[href]')].filter(a=>!a.hasAttribute('data-language-link')).map(a=>a.getAttribute('href'));
   const prefix=${JSON.stringify(V5_LOCALES[locale].prefix ? `/${V5_LOCALES[locale].prefix}/` : '/')};
   const otherPrefixes=${JSON.stringify(Object.values(V5_LOCALES).map(v=>v.prefix).filter(Boolean).map(prefix=>`/${prefix}/`))};
   const leaked=hrefs.filter(href=>{if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:'))return false;const url=new URL(href,location.href);if(/^https?:/i.test(href)&&!['zxrubbertech.com','www.zxrubbertech.com',location.hostname].includes(url.hostname))return false;const path=url.pathname;if(path.startsWith('/media/')||path.startsWith('/LOGO/'))return false;if(locale==='en')return otherPrefixes.some(p=>path.startsWith(p));return !path.startsWith(prefix);});
-  const mirrored=[...document.querySelectorAll('img,video,picture,svg,.logo,[data-map-destination],.quotev5-map-preview')].filter(element=>{const value=getComputedStyle(element).transform;if(!value||value==='none')return false;const match=value.match(/^matrix\\(([^)]+)\\)$/);if(!match)return /scaleX\\(\\s*-/.test(value);const [a,b,c,d]=match[1].split(',').map(Number);return a*d-b*c<0;}).map(element=>({tag:element.tagName,className:element.className,transform:getComputedStyle(element).transform}));
+  const isReflected=(style)=>{const value=style.transform||'none';if((style.webkitBoxReflect||'none')!=='none')return true;const matrix=value.match(/^matrix\\(([^)]+)\\)$/);if(matrix){const [a,b,c,d]=matrix[1].split(',').map(Number);return a*d-b*c<0}const matrix3d=value.match(/^matrix3d\\(([^)]+)\\)$/);if(matrix3d){const m=matrix3d[1].split(',').map(Number);const determinant=m[0]*(m[5]*m[10]-m[6]*m[9])-m[1]*(m[4]*m[10]-m[6]*m[8])+m[2]*(m[4]*m[9]-m[5]*m[8]);return determinant<0}return /scaleX\\(\\s*-|rotateY\\(\\s*180deg/.test(value)};
+  const mirrored=[];
+  for(const element of document.querySelectorAll('body *'))for(const pseudo of ['', '::before', '::after']){const style=getComputedStyle(element,pseudo||null);if(pseudo&&(!style.content||style.content==='none'||style.content==='normal'))continue;if(!isReflected(style))continue;const map=element.matches('[data-map-destination],.quotev5-map-preview')||Boolean(element.closest('[data-map-destination],.quotev5-map-preview'));const media=!map&&(element.matches('img,video,picture,svg,.logo')||Boolean(element.closest('picture,.logo')));mirrored.push({tag:element.tagName,className:String(element.className||''),pseudo,category:map?'map':media?'media':'decorative',transform:style.transform,webkitBoxReflect:style.webkitBoxReflect||'none'})}
   const ltrBdi=[...document.querySelectorAll('bdi[dir="ltr"]')];
   const languageRoots=[...document.querySelectorAll('.v5-language-switcher,.v5-language-mobile,.v5-language-footer')];
-  const persianEvidence=locale!=='fa'?null:{
+  const rtlLocale=${JSON.stringify(Object.fromEntries(Object.entries(V5_LOCALES).map(([id,definition])=>[id,definition.direction==='rtl'])))}[locale];
+  const rtlEvidence=!rtlLocale?null:{
     documentDirection:document.documentElement.dir==='rtl'&&getComputedStyle(document.body).direction==='rtl',
     h1Direction:getComputedStyle(document.querySelector('h1')).direction==='rtl',
     languageControlDirections:languageRoots.map(root=>getComputedStyle(root).direction),
@@ -667,13 +677,14 @@ const pageInvariantExpression = (locale, stem, expectedCanonical) => `
       emailDir:document.querySelector('[name="email"]')?.dir||null,
       phoneDir:document.querySelector('[name="phone"]')?.dir||null,
       nameDir:document.querySelector('[name="name"]')?.dir||null,
+      companyDir:document.querySelector('[name="company"]')?.dir||null,
       messageDir:document.querySelector('[name="message"]')?.dir||null,
       dirnameFields:document.querySelectorAll('[dirname]').length,
     },
     ltrBdiCount:ltrBdi.length,
     ltrBdiValid:ltrBdi.length>0&&ltrBdi.every(element=>getComputedStyle(element).direction==='ltr'&&!/[\\u0600-\\u06ff]/.test(element.textContent)),
   };
-  const persianEvidenceValid=locale!=='fa'||(persianEvidence.documentDirection&&persianEvidence.h1Direction&&persianEvidence.languageControlDirections.every(direction=>direction==='rtl')&&persianEvidence.footerDirection==='rtl'&&(stem!=='faq'||(persianEvidence.faqSummaryDirections.length>0&&persianEvidence.faqSummaryDirections.every(direction=>direction==='rtl')))&&(stem!=='quote'||(persianEvidence.form.hiddenLocale==='fa'&&persianEvidence.form.turnstileLanguage==='fa'&&persianEvidence.form.emailDir==='ltr'&&persianEvidence.form.phoneDir==='ltr'&&persianEvidence.form.nameDir==='auto'&&persianEvidence.form.messageDir==='auto'&&persianEvidence.form.dirnameFields===0))&&persianEvidence.ltrBdiValid);
+  const rtlEvidenceValid=!rtlLocale?ltrBdi.length===0:(rtlEvidence.documentDirection&&rtlEvidence.h1Direction&&rtlEvidence.languageControlDirections.every(direction=>direction==='rtl')&&rtlEvidence.footerDirection==='rtl'&&(stem!=='faq'||(rtlEvidence.faqSummaryDirections.length>0&&rtlEvidence.faqSummaryDirections.every(direction=>direction==='rtl')))&&(stem!=='quote'||(rtlEvidence.form.hiddenLocale===locale&&rtlEvidence.form.turnstileLanguage===${JSON.stringify(Object.fromEntries(Object.entries(V5_LOCALES).map(([id,definition])=>[id,definition.turnstileLanguage])))}[locale]&&rtlEvidence.form.emailDir==='ltr'&&rtlEvidence.form.phoneDir==='ltr'&&rtlEvidence.form.nameDir==='auto'&&rtlEvidence.form.companyDir==='auto'&&rtlEvidence.form.messageDir==='auto'&&rtlEvidence.form.dirnameFields===0))&&rtlEvidence.ltrBdiValid);
   return {
     htmlLang:document.documentElement.lang,
     htmlDir:document.documentElement.dir||'ltr',
@@ -692,16 +703,18 @@ const pageInvariantExpression = (locale, stem, expectedCanonical) => `
     hreflangValid:JSON.stringify(alternates)===JSON.stringify(expectedAlternates),
     internalNavigationValid:leaked.length===0,
     leaked,
-    rtlValid:persianEvidenceValid,
-    persianEvidence,
-    mediaMirrored:mirrored.some(item=>!item.className?.toString().includes('map')),
-    mapMirrored:mirrored.some(item=>item.className?.toString().includes('map')),
+    rtlValid:rtlEvidenceValid,
+    rtlEvidence,
+    mediaMirrored:mirrored.some(item=>item.category==='media'),
+    mapMirrored:mirrored.some(item=>item.category==='map'),
+    decorativeMirrored:mirrored.some(item=>item.category==='decorative'),
     mirrored,
   };
 })()`;
 
 function pageResultOk(result, locale, events) {
   return result.htmlLang === V5_LOCALES[locale].htmlLang
+    && result.htmlDir === V5_LOCALES[locale].direction
     && result.h1Count === 1
     && result.horizontalOverflow === false
     && result.localOverflow === false
@@ -709,13 +722,16 @@ function pageResultOk(result, locale, events) {
     && result.videoChecks.every(({ ok }) => ok)
     && result.controlsValid === true
     && result.canonicalValid === true
-    && result.hreflangCount === 9
+    && result.hreflangCount === localeIds.length + 1
     && result.hreflangValid === true
     && result.internalNavigationValid === true
     && events.consoleErrors.length === 0
     && events.pageErrors.length === 0
     && events.sameOriginHttpErrors.length === 0
-    && (locale !== 'fa' || (result.rtlValid && !result.mediaMirrored && !result.mapMirrored));
+    && result.rtlValid
+    && !result.mediaMirrored
+    && !result.mapMirrored
+    && !result.decorativeMirrored;
 }
 
 async function runBrowserChecks(chrome, baseUrl) {
@@ -749,10 +765,11 @@ async function runBrowserChecks(chrome, baseUrl) {
           hreflangCount: invariant.hreflangCount,
           internalNavigationValid: invariant.internalNavigationValid,
           migrationConsoleErrors,
-          ...(locale === 'fa' ? {
+          ...(V5_LOCALES[locale].direction === 'rtl' ? {
             rtlValid: invariant.rtlValid,
             mediaMirrored: invariant.mediaMirrored,
             mapMirrored: invariant.mapMirrored,
+            decorativeMirrored: invariant.decorativeMirrored,
           } : {}),
           diagnostics: {
             htmlLang: invariant.htmlLang,
@@ -765,7 +782,7 @@ async function runBrowserChecks(chrome, baseUrl) {
             videoChecks: invariant.videoChecks,
             localOverflowElements: invariant.localOverflowElements,
             mirrored: invariant.mirrored,
-            persianEvidence: invariant.persianEvidence,
+            rtlEvidence: invariant.rtlEvidence,
           },
         };
         browserResults.push(result);
@@ -819,10 +836,10 @@ async function runInteractions(page, baseUrl) {
     await page.viewport(viewports[0]);
     await page.navigate(new URL(getLocalizedRoute('en', stem), baseUrl).href);
     await page.click('.v5-language-switcher__button');
-    await page.click('.v5-language-switcher__menu a[data-locale="ja"]');
-    await page.waitFor(`location.pathname===${JSON.stringify(getLocalizedRoute('ja', stem))}`, `Japanese ${stem} language-switch route`);
+    await page.click('.v5-language-switcher__menu a[data-locale="ar"]');
+    await page.waitFor(`location.pathname===${JSON.stringify(getLocalizedRoute('ar', stem))}`, `Arabic ${stem} language-switch route`);
     const role = await page.evaluate('({lang:document.documentElement.lang,path:location.pathname})');
-    if (role.lang === 'ja' && role.path === getLocalizedRoute('ja', stem)) samePageLanguageRoles += 1;
+    if (role.lang === 'ar' && role.path === getLocalizedRoute('ar', stem)) samePageLanguageRoles += 1;
   }
 
   await page.navigate(new URL('/products/', baseUrl).href);
@@ -868,16 +885,20 @@ async function runInteractions(page, baseUrl) {
   await page.key('Escape');
   const escapeRestored = await page.evaluate('document.activeElement===document.querySelector(".v5-language-switcher__button")&&document.querySelector(".v5-language-switcher__menu").hidden');
 
-  await page.navigate(new URL('/fa/quote/', baseUrl).href);
-  await page.viewport(viewports[0]);
-  const expectedFocusable = await page.evaluate(`(()=>[...document.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(e=>{const s=getComputedStyle(e);const r=e.getBoundingClientRect();return s.visibility!=='hidden'&&s.display!=='none'&&r.width>0&&r.height>0}).slice(0,8).map(e=>e.outerHTML.slice(0,120)))()`);
-  await page.evaluate('document.body.focus()');
-  const observedFocusable = [];
-  for (let index = 0; index < expectedFocusable.length; index += 1) {
-    await page.key('Tab');
-    observedFocusable.push(await page.evaluate('document.activeElement?.outerHTML?.slice(0,120)||null'));
-  }
-  const persianFocusOrder = JSON.stringify(observedFocusable) === JSON.stringify(expectedFocusable);
+  const rtlFocusOrder = async (locale) => {
+    await page.navigate(new URL(getLocalizedRoute(locale, 'quote'), baseUrl).href);
+    await page.viewport(viewports[0]);
+    const expectedFocusable = await page.evaluate(`(()=>[...document.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(e=>{const s=getComputedStyle(e);const r=e.getBoundingClientRect();return s.visibility!=='hidden'&&s.display!=='none'&&r.width>0&&r.height>0}).slice(0,8).map(e=>e.outerHTML.slice(0,120)))()`);
+    await page.evaluate('document.body.focus()');
+    const observedFocusable = [];
+    for (let index = 0; index < expectedFocusable.length; index += 1) {
+      await page.key('Tab');
+      observedFocusable.push(await page.evaluate('document.activeElement?.outerHTML?.slice(0,120)||null'));
+    }
+    return JSON.stringify(observedFocusable) === JSON.stringify(expectedFocusable);
+  };
+  const persianFocusOrder = await rtlFocusOrder('fa');
+  const arabicFocusOrder = await rtlFocusOrder('ar');
   return {
     samePageLanguageRoles,
     productsFragment,
@@ -893,6 +914,7 @@ async function runInteractions(page, baseUrl) {
     keyboardArrows: firstMenuLocale === 'en' && secondMenuLocale === 'de',
     keyboardEscape: escapeRestored,
     persianFocusOrder,
+    arabicFocusOrder,
   };
 }
 
@@ -923,8 +945,14 @@ async function runQuoteChecks(page, baseUrl) {
       hiddenLocale:document.querySelector('input[type="hidden"][name="language"]')?.value||null,
       turnstileLanguage:document.querySelector('.cf-turnstile')?.dataset?.language||null,
       formAction:document.getElementById('contact-form')?.action||null,
+      directions:Object.fromEntries(['name','company','email','phone','message'].map(name=>[name,document.querySelector('[name="'+name+'"]')?.dir||null])),
+      dirnameFields:document.querySelectorAll('#contact-form [dirname]').length,
     }))()`);
     const expectedTurnstile = V5_LOCALES[locale].turnstileLanguage;
+    const rtlDirectionsValid = V5_LOCALES[locale].direction !== 'rtl'
+      || JSON.stringify(withoutTurnstile.directions) === JSON.stringify({
+        name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto',
+      });
     const ok = empty.invalid === 3 && empty.messages.every(Boolean)
       && badEmail.invalid && Boolean(badEmail.message)
       && withoutTurnstile.state === 'error' && Boolean(withoutTurnstile.status)
@@ -934,6 +962,8 @@ async function runQuoteChecks(page, baseUrl) {
       && withoutTurnstile.hiddenLocale === locale
       && withoutTurnstile.turnstileLanguage === expectedTurnstile
       && withoutTurnstile.formAction === 'https://formspree.io/f/mrpzqado'
+      && rtlDirectionsValid
+      && withoutTurnstile.dirnameFields === 0
       && page.form.attemptedPostRequests === beforeAttempts;
     localeResults.push({ locale, ok, empty, badEmail, withoutTurnstile });
   }
@@ -962,6 +992,7 @@ function exactClickPathsPassed(clicks) {
     keyboardArrows: true,
     keyboardEscape: true,
     persianFocusOrder: true,
+    arabicFocusOrder: true,
   }).every(([key, expected]) => clicks[key] === expected);
 }
 
@@ -972,6 +1003,22 @@ function validateExactOrdering(report) {
   if (JSON.stringify(browserKeys) !== JSON.stringify(expectedBrowserKeys)) throw new AcceptanceError('Browser result keys/order are not exact');
   const persianKeys = report.browserResults.filter(({ locale }) => locale === 'fa').map(({ locale, stem, viewport }) => `${locale}\0${stem}\0${viewport}`);
   if (JSON.stringify(persianKeys) !== JSON.stringify(expectedPersianKeys)) throw new AcceptanceError('Persian RTL keys/order are not exact');
+  const arabicKeys = report.browserResults.filter(({ locale }) => locale === 'ar').map(({ locale, stem, viewport }) => `${locale}\0${stem}\0${viewport}`);
+  if (JSON.stringify(arabicKeys) !== JSON.stringify(expectedArabicKeys)) throw new AcceptanceError('Arabic RTL keys/order are not exact');
+  const rtlKeys = report.browserResults.filter(({ locale }) => V5_LOCALES[locale]?.direction === 'rtl')
+    .map(({ locale, stem, viewport }) => `${locale}\0${stem}\0${viewport}`);
+  if (JSON.stringify(rtlKeys) !== JSON.stringify(expectedRtlKeys)) throw new AcceptanceError('RTL result keys/order are not exact');
+  const quoteValidation = report.interactionEvidence?.quoteValidation;
+  if (!Array.isArray(quoteValidation)
+      || JSON.stringify(quoteValidation.map(({ locale }) => locale)) !== JSON.stringify(localeIds)) {
+    throw new AcceptanceError('Quote validation locale keys/order are not exact');
+  }
+  for (const record of quoteValidation) {
+    if (JSON.stringify(Object.keys(record)) !== JSON.stringify(['locale', 'ok', 'empty', 'badEmail', 'withoutTurnstile'])
+        || record.ok !== true) {
+      throw new AcceptanceError(`Quote validation record schema failed: ${record?.locale ?? 'unknown'}`);
+    }
+  }
 }
 
 async function run(options) {
@@ -1051,12 +1098,16 @@ async function run(options) {
       pageViewportPassed: passingBrowser,
       browserResults: browser.browserResults,
       persianRtlViewportChecks: browser.browserResults.filter(({ locale, ok }) => locale === 'fa' && ok).length,
+      arabicRtlViewportChecks: browser.browserResults.filter(({ locale, ok }) => locale === 'ar' && ok).length,
+      rtlViewportChecks: browser.browserResults.filter(({ locale, ok }) => V5_LOCALES[locale]?.direction === 'rtl' && ok).length,
       clickPaths: browser.clickPaths,
       interactionEvidence: {
         quoteValidation: browser.formEvidence.locales,
         exactHttpKeys: expectedHttpRoutes,
         exactBrowserKeys: expectedBrowserKeys,
         exactPersianKeys: expectedPersianKeys,
+        exactArabicKeys: expectedArabicKeys,
+        exactRtlKeys: expectedRtlKeys,
       },
       formSubmission: 'deferred',
       realSubmissions: 0,
@@ -1111,6 +1162,8 @@ async function main() {
       pageViewportChecks: 0,
       pageViewportPassed: 0,
       persianRtlViewportChecks: 0,
+      arabicRtlViewportChecks: 0,
+      rtlViewportChecks: 0,
       formSubmission: 'deferred',
       realSubmissions: 0,
       formspreeAttemptedPostRequests: 0,

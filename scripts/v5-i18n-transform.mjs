@@ -27,6 +27,10 @@ export const V5_RTL_APPROVED_LTR_LITERALS = Object.freeze([
   'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC', 'PPAP',
   'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
 ]);
+export const V5_RTL_APPROVED_LTR_LITERALS_BY_LOCALE = Object.freeze({
+  fa: V5_RTL_APPROVED_LTR_LITERALS,
+  ar: V5_RTL_APPROVED_LTR_LITERALS,
+});
 const RTL_STYLE = `
 /* V5:RTL START */
 html[dir="rtl"] body{direction:rtl}
@@ -35,8 +39,11 @@ html[dir="rtl"] :is(input,textarea,select){text-align:start}
 html[dir="rtl"] :is(.eyebrow,.tab-hero .th-note,.stat>span,.panel h4,.hcat .go,.pstep b,.pcat .go,.pcat-src,.dl-card .go,.tags span,.prod3 figcaption,.compound-primary-code,.compound-primary-status,.capv5-route span,.capv5-quality-step b,.capv5-capacity-stat>span,.footv5-group h3,.footv5-legal-row){letter-spacing:normal;text-transform:none}
 /* V5:RTL END */
 `;
-if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map))/i.test(RTL_STYLE)) {
+if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|box-reflect\s*:|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map|decor))/i.test(RTL_STYLE)) {
   throw new Error('Shared RTL CSS must not mirror media, Logo, map, or decorative elements');
+}
+if (/(?:^|[;{])\s*(?:(?:margin|padding|inset|border)-(?:left|right)|left|right)\s*:/im.test(RTL_STYLE)) {
+  throw new Error('Shared RTL CSS must use logical directional properties');
 }
 
 function assertPlainObject(value, label) {
@@ -152,15 +159,22 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-const RTL_LTR_PATTERN = new RegExp(
-  `(?<![A-Za-z0-9])(?:${[...V5_RTL_APPROVED_LTR_LITERALS]
-    .sort((left, right) => right.length - left.length)
-    .map(escapeRegExp)
-    .join('|')})(?![A-Za-z0-9])`,
-  'g',
-);
+const RTL_LTR_PATTERNS = Object.freeze(Object.fromEntries(
+  Object.entries(V5_RTL_APPROVED_LTR_LITERALS_BY_LOCALE).map(([locale, literals]) => [
+    locale,
+    new RegExp(
+      `(?<![A-Za-z0-9])(?:${[...literals]
+        .sort((left, right) => right.length - left.length)
+        .map(escapeRegExp)
+        .join('|')})(?![A-Za-z0-9])`,
+      'g',
+    ),
+  ]),
+));
 
 function isolateRtlVisibleLtrTokens(html, { stem, locale }) {
+  const literalPattern = RTL_LTR_PATTERNS[locale];
+  if (!literalPattern) throw new Error(`${stem}/${locale}: missing approved RTL LTR literal contract`);
   const bodyOpen = [...html.matchAll(/<body\b[^>]*>/gi)];
   const bodyClose = [...html.matchAll(/<\/body\s*>/gi)];
   if (bodyOpen.length !== 1 || bodyClose.length !== 1 || bodyClose[0].index <= bodyOpen[0].index) {
@@ -186,7 +200,7 @@ function isolateRtlVisibleLtrTokens(html, { stem, locale }) {
     }
     transformed += excluded.length
       ? token
-      : token.replace(RTL_LTR_PATTERN, (literal) => `<bdi dir="ltr">${literal}</bdi>`);
+      : token.replace(literalPattern, (literal) => `<bdi dir="ltr">${literal}</bdi>`);
   }
   return `${html.slice(0, start)}${transformed}${html.slice(end)}`;
 }

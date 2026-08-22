@@ -791,6 +791,9 @@ function runReleaseChecker(fixture, checker) {
   } else if (checker === 'form') {
     file = join(scriptsRoot, 'check-v5-i18n.mjs');
     args = ['--gate=form', '--profile=release', `--root=${fixture.fixtureRoot}`];
+  } else if (checker === 'rtl') {
+    file = join(scriptsRoot, 'check-v5-i18n.mjs');
+    args = ['--gate=release', '--profile=release', `--root=${fixture.fixtureRoot}`];
   } else {
     throw new Error(`Unknown release mutation checker: ${checker}`);
   }
@@ -804,23 +807,33 @@ function runReleaseChecker(fixture, checker) {
 function releaseGreenPassed(testCase, result, report) {
   if (result.status !== 0 || report?.status !== 'PASS') return false;
   if (testCase.checker === 'seo') {
-    return report.metrics?.locales === 8
-      && report.metrics?.publicPages === 56
-      && report.metrics?.hreflangLinks === 504
-      && report.metrics?.sitemapUrls === 56;
+    return report.metrics?.locales === 9
+      && report.metrics?.publicPages === 63
+      && report.metrics?.hreflangLinks === 630
+      && report.metrics?.sitemapUrls === 63;
   }
   if (testCase.checker === 'controls') {
     return report.controls?.pages === 7
-      && report.controls?.anchorsPerGroup === 8
-      && report.controls?.anchorsPerPage === 24
-      && report.controls?.totalAnchors === 168;
+      && report.controls?.anchorsPerGroup === 9
+      && report.controls?.anchorsPerPage === 27
+      && report.controls?.totalAnchors === 189;
   }
-  return report.form?.quotePages === 8
-    && report.form?.formspreeTargets === 8
-    && report.form?.turnstileWidgets === 8
-    && report.form?.localeFields === 8
-    && report.form?.runtimeMessages === 112
-    && report.form?.realSubmissions === 0;
+  if (testCase.checker === 'form') {
+    return report.form?.quotePages === 9
+      && report.form?.formspreeTargets === 9
+      && report.form?.turnstileWidgets === 9
+      && report.form?.localeFields === 9
+      && report.form?.runtimeMessages === 126
+      && report.form?.runtimeMessageResults?.length === 126
+      && report.form.runtimeMessageResults.every(({ passed }) => passed === true)
+      && report.form?.realSubmissions === 0;
+  }
+  return report.release?.locales === 9
+    && report.release?.publicPages === 63
+    && report.release?.hreflangLinks === 630
+    && report.release?.sitemapUrls === 63
+    && report.release?.rtlPages === 14
+    && JSON.stringify(report.release?.rtlPagesByLocale) === JSON.stringify({ fa: 7, ar: 7 });
 }
 
 function releaseCaseDefinitions() {
@@ -829,7 +842,7 @@ function releaseCaseDefinitions() {
   return [
     {
       name: 'missing-language-anchor', checker: 'controls',
-      expectedSignal: 'desktop language control must contain 8 real anchors; found 7',
+      expectedSignal: 'desktop language control must contain 9 real anchors; found 8',
       mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => mutateMarkedGroup(
         source,
         'DESKTOP',
@@ -838,7 +851,7 @@ function releaseCaseDefinitions() {
     },
     {
       name: 'duplicate-language-anchor', checker: 'controls',
-      expectedSignal: 'desktop language control must contain 8 real anchors; found 9',
+      expectedSignal: 'desktop language control must contain 9 real anchors; found 10',
       mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'demo-a', (source) => mutateMarkedGroup(
         source,
         'DESKTOP',
@@ -900,6 +913,46 @@ function releaseCaseDefinitions() {
       )),
     },
     {
+      name: 'wrong-arabic-dir', checker: 'seo',
+      expectedSignal: 'ar/demo-a: html dir must be rtl',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<html lang="ar" dir="rtl">',
+        '<html lang="ar" dir="ltr">',
+        'wrong-arabic-dir',
+      )),
+    },
+    {
+      name: 'invalid-arabic-rtl-wrapper', checker: 'rtl',
+      expectedSignal: 'ar/demo-a: RTL LTR literals must use exact nonempty non-nested bdi dir=ltr pairs',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '<bdi dir="ltr">',
+        '<bdi dir="rtl">',
+        'invalid-arabic-rtl-wrapper',
+      )),
+    },
+    {
+      name: 'rtl-media-reflection', checker: 'rtl',
+      expectedSignal: 'ar/demo-a: RTL CSS must not mirror media, Logo, map, or decorative elements',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '/* V5:RTL END */',
+        'html[dir="rtl"] img{transform:scaleX(-1)}\n/* V5:RTL END */',
+        'rtl-media-reflection',
+      )),
+    },
+    {
+      name: 'rtl-decorative-reflection', checker: 'rtl',
+      expectedSignal: 'ar/demo-a: RTL CSS must not mirror media, Logo, map, or decorative elements',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'demo-a', (source) => replaceFirstExact(
+        source,
+        '/* V5:RTL END */',
+        'html[dir="rtl"] .tab-hero::before{-webkit-box-reflect:right}\n/* V5:RTL END */',
+        'rtl-decorative-reflection',
+      )),
+    },
+    {
       name: 'wrong-turnstile-language', checker: 'form',
       expectedSignal: 'fa/quote: Turnstile data-language must equal fa',
       mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceFirstExact(
@@ -917,6 +970,16 @@ function releaseCaseDefinitions() {
         '<input type="hidden" name="language" value="fa">',
         '<input type="hidden" name="language" value="en">',
         'wrong-hidden-locale',
+      )),
+    },
+    {
+      name: 'wrong-persian-input-direction', checker: 'form',
+      expectedSignal: 'fa/quote: name direction must equal auto',
+      mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'quote', (source) => replaceOnce(
+        source,
+        /(<input\b(?=[^>]*\bname="name")[^>]*\b)dir="auto"/g,
+        '$1dir="ltr"',
+        'wrong-persian-input-direction',
       )),
     },
     {
@@ -950,6 +1013,66 @@ function releaseCaseDefinitions() {
       )),
     },
     {
+      name: 'wrong-arabic-turnstile-language', checker: 'form',
+      expectedSignal: 'ar/quote: Turnstile data-language must equal ar',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceFirstExact(
+        source,
+        ' data-language="ar"',
+        ' data-language="en"',
+        'wrong-arabic-turnstile-language',
+      )),
+    },
+    {
+      name: 'wrong-arabic-hidden-locale', checker: 'form',
+      expectedSignal: 'ar/quote: hidden language field must equal locale ID ar',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceFirstExact(
+        source,
+        '<input type="hidden" name="language" value="ar">',
+        '<input type="hidden" name="language" value="en">',
+        'wrong-arabic-hidden-locale',
+      )),
+    },
+    {
+      name: 'wrong-arabic-input-direction', checker: 'form',
+      expectedSignal: 'ar/quote: name direction must equal auto',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceOnce(
+        source,
+        /(<input\b(?=[^>]*\bname="name")[^>]*\b)dir="auto"/g,
+        '$1dir="ltr"',
+        'wrong-arabic-input-direction',
+      )),
+    },
+    {
+      name: 'changed-arabic-formspree-id', checker: 'form',
+      expectedSignal: 'ar/quote: Formspree target must contain mrpzqado exactly once',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceFirstExact(
+        source,
+        'https://formspree.io/f/mrpzqado',
+        'https://formspree.io/f/changedid',
+        'changed-arabic-formspree-id',
+      )),
+    },
+    {
+      name: 'changed-arabic-turnstile-site-key', checker: 'form',
+      expectedSignal: 'ar/quote: Turnstile Site Key must equal the approved key exactly once',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceFirstExact(
+        source,
+        '0x4AAAAAAENHOMMn_zK0WuNN',
+        '0x4AAAAAAENHOMMn_zK0WuNX',
+        'changed-arabic-turnstile-site-key',
+      )),
+    },
+    {
+      name: 'changed-arabic-backend-field', checker: 'form',
+      expectedSignal: 'ar/quote: stable backend fields must equal name, company, email, phone, message plus hidden language',
+      mutate: (fixture) => mutateReleasePage(fixture, 'ar', 'quote', (source) => replaceFirstExact(
+        source,
+        'name="company"',
+        'name="organisation"',
+        'changed-arabic-backend-field',
+      )),
+    },
+    {
       name: 'english-internal-link-leakage', checker: 'seo',
       expectedSignal: 'fa/products: internal href leaves active locale routes: /quote/',
       mutate: (fixture) => mutateReleasePage(fixture, 'fa', 'products', (source) => replaceFirstExact(
@@ -976,9 +1099,10 @@ function runReleaseCase(root, testCase) {
   const fixture = prepareReleaseFixture(root);
   try {
     const greenInventory = releaseInventoryMetrics(fixture.fixtureRoot);
+    const expectedCanonicalPages = Object.keys(V5_LOCALES).length * V5_PAGE_STEMS.length;
     const greenResult = runReleaseChecker(fixture, testCase.checker);
     const greenReport = parseCheckerReport(greenResult);
-    const greenPassed = greenInventory.canonicalPages === 56
+    const greenPassed = greenInventory.canonicalPages === expectedCanonicalPages
       && greenInventory.missingFiles.length === 0
       && releaseGreenPassed(testCase, greenResult, greenReport);
 
@@ -989,7 +1113,7 @@ function runReleaseCase(root, testCase) {
     const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
     const missingFileNoise = (output.match(/missing (?:file|page)|file does not exist/gi) ?? []).length;
     const actualSignalFound = output.includes(testCase.expectedSignal);
-    const unaffectedMetricsMatch = mutationInventory.canonicalPages === 56
+    const unaffectedMetricsMatch = mutationInventory.canonicalPages === expectedCanonicalPages
       && mutationInventory.missingFiles.length === 0;
     return {
       case: testCase.name,
@@ -997,13 +1121,13 @@ function runReleaseCase(root, testCase) {
       fixtureSha256: fixtureSha256(fixture.fixtureRoot),
       greenExitCode: greenResult.status,
       greenInventory,
-      greenMetrics: greenReport?.metrics ?? greenReport?.controls ?? greenReport?.form ?? null,
+      greenMetrics: greenReport?.metrics ?? greenReport?.controls ?? greenReport?.form ?? greenReport?.release ?? null,
       exitCode: result.status,
       expectedExitCode: 1,
       expectedSignal: testCase.expectedSignal,
       actualSignalFound,
       mutationInventory,
-      mutationMetrics: checkerReport?.metrics ?? checkerReport?.controls ?? checkerReport?.form ?? null,
+      mutationMetrics: checkerReport?.metrics ?? checkerReport?.controls ?? checkerReport?.form ?? checkerReport?.release ?? null,
       unaffectedMetricsMatch,
       missingFileNoise,
       status: greenPassed && result.status === 1 && actualSignalFound && unaffectedMetricsMatch && missingFileNoise === 0
@@ -1379,8 +1503,9 @@ function runSuite({ suite, root }) {
   if (suite === 'release') {
     if (!root) throw new CliError('Release mutation suite requires --root=<complete-green-release>');
     const inventory = releaseInventoryMetrics(root);
-    if (inventory.canonicalPages !== 56 || inventory.missingFiles.length) {
-      throw new CliError(`Release mutation suite requires all 56 canonical pages; found ${inventory.canonicalPages}`);
+    const expectedCanonicalPages = Object.keys(V5_LOCALES).length * V5_PAGE_STEMS.length;
+    if (inventory.canonicalPages !== expectedCanonicalPages || inventory.missingFiles.length) {
+      throw new CliError(`Release mutation suite requires all ${expectedCanonicalPages} canonical pages; found ${inventory.canonicalPages}`);
     }
     return releaseCaseDefinitions().map((testCase) => runReleaseCase(root, testCase));
   }

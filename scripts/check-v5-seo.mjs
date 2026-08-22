@@ -49,13 +49,17 @@ const turnstilePreviewTestSiteKeys = new Set([
 ]);
 const quoteFormspreeFormId = 'mrpzqado';
 const quoteFormspreeAction = `https://formspree.io/f/${quoteFormspreeFormId}`;
-const approvedPersianLtrLiterals = new Set([
+const approvedRtlLtrLiterals = new Set([
   'ANHUI ZHIXIN MATERIAL TECHNOLOGY CO., LTD', 'ZHIXIN RUBBER MATERIAL',
   'martin@zxrubbertech.com', 'https://wa.me/8615256225135', '+86 152 5622 5135',
   'ISO 9001:2015', 'WhatsApp', 'ZHIXIN', 'HNBR', 'EPDM', 'FKM', 'ACM', 'AEM',
   'OEM', 'ODM', 'MOQ', 'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC',
   'PPAP', 'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
 ]);
+const approvedRtlLtrLiteralsByLocale = Object.freeze({
+  fa: approvedRtlLtrLiterals,
+  ar: approvedRtlLtrLiterals,
+});
 const approvedGate6Copy = Object.freeze({
   'demo-a': Object.freeze({
     h1: Object.freeze({
@@ -1900,19 +1904,20 @@ function stripApprovedQuoteLanguageField(body, stem, locale, label) {
   return body.replace(expected, '');
 }
 
-function stripApprovedPersianBidiIsolation(body, locale, label) {
+function stripApprovedRtlBidiIsolation(body, locale, label) {
   const tags = body.match(/<\/?bdi\b[^>]*>/gi) ?? [];
-  if (locale !== 'fa') {
-    if (tags.length) throw new Error(`${label}: bidi isolation is forbidden outside Persian pages`);
+  const approvedLiterals = approvedRtlLtrLiteralsByLocale[locale];
+  if (!approvedLiterals) {
+    if (tags.length) throw new Error(`${label}: bidi isolation is forbidden outside approved RTL pages`);
     return body;
   }
   const pairs = [...body.matchAll(/<bdi dir="ltr">([^<]+)<\/bdi>/g)];
   if (!pairs.length || tags.length !== pairs.length * 2) {
-    throw new Error(`${label}: Persian bidi isolation must use exact nonempty bdi dir=ltr pairs`);
+    throw new Error(`${label}: RTL bidi isolation must use exact nonempty bdi dir=ltr pairs`);
   }
   for (const pair of pairs) {
-    if (!approvedPersianLtrLiterals.has(pair[1])) {
-      throw new Error(`${label}: unapproved Persian LTR bidi literal: ${pair[1]}`);
+    if (!approvedLiterals.has(pair[1])) {
+      throw new Error(`${label}: unapproved ${locale} LTR bidi literal: ${pair[1]}`);
     }
   }
   return body.replace(/<bdi dir="ltr">([^<]+)<\/bdi>/g, '$1');
@@ -1922,7 +1927,7 @@ function bodyStructureSignature(html, label, { stem = null, locale = null, relea
   const body = html.match(/<body\b[^>]*>[\s\S]*?<\/body>/i)?.[0];
   if (!body) throw new Error(`${label}: body is missing`);
   const releaseNormalized = release
-    ? stripApprovedPersianBidiIsolation(
+    ? stripApprovedRtlBidiIsolation(
       stripApprovedQuoteLanguageField(body, stem, locale, label),
       locale,
       label,

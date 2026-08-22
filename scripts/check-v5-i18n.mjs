@@ -29,6 +29,10 @@ const RTL_APPROVED_LTR_LITERALS = Object.freeze(new Set([
   'OEM', 'ODM', 'MOQ', 'SBR', 'NBR', 'CAE', 'CAD', 'NVH', 'LSR', 'PTFE', 'HVAC',
   'PPAP', 'NDA', 'EXW', 'FOB', 'PVC', 'NR', 'CR', 'MQ', 'TC',
 ]));
+const RTL_APPROVED_LTR_LITERALS_BY_LOCALE = Object.freeze({
+  fa: RTL_APPROVED_LTR_LITERALS,
+  ar: RTL_APPROVED_LTR_LITERALS,
+});
 
 const REQUIRED_GLOSSARY_TERMS = Object.freeze([
   'rubber compound', 'molded rubber parts', 'rubber-to-metal bonding',
@@ -1636,17 +1640,25 @@ function validateRtlContract(html, locale, stem, label, definition, failures) {
   if (!rtlRules.length || rtlRules.some((selector) => !selector.startsWith('html[dir="rtl"]'))) {
     failures.push(`${label}: every RTL selector must be scoped by html[dir="rtl"]`);
   }
-  if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map))/i.test(rtlCss)) {
+  if (/(?:scaleX\s*\(\s*-1|rotateY\s*\(\s*180deg|matrix\s*\(|box-reflect\s*:|\b(?:img|video|picture|svg)\b|[.#][\w-]*(?:logo|map|decor))/i.test(rtlCss)) {
     failures.push(`${label}: RTL CSS must not mirror media, Logo, map, or decorative elements`);
+  }
+  if (/(?:^|[;{])\s*(?:(?:margin|padding|inset|border)-(?:left|right)|left|right)\s*:/im.test(rtlCss)) {
+    failures.push(`${label}: RTL CSS must use logical directional properties`);
   }
   if (/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/u.test(html)) {
     failures.push(`${label}: hidden bidi controls are not allowed in RTL HTML`);
   }
+  if (locale === 'ar' && /[\u200C\u200D]/u.test(html)) {
+    failures.push(`${label}: Arabic RTL HTML must not contain ZWJ or ZWNJ`);
+  }
 
   const pairs = [...html.matchAll(/<bdi dir="ltr">([^<]+)<\/bdi>/g)];
   if (bdiTags.length !== pairs.length * 2) failures.push(`${label}: RTL LTR literals must use exact nonempty non-nested bdi dir=ltr pairs`);
+  const approvedLiterals = RTL_APPROVED_LTR_LITERALS_BY_LOCALE[locale];
+  if (!approvedLiterals) failures.push(`${label}: missing locale-specific RTL LTR literal contract`);
   for (const pair of pairs) {
-    if (!RTL_APPROVED_LTR_LITERALS.has(pair[1])) {
+    if (!approvedLiterals?.has(pair[1])) {
       failures.push(`${label}: unapproved RTL LTR bidi literal: ${pair[1]}`);
     }
   }
@@ -1806,6 +1818,7 @@ function validateFormGate(normalized, config) {
   let turnstileWidgets = 0;
   let localeFields = 0;
   let runtimeMessages = 0;
+  const runtimeMessageResults = [];
 
   if (normalized.profile !== 'release') failures.push('Form gate requires profile=release');
   if (normalized.locale) failures.push(`Form gate must validate all ${localeIds.length} release locales`);
@@ -1867,7 +1880,7 @@ function validateFormGate(normalized, config) {
     if (controls.some(({ tag }) => htmlAttribute(tag, 'dirname') !== null)) {
       failures.push(`${label}: Quote controls must not add dirname backend fields`);
     }
-    if (locale === 'fa') {
+    if (config.V5_LOCALES[locale].direction === 'rtl') {
       const expectedDirections = { name: 'auto', company: 'auto', email: 'ltr', phone: 'ltr', message: 'auto' };
       for (const [name, direction] of Object.entries(expectedDirections)) {
         const control = controls.find((candidate) => candidate.name === name);
@@ -1897,14 +1910,16 @@ function validateFormGate(normalized, config) {
       failures.push(`${label}: Quote validation catalog must contain exactly required-field and invalid-email`);
     }
     const messages = [
-      ...Object.values(catalog.runtime?.quote?.js_string ?? {}),
-      ...Object.values(validation),
+      ...Object.entries(catalog.runtime?.quote?.js_string ?? {}).map(([key, message]) => ({ key: `js_string.${key}`, message })),
+      ...Object.entries(validation).map(([key, message]) => ({ key: `validation.${key}`, message })),
     ];
     if (messages.length !== 14) failures.push(`${label}: expected 14 catalogized Quote runtime messages; found ${messages.length}`);
-    for (const message of messages) {
+    for (const { key, message } of messages) {
       const singleQuoted = message.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
       const count = (html.split(message).length - 1) + (singleQuoted === message ? 0 : html.split(singleQuoted).length - 1);
-      if (count < 1) failures.push(`${label}: catalogized Quote runtime message is missing: ${message}`);
+      const passed = count >= 1;
+      runtimeMessageResults.push({ locale, key, passed });
+      if (!passed) failures.push(`${label}: catalogized Quote runtime message is missing: ${message}`);
       else runtimeMessages += 1;
     }
 
@@ -1936,6 +1951,7 @@ function validateFormGate(normalized, config) {
       turnstileWidgets,
       localeFields,
       runtimeMessages,
+      runtimeMessageResults,
       realSubmissions: 0,
     },
   };
